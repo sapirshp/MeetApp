@@ -9,13 +9,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.List;
 
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 {
-
     public MyAdapter(List<GroupItem> groupItem, Context context) {
         this.groupItem = groupItem;
         this.context = context;
@@ -47,7 +45,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
                 Toast.makeText(context, "pressed "+ newGroup.getHead(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
 
@@ -56,13 +53,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
         return groupItem.size();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public TextView textViewGroupName;
         public TextView textViewParticipants;
         public LinearLayout linearLayout;
-
-
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -73,7 +69,4 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
             linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
         }
     }
-
-
 }
-
