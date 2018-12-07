@@ -11,6 +11,7 @@
 
     <Button
         android:id="@+id/AddGroupBtn"
+        android:onClick="showNewGroupPopup"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginStart="8dp"

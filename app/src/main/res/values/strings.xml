@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MeetApp</string>
+    <string name="XBtn">X</string>
+    <string name="enterGroupName">Enter Group Name:</string>
+
+    <string name="groupNameHint">Group Name Here</string>
+    <string name="addGroupIcon">Add Group Icon</string>
+
+
 </resources>
