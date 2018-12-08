@@ -14,12 +14,12 @@ import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 {
-    public MyAdapter(List<GroupItem> groupItem, Context context) {
-        this.groupItem = groupItem;
+    public MyAdapter(List<Group> group, Context context) {
+        this.group = group;
         this.context = context;
     }
 
-    private List<GroupItem> groupItem;
+    private List<Group> group;
     private Context context;
 
 
@@ -34,15 +34,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        final GroupItem newGroup = groupItem.get(position);
+        final Group newGroup = group.get(position);
 
-        viewHolder.textViewGroupName.setText(newGroup.getHead());
+        viewHolder.textViewGroupName.setText(newGroup.getAdmin());
         viewHolder.textViewParticipants.setText(newGroup.getParticipants());
 
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "pressed "+ newGroup.getHead(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "pressed "+ newGroup.getAdmin(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -50,7 +50,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return groupItem.size();
+        return group.size();
     }
 
 
@@ -64,9 +64,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textViewGroupName = (TextView) itemView.findViewById(R.id.textViewGroupName);
-            textViewParticipants = (TextView) itemView.findViewById(R.id.textViewParticipantsName);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
+            textViewGroupName = itemView.findViewById(R.id.textViewGroupName);
+            textViewParticipants = itemView.findViewById(R.id.textViewParticipantsName);
+            linearLayout = itemView.findViewById(R.id.linearLayout);
         }
     }
 }

@@ -13,7 +13,8 @@ public class FirstScreen extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private List<GroupItem> groupItems;
+    private List<Group> groups;
+    private String userName = "Chen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +25,15 @@ public class FirstScreen extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        groupItems = new ArrayList<>();
+        groups = new ArrayList<>();
 
-        for (int i=0; i<=10; i++)
+        for (int i=0; i<=5; i++)
         {
-            GroupItem newCur = new GroupItem("heading" + (i), "chen, sapir, oren");
-            groupItems.add(newCur);
+            Group newCur = new Group("a" + i, userName, String.valueOf(i), "Chen, Sapir, Oren");
+            groups.add(newCur);
         }
 
-        adapter = new MyAdapter(groupItems, this);
+        adapter = new MyAdapter(groups, this);
 
         recyclerView.setAdapter(adapter);
 
