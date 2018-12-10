@@ -66,8 +66,15 @@ public class FirstScreen extends AppCompatActivity {
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         String newGroupName = userInput.getText().toString();
-        GroupItem newGroup = new GroupItem(newGroupName, "only me :) ");
-        groupItems.add(newGroup);
+        if(newGroupName.equals(""))
+        {
+            Toast.makeText(getBaseContext(), "Empty Name Not Allowed!", Toast.LENGTH_SHORT).show();
+            newGroupDialog.dismiss();
+        }
+        else{
+            GroupItem newGroup = new GroupItem(newGroupName, "only me :) ");
+            groupItems.add(newGroup);
+        }
     }
 
     private void handleExitPopup() {
