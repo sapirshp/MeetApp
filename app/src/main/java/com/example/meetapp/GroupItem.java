@@ -12,7 +12,7 @@ public class GroupItem
         Participants = participants;
     }
 
-    public String getHead()
+    public String getGroupName()
     {
         return GroupName;
     }

@@ -46,9 +46,6 @@ public class FirstScreen extends AppCompatActivity {
         newGroupDialog.setContentView(R.layout.new_group_popup);
         handleExitPopup();
         handleCreateNewGroup();
-
-
-
         newGroupDialog.show();
     }
 
@@ -63,25 +60,14 @@ public class FirstScreen extends AppCompatActivity {
                 newGroupDialog.dismiss();
             }
         });
-//        createGroup.setOnClickListener(new Button.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addNewGroup();
-//                newGroupDialog.dismiss();
-//            }
-//        });
-
     }
 
     private void addNewGroup()
     {
-//        String newGroupName = 'h';
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
-//        TextView tview = (TextView)findViewById(R.id.textview1);
         String newGroupName = userInput.getText().toString();
         GroupItem newGroup = new GroupItem(newGroupName, "only me :) ");
         groupItems.add(newGroup);
-        int c=7;
     }
 
     private void handleExitPopup() {

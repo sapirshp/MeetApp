@@ -36,13 +36,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         final GroupItem newGroup = groupItem.get(position);
 
-        viewHolder.textViewGroupName.setText(newGroup.getHead());
+        viewHolder.textViewGroupName.setText(newGroup.getGroupName());
         viewHolder.textViewParticipants.setText(newGroup.getParticipants());
 
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "pressed "+ newGroup.getHead(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "pressed "+ newGroup.getGroupName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
