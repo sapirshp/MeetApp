@@ -1,14 +1,11 @@
 package com.example.meetapp;
 
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,7 +22,7 @@ public class FirstScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         groupItems = new ArrayList<>();
@@ -41,17 +38,21 @@ public class FirstScreen extends AppCompatActivity {
 
     public void showNewGroupPopup(View v)
     {
-        TextView Xbtn;
-        newGroupDialog.setContentView(R.layout.new_group_popup);
-        Xbtn = (TextView) findViewById(R.id.exitNewGroupBtn);
-//        Xbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                newGroupDialog.dismiss();
-//            }
-//        });
-//        newGroupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        handleExitPopup();
+
         newGroupDialog.show();
+    }
+
+    private void handleExitPopup() {
+        TextView exitPopupBtn;
+        newGroupDialog.setContentView(R.layout.new_group_popup);
+        exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn2);
+        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newGroupDialog.dismiss();
+            }
+        });
     }
 
     private void createDemoCards() {
