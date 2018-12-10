@@ -1,17 +1,22 @@
 package com.example.meetapp;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirstScreen extends AppCompatActivity {
+    private static long back_pressed;
     Dialog newGroupDialog;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -38,15 +43,50 @@ public class FirstScreen extends AppCompatActivity {
 
     public void showNewGroupPopup(View v)
     {
+        newGroupDialog.setContentView(R.layout.new_group_popup);
         handleExitPopup();
+        handleCreateNewGroup();
+
+
 
         newGroupDialog.show();
     }
 
+    private void handleCreateNewGroup()
+    {
+        TextView createGroup;
+        createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
+        createGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewGroup();
+                newGroupDialog.dismiss();
+            }
+        });
+//        createGroup.setOnClickListener(new Button.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                addNewGroup();
+//                newGroupDialog.dismiss();
+//            }
+//        });
+
+    }
+
+    private void addNewGroup()
+    {
+//        String newGroupName = 'h';
+        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+//        TextView tview = (TextView)findViewById(R.id.textview1);
+        String newGroupName = userInput.getText().toString();
+        GroupItem newGroup = new GroupItem(newGroupName, "only me :) ");
+        groupItems.add(newGroup);
+        int c=7;
+    }
+
     private void handleExitPopup() {
         TextView exitPopupBtn;
-        newGroupDialog.setContentView(R.layout.new_group_popup);
-        exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn2);
+        exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
         exitPopupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,12 +96,25 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     private void createDemoCards() {
-        for (int i=0; i<=10; i++)
+        for (int i=0; i<=3; i++)
         {
             GroupItem newCur = new GroupItem("heading" + (i), "chen, sapir, oren");
             groupItems.add(newCur);
         }
     }
 
+
+    @Override
+    public void onBackPressed()
+    {
+        if (back_pressed + 2000 > System.currentTimeMillis())
+        {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        }
+        else Toast.makeText(getBaseContext(), "Press once again to exit!", Toast.LENGTH_SHORT).show();
+        back_pressed = System.currentTimeMillis();
+    }
 
 }

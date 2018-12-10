@@ -2,22 +2,23 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="vertical"
-        android:layout_height="300dp"
+        android:layout_height="320dp"
         android:layout_width="350dp"
         android:background="@color/blueDark"
         >
 
         <TextView
-            android:id="@+id/exitNewGroupBtn2"
+            android:id="@+id/exitNewGroupBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
@@ -39,6 +40,7 @@
             android:textStyle="bold" />
 
         <EditText
+            android:id="@+id/newGroupNameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -60,6 +62,20 @@
             android:background="@drawable/add_picture_to_new_group"
             android:text="@string/addGroupIcon"
             android:textColor="@color/colorWhite"
+            android:textSize="12sp"
+
+            />
+
+        <TextView
+            android:id="@+id/CreateGroupBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/add_picture_to_new_group"
+            android:text="@string/createGroupMsg"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
             />
 
     </LinearLayout>

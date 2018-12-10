@@ -5,6 +5,6 @@
 
     <string name="groupNameHint">Group Name Here</string>
     <string name="addGroupIcon">Add Group Icon</string>
-
-
+    <string name="createGroupMsg">Create New Group!</string>
+    <string name="addParticipantMsg">Add Participant</string>
 </resources>

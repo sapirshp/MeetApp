@@ -2,19 +2,19 @@ package com.example.meetapp;
 
 public class GroupItem
 {
-    private String Admin;
+    private String GroupName;
     private String Participants;
     private boolean isScheduled;
 
-    public GroupItem(String admin, String participants)
+    public GroupItem(String groupName, String participants)
     {
-        Admin = admin;
+        GroupName = groupName;
         Participants = participants;
     }
 
     public String getHead()
     {
-        return Admin;
+        return GroupName;
     }
 
     public String getParticipants()
