@@ -1,66 +1,132 @@
 package com.example.meetapp;
 
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ScrollView;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FirstScreen extends AppCompatActivity {
     Dialog newGroupDialog;
+    private static long back_pressed;
+    private final int EXIT_DELAY = 2000;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private List<GroupItem> groupItems;
+    private ArrayList<Group> groups = new ArrayList<>();
+    private String userName = "Oren";
+    private String phoneNumber = "972528240512";
+    String NEW_GROUP_CREATED_MSG = "New Group Created Successfully!";
+    String EMPTY_GROUP_NAME_MSG = "Empty Group Name Not Allowed!";
+    String GROUP_NAME_EXISTS_MSG = "The Name You Chose Already exists!";
+    String EMPTY_GROUP_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        groupItems = new ArrayList<>();
 
         createDemoCards();
 
-        adapter = new MyAdapter(groupItems, this);
+        adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
-
         newGroupDialog = new Dialog(this);
-
     }
 
     public void showNewGroupPopup(View v)
     {
-        TextView Xbtn;
         newGroupDialog.setContentView(R.layout.new_group_popup);
-        Xbtn = (TextView) findViewById(R.id.exitNewGroupBtn);
-//        Xbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                newGroupDialog.dismiss();
-//            }
-//        });
-//        newGroupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        handleExitPopup();
+        handleCreateNewGroup();
         newGroupDialog.show();
     }
 
-    private void createDemoCards() {
-        for (int i=0; i<=10; i++)
+    private void handleCreateNewGroup()
+    {
+        TextView createGroup;
+        createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
+        createGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewGroup();
+                newGroupDialog.dismiss();
+            }
+        });
+    }
+
+    private void addNewGroup()
+    {
+        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+        String newGroupName = userInput.getText().toString();
+        if(newGroupName.equals(EMPTY_GROUP_NAME)){
+            makeToastAndDismissDialog(newGroupDialog,EMPTY_GROUP_NAME_MSG);
+        }
+        else if(groupNameAlreadyExists(newGroupName))
         {
-            GroupItem newCur = new GroupItem("heading" + (i), "chen, sapir, oren");
-            groupItems.add(newCur);
+            makeToastAndDismissDialog(newGroupDialog,GROUP_NAME_EXISTS_MSG);
+        }
+        else {
+            List<String> members = Arrays.asList(new String[]{"Oren", "Chen", "Sapir"});
+            Group newGroup = new Group(newGroupName, userName, members, false);
+            groups.add(newGroup);
+            Toast.makeText(getBaseContext(), NEW_GROUP_CREATED_MSG, Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void makeToastAndDismissDialog(Dialog currentDialog, String message)
+    {
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
+        currentDialog.dismiss();
+    }
+
+    private boolean groupNameAlreadyExists(String newGroupName)
+    {
+        for(Group group:groups)
+        {
+            if(group.getName().equals(newGroupName)) { return true; }
+        }
+        return false;
+    }
+    private void handleExitPopup() {
+        TextView exitPopupBtn;
+        exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
+        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newGroupDialog.dismiss();
+            }
+        });
+    }
+    private void createDemoCards() {
+        for (int i=0; i<=3; i++)
+        {
+            List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
+            Group newGroup = new Group("Group" + i, userName, members, false);
+            groups.add(newGroup);
+        }
+    }
+    @Override
+    public void onBackPressed()
+    {
+        if (back_pressed + EXIT_DELAY > System.currentTimeMillis())
+        {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        }
+        else Toast.makeText(getBaseContext(), "Press once again to exit!", Toast.LENGTH_SHORT).show();
+        back_pressed = System.currentTimeMillis();
+    }
 
 }

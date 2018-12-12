@@ -1,7 +1,9 @@
 package com.example.meetapp;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,50 +11,45 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.List;
 
+import java.util.ArrayList;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
+public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
 {
-    public MyAdapter(List<GroupItem> groupItem, Context context) {
-        this.groupItem = groupItem;
+    private ArrayList<Group> groups;
+    private Context context;
+
+    public GroupAdapter(ArrayList<Group> groups, Context context) {
+        this.groups = groups;
         this.context = context;
     }
 
-    private List<GroupItem> groupItem;
-    private Context context;
-
-
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View newViewHolder = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.group_item, viewGroup, false);
         return new ViewHolder(newViewHolder);
     }
 
-
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        final GroupItem newGroup = groupItem.get(position);
-
-        viewHolder.textViewGroupName.setText(newGroup.getHead());
-        viewHolder.textViewParticipants.setText(newGroup.getParticipants());
-
+        final Group newGroup = groups.get(position);
+        viewHolder.textViewGroupName.setText(newGroup.getName());
+        viewHolder.textViewParticipants.setText(newGroup.getMembers());
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "pressed "+ newGroup.getHead(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "pressed "+ newGroup.getAdmin(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-
     @Override
     public int getItemCount() {
-        return groupItem.size();
+        return groups.size();
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -63,10 +60,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            textViewGroupName = (TextView) itemView.findViewById(R.id.textViewGroupName);
-            textViewParticipants = (TextView) itemView.findViewById(R.id.textViewParticipantsName);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
+            textViewGroupName = itemView.findViewById(R.id.textViewGroupName);
+            textViewParticipants = itemView.findViewById(R.id.textViewParticipantsName);
+            linearLayout = itemView.findViewById(R.id.linearLayout);
         }
     }
 }
