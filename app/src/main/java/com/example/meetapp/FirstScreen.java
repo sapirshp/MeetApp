@@ -2,12 +2,11 @@ package com.example.meetapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +16,7 @@ import java.util.List;
 
 public class FirstScreen extends AppCompatActivity {
     private static long back_pressed;
+    private final int EXIT_DELAY = 2000;
     Dialog newGroupDialog;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -68,13 +68,32 @@ public class FirstScreen extends AppCompatActivity {
         String newGroupName = userInput.getText().toString();
         if(newGroupName.equals(""))
         {
-            Toast.makeText(getBaseContext(), "Empty Name Not Allowed!", Toast.LENGTH_SHORT).show();
-            newGroupDialog.dismiss();
+            makeToastAndDismissDialog(newGroupDialog,"Empty Group Name Not Allowed!");
+        }
+        else if(groupNameAlreadyExists(newGroupName))
+        {
+            makeToastAndDismissDialog(newGroupDialog,"The Name You Chose Already exists!");
         }
         else{
-            GroupItem newGroup = new GroupItem(newGroupName, "only me :) ");
+            GroupItem newGroup = new GroupItem(newGroupName, "only me :) ", "+000");
             groupItems.add(newGroup);
+            Toast.makeText(getBaseContext(), "New Group Created Successfully!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void makeToastAndDismissDialog(Dialog currentDialog, String message)
+    {
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
+        currentDialog.dismiss();
+    }
+
+    private boolean groupNameAlreadyExists(String newGroupName)
+    {
+        for(GroupItem group:groupItems)
+        {
+            if(group.getGroupName().equals(newGroupName)) { return true; }
+        }
+        return false;
     }
 
     private void handleExitPopup() {
@@ -91,7 +110,7 @@ public class FirstScreen extends AppCompatActivity {
     private void createDemoCards() {
         for (int i=0; i<=3; i++)
         {
-            GroupItem newCur = new GroupItem("heading" + (i), "chen, sapir, oren");
+            GroupItem newCur = new GroupItem("heading" + (i), "chen, sapir, oren", "+111");
             groupItems.add(newCur);
         }
     }
@@ -100,7 +119,7 @@ public class FirstScreen extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        if (back_pressed + 2000 > System.currentTimeMillis())
+        if (back_pressed + EXIT_DELAY > System.currentTimeMillis())
         {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
