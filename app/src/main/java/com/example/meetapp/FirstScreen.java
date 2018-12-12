@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class FirstScreen extends AppCompatActivity {
     private static long back_pressed;
     private final int EXIT_DELAY = 2000;
@@ -21,6 +22,10 @@ public class FirstScreen extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<GroupItem> groupItems;
+    String NEW_GROUP_CREATED_MSG = "New Group Created Successfully!";
+    String EMPTY_GROUP_NAME_MSG = "Empty Group Name Not Allowed!";
+    String GROUP_NAME_EXISTS_MSG = "The Name You Chose Already exists!";
+    String EMPTY_GROUP_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,18 +71,18 @@ public class FirstScreen extends AppCompatActivity {
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         String newGroupName = userInput.getText().toString();
-        if(newGroupName.equals(""))
+        if(newGroupName.equals(EMPTY_GROUP_NAME))
         {
-            makeToastAndDismissDialog(newGroupDialog,"Empty Group Name Not Allowed!");
+            makeToastAndDismissDialog(newGroupDialog,EMPTY_GROUP_NAME_MSG);
         }
         else if(groupNameAlreadyExists(newGroupName))
         {
-            makeToastAndDismissDialog(newGroupDialog,"The Name You Chose Already exists!");
+            makeToastAndDismissDialog(newGroupDialog,GROUP_NAME_EXISTS_MSG);
         }
         else{
             GroupItem newGroup = new GroupItem(newGroupName, "only me :) ", "+000");
             groupItems.add(newGroup);
-            Toast.makeText(getBaseContext(), "New Group Created Successfully!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), NEW_GROUP_CREATED_MSG, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -110,7 +115,7 @@ public class FirstScreen extends AppCompatActivity {
     private void createDemoCards() {
         for (int i=0; i<=3; i++)
         {
-            GroupItem newCur = new GroupItem("heading" + (i), "chen, sapir, oren", "+111");
+            GroupItem newCur = new GroupItem("heading" + (i), "Chen, Sapir, Oren", "+111");
             groupItems.add(newCur);
         }
     }
