@@ -7,7 +7,7 @@ import java.util.List;
 public class Group {
     private String name;
     private String admin;
-    //    private String groupId;
+    private String groupId;
     private List<String> members;
     //    private @ServerTimestamp Date timestamp;
     private boolean isScheduled;
