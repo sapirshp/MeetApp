@@ -1,32 +1,33 @@
 package com.example.meetapp;
 
-import android.support.annotation.NonNull;
+import android.app.Dialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FirstScreen extends AppCompatActivity {
-
+    Dialog newGroupDialog;
+    private static long back_pressed;
+    private final int EXIT_DELAY = 2000;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private ArrayList<Group> groups = new ArrayList<>();
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
-    private DocumentSnapshot mLastQueriedDocument;
-    private static final String TAG = "MyActivity";
+    String NEW_GROUP_CREATED_MSG = "New Group Created Successfully!";
+    String EMPTY_GROUP_NAME_MSG = "Empty Group Name Not Allowed!";
+    String GROUP_NAME_EXISTS_MSG = "The Name You Chose Already exists!";
+    String EMPTY_GROUP_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,50 +36,97 @@ public class FirstScreen extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.adapter = new GroupAdapter(groups, this);
+
+        createDemoCards();
+
+        adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
-        getGroups();
+        newGroupDialog = new Dialog(this);
     }
 
-    private void notifyDataSetChanged() {
-        this.adapter.notifyDataSetChanged();
+    public void showNewGroupPopup(View v)
+    {
+        newGroupDialog.setContentView(R.layout.new_group_popup);
+        handleExitPopup();
+        handleCreateNewGroup();
+        newGroupDialog.show();
     }
 
-    private void getGroups(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference groupsCollectionRef = db.collection("groups");
-        Query userGroupsQuery = null;
-        if(mLastQueriedDocument != null){
-            userGroupsQuery = groupsCollectionRef
-                    .whereArrayContains("members", phoneNumber)
-                    .startAfter(mLastQueriedDocument);
-        }
-        else{
-            userGroupsQuery = groupsCollectionRef
-                    .whereArrayContains("members", phoneNumber);
-        }
-
-        userGroupsQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void handleCreateNewGroup()
+    {
+        TextView createGroup;
+        createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
+        createGroup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-
-                    for(QueryDocumentSnapshot document: task.getResult()){
-                        Group group = document.toObject(Group.class);
-                        groups.add(group);
-                    }
-                    if(task.getResult().size() != 0){
-                        mLastQueriedDocument = task.getResult().getDocuments()
-                                .get(task.getResult().size() -1);
-                    }
-                    notifyDataSetChanged();
-                }
-                else{
-                    Log.d(TAG, "Cached get failed: ", task.getException());
-                }
+            public void onClick(View v) {
+                addNewGroup();
+                newGroupDialog.dismiss();
             }
         });
     }
 
+    private void addNewGroup()
+    {
+        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+        String newGroupName = userInput.getText().toString();
+        if(newGroupName.equals(EMPTY_GROUP_NAME)){
+            makeToastAndDismissDialog(newGroupDialog,EMPTY_GROUP_NAME_MSG);
+        }
+        else if(groupNameAlreadyExists(newGroupName))
+        {
+            makeToastAndDismissDialog(newGroupDialog,GROUP_NAME_EXISTS_MSG);
+        }
+        else {
+            List<String> members = Arrays.asList(new String[]{"Oren", "Chen", "Sapir"});
+            Group newGroup = new Group(newGroupName, userName, members, false);
+            groups.add(newGroup);
+            Toast.makeText(getBaseContext(), NEW_GROUP_CREATED_MSG, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void makeToastAndDismissDialog(Dialog currentDialog, String message)
+    {
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
+        currentDialog.dismiss();
+    }
+
+    private boolean groupNameAlreadyExists(String newGroupName)
+    {
+        for(Group group:groups)
+        {
+            if(group.getName().equals(newGroupName)) { return true; }
+        }
+        return false;
+    }
+    private void handleExitPopup() {
+        TextView exitPopupBtn;
+        exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
+        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newGroupDialog.dismiss();
+            }
+        });
+    }
+    private void createDemoCards() {
+        for (int i=0; i<=3; i++)
+        {
+            List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
+            Group newGroup = new Group("Group" + i, userName, members, false);
+            groups.add(newGroup);
+        }
+    }
+    @Override
+    public void onBackPressed()
+    {
+        if (back_pressed + EXIT_DELAY > System.currentTimeMillis())
+        {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(intent);
+        }
+        else Toast.makeText(getBaseContext(), "Press once again to exit!", Toast.LENGTH_SHORT).show();
+        back_pressed = System.currentTimeMillis();
+    }
 
 }
