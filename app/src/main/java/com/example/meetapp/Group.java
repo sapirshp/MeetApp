@@ -2,20 +2,12 @@ package com.example.meetapp;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-
-import com.google.firebase.firestore.IgnoreExtraProperties;
-import com.google.firebase.firestore.ServerTimestamp;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-@IgnoreExtraProperties
 public class Group {
     private String name;
     private String admin;
-    //    private String groupId;
+    private String groupId;
     private List<String> members;
     //    private @ServerTimestamp Date timestamp;
     private boolean isScheduled;
