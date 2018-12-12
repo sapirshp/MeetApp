@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-// GroupRecyclerViewAdapter
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
 {
     private ArrayList<Group> groups;
@@ -33,7 +32,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         return new ViewHolder(newViewHolder);
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
@@ -48,12 +46,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         });
     }
 
-
     @Override
     public int getItemCount() {
         return groups.size();
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
