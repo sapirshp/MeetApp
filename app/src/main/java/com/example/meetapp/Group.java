@@ -36,7 +36,13 @@ public class Group {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public String getMembers() {
-        return String.join(",", members);
+        String allMembers = "";
+        for (String member:members)
+        {
+            allMembers += member  + ", ";
+        }
+        allMembers = allMembers.substring(0, allMembers.length() - 2);
+        return allMembers;
     }
 
 }
