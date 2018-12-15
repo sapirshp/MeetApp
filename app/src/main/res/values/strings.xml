@@ -6,4 +6,7 @@
     <string name="addGroupIcon">Add Group Icon</string>
     <string name="createGroupMsg">Create New Group!</string>
     <string name="addParticipantMsg">Add Participant</string>
+    <string name="Morning">Morning\n</string>
+    <string name="Afternoon">Afternoon\n</string>
+    <string name="Evening">Evening\n</string>
 </resources>
