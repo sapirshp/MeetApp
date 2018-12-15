@@ -9,10 +9,10 @@ public class TimeSloth {
     private String hour;
     private int chosenCounter;
 
-    TimeSloth(Button button, String date, String hour){
+    TimeSloth(Button button){
         this.btn = button;
-        this.date = date;
-        this.hour = hour;
+        this.date = btn.getParent().toString();
+        this.hour = btn.getText().toString();
         isClicked = false;
         chosenCounter = 0;
 

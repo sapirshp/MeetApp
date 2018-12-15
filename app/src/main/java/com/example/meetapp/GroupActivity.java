@@ -24,11 +24,11 @@ public class GroupActivity extends AppCompatActivity {
             int idAfternoon = getResources().getIdentifier("d"+i+"a", "id", getPackageName());
             int idEvening = getResources().getIdentifier("d"+i+"e", "id", getPackageName());
             final Button btnMorning = findViewById(idMorning);
-            final TimeSloth ctMorning = new TimeSloth(btnMorning,btnMorning.getParent().toString(), "Morning");
+            final TimeSloth ctMorning = new TimeSloth(btnMorning);
             final Button btnAfternoon = findViewById(idAfternoon);
-            final TimeSloth ctAfternoon = new TimeSloth(btnAfternoon,btnMorning.getParent().toString(), "Afernoon");
+            final TimeSloth ctAfternoon = new TimeSloth(btnAfternoon);
             final Button btnEvening = findViewById(idEvening);
-            final TimeSloth ctEvening = new TimeSloth(btnEvening,btnMorning.getParent().toString(), "Evening");
+            final TimeSloth ctEvening = new TimeSloth(btnEvening);
             btnMorning.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
