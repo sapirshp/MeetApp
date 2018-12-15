@@ -51,11 +51,5 @@ public class GroupActivity extends AppCompatActivity {
             }
             timeSlot.setClicked(false);
         }
-
-
-
     }
-
-
-
 }

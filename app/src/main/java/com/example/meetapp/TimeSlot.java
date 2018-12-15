@@ -15,7 +15,6 @@ public class TimeSlot {
         this.hour = timeSlotBtn.getText().toString();
         isClicked = false;
         chosenCounter = 0;
-
     }
 
     public Button getButton(){
