@@ -2,24 +2,24 @@ package com.example.meetapp;
 
 import android.widget.Button;
 
-public class TimeSloth {
-    private Button btn;
+public class TimeSlot {
+    private Button timeSlotBtn;
     private boolean isClicked;
     private String date;
     private String hour;
     private int chosenCounter;
 
-    TimeSloth(Button button){
-        this.btn = button;
-        this.date = btn.getParent().toString();
-        this.hour = btn.getText().toString();
+    TimeSlot(Button button){
+        this.timeSlotBtn = button;
+        this.date = timeSlotBtn.getParent().toString();
+        this.hour = timeSlotBtn.getText().toString();
         isClicked = false;
         chosenCounter = 0;
 
     }
 
     public Button getButton(){
-        return btn;
+        return timeSlotBtn;
     }
 
     public void setClicked(boolean clicked) {

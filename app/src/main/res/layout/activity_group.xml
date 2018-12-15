@@ -56,6 +56,50 @@
                     android:textAlignment="center" />
 
                 <Button
+                    android:id="@+id/d0m"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_bottom"
+                    android:minHeight="80dp"
+                    android:text="Morning"
+                    android:textAlignment="center"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/d0a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_bottom"
+                    android:minHeight="80dp"
+                    android:text="Afternoon"
+                    android:textAlignment="center"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/d0e"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/evening_border"
+                    android:minHeight="80dp"
+                    android:text="Evening"
+                    android:textAlignment="center"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/day2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/custom_border"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Day 2"
+                    android:textAlignment="center" />
+
+                <Button
                     android:id="@+id/d1m"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,7 +131,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/day2"
+                android:id="@+id/day3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/custom_border"
@@ -96,7 +140,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Day 2"
+                    android:text="Day 3"
                     android:textAlignment="center" />
 
                 <Button
@@ -131,7 +175,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/day3"
+                android:id="@+id/day4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/custom_border"
@@ -140,7 +184,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Day 3"
+                    android:text="Day 4"
                     android:textAlignment="center" />
 
                 <Button
@@ -175,7 +219,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/day4"
+                android:id="@+id/day5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/custom_border"
@@ -184,7 +228,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Day 4"
+                    android:text="Day 5"
                     android:textAlignment="center" />
 
                 <Button
@@ -219,7 +263,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/day5"
+                android:id="@+id/day6"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/custom_border"
@@ -228,7 +272,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Day 5"
+                    android:text="Day 6"
                     android:textAlignment="center" />
 
                 <Button
@@ -263,7 +307,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/day6"
+                android:id="@+id/day7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/custom_border"
@@ -272,7 +316,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Day 6"
+                    android:text="Day 7"
                     android:textAlignment="center" />
 
                 <Button
@@ -297,50 +341,6 @@
 
                 <Button
                     android:id="@+id/d6e"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/evening_border"
-                    android:minHeight="80dp"
-                    android:text="Evening"
-                    android:textAlignment="center"
-                    android:textAllCaps="false" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/day7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/custom_border"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Day 7"
-                    android:textAlignment="center" />
-
-                <Button
-                    android:id="@+id/d7m"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/border_bottom"
-                    android:minHeight="80dp"
-                    android:text="Morning"
-                    android:textAlignment="center"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:id="@+id/d7a"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/border_bottom"
-                    android:minHeight="80dp"
-                    android:text="Afternoon"
-                    android:textAlignment="center"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:id="@+id/d7e"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/evening_border"
