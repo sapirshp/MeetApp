@@ -19,25 +19,9 @@ public class GroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
+        setButtonsIdForListeners();
+        setListeners();
 
-        for (int i = 0; i < DAYS_IN_CALENDAR; i++) {
-            int morningBtnId = getResources().getIdentifier("d" + i + "m", "id", getPackageName());
-            buttonsIdForListeners.add(morningBtnId);
-            int afternoonBtnId = getResources().getIdentifier("d" + i + "a", "id", getPackageName());
-            buttonsIdForListeners.add(afternoonBtnId);
-            int eveningBtnId = getResources().getIdentifier("d" + i + "e", "id", getPackageName());
-            buttonsIdForListeners.add(eveningBtnId);
-        }
-        for (int id : buttonsIdForListeners){
-            final Button timeSlotButton = findViewById(id);
-            final TimeSlot timeSlot = new TimeSlot(timeSlotButton);
-            timeSlotButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    buttonSelection(timeSlot);
-                }
-            });
-        }
     }
     public void buttonSelection(TimeSlot timeSlot) {
         if (!timeSlot.getClicked()) {
@@ -50,6 +34,30 @@ public class GroupActivity extends AppCompatActivity {
                 timeSlot.getButton().setBackgroundResource(R.drawable.evening_border);
             }
             timeSlot.setClicked(false);
+        }
+    }
+
+    public void setButtonsIdForListeners() {
+        for (int i = 0; i < DAYS_IN_CALENDAR; i++) {
+            int morningBtnId = getResources().getIdentifier("d" + i + "m", "id", getPackageName());
+            buttonsIdForListeners.add(morningBtnId);
+            int afternoonBtnId = getResources().getIdentifier("d" + i + "a", "id", getPackageName());
+            buttonsIdForListeners.add(afternoonBtnId);
+            int eveningBtnId = getResources().getIdentifier("d" + i + "e", "id", getPackageName());
+            buttonsIdForListeners.add(eveningBtnId);
+        }
+    }
+
+    public void setListeners(){
+        for (int id : buttonsIdForListeners){
+            final Button timeSlotButton = findViewById(id);
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton);
+            timeSlotButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    buttonSelection(timeSlot);
+                }
+            });
         }
     }
 }
