@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,11 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.toList;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -44,32 +36,39 @@ public class GroupActivity extends AppCompatActivity {
         setButtonsIdForListeners();
         setListeners();
     }
-    
+
     public void buttonSelection(TimeSlot timeSlot) {
-        String textWithSelectionNumber = "";
         if (!timeSlot.getClicked()) {
-            slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) + 1 : 1);
-            timeSlot.getButton().setBackgroundColor(Color.GREEN);
-            textWithSelectionNumber = timeSlot.getHour() + "\n(" + slotSelections.get(timeSlot) + ")";
-            timeSlot.getButton().setText(textWithSelectionNumber);
-            timeSlot.setClicked(true);
+            clickedOn(timeSlot);
         } else {
-            if (!timeSlot.getHour().equals("Evening")) {
-                timeSlot.getButton().setBackgroundResource(R.drawable.border_bottom);
-            }else {
-                timeSlot.getButton().setBackgroundResource(R.drawable.evening_border);
-            }
-            timeSlot.setClicked(false);
-            textWithSelectionNumber = timeSlot.getHour() + "\n";
-            timeSlot.getButton().setText(textWithSelectionNumber);
-            if (slotSelections.get(timeSlot)>1){
-                slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) -1 : 1);
-            }else{
-                slotSelections.remove(timeSlot);
-            }
+            clickedOff(timeSlot);
         }
         slotSelections = sortByValue(slotSelections);
         displayTopSelections();
+    }
+
+    public void clickedOn(TimeSlot timeSlot) {
+        slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) + 1 : 1);
+        timeSlot.getButton().setBackgroundColor(Color.GREEN);
+        String textWithSelectionNumber = timeSlot.getHour() + "\n(" + slotSelections.get(timeSlot) + ")";
+        timeSlot.getButton().setText(textWithSelectionNumber);
+        timeSlot.setClicked(true);
+    }
+
+    public void clickedOff(TimeSlot timeSlot){
+        if (!timeSlot.getHour().equals("Evening")) {
+            timeSlot.getButton().setBackgroundResource(R.drawable.border_bottom);
+        }else {
+            timeSlot.getButton().setBackgroundResource(R.drawable.evening_border);
+        }
+        timeSlot.setClicked(false);
+        String textWithSelectionNumber = timeSlot.getHour() + "\n";
+        timeSlot.getButton().setText(textWithSelectionNumber);
+        if (slotSelections.get(timeSlot)>1){
+            slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) -1 : 1);
+        }else{
+            slotSelections.remove(timeSlot);
+        }
     }
 
     public void setButtonsIdForListeners() {
