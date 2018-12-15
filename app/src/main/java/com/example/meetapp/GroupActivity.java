@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 public class GroupActivity extends AppCompatActivity {
 
+    private ArrayList<Integer> buttonsIdForListeners = new ArrayList<>();
+
     private int DAYS_IN_CALENDAR = 7;
-;
-    static boolean clicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,37 +21,25 @@ public class GroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group);
 
         for (int i = 0; i < DAYS_IN_CALENDAR; i++) {
-            int morningBtnId = getResources().getIdentifier("d"+i+"m", "id", getPackageName());
-            int afternoonBtnId = getResources().getIdentifier("d"+i+"a", "id", getPackageName());
-            int eveningBtnId = getResources().getIdentifier("d"+i+"e", "id", getPackageName());
-            final Button morningBtn = findViewById(morningBtnId);
-            final TimeSlot morningTimeSlot = new TimeSlot(morningBtn);
-            final Button afternoonBtn = findViewById(afternoonBtnId);
-            final TimeSlot afternoonTimeSlot = new TimeSlot(afternoonBtn);
-            final Button eveningBtn = findViewById(eveningBtnId);
-            final TimeSlot eveningTimeSlot = new TimeSlot(eveningBtn);
-            morningBtn.setOnClickListener(new View.OnClickListener() {
+            int morningBtnId = getResources().getIdentifier("d" + i + "m", "id", getPackageName());
+            buttonsIdForListeners.add(morningBtnId);
+            int afternoonBtnId = getResources().getIdentifier("d" + i + "a", "id", getPackageName());
+            buttonsIdForListeners.add(afternoonBtnId);
+            int eveningBtnId = getResources().getIdentifier("d" + i + "e", "id", getPackageName());
+            buttonsIdForListeners.add(eveningBtnId);
+        }
+        for (int id : buttonsIdForListeners){
+            final Button timeSlotButton = findViewById(id);
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton);
+            timeSlotButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    buttonSelection(morningTimeSlot);
+                    buttonSelection(timeSlot);
                 }
             });
-            afternoonBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    buttonSelection(afternoonTimeSlot);
-                }
-            });eveningBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    buttonSelection(eveningTimeSlot);
-                }
-            });
-
         }
     }
     public void buttonSelection(TimeSlot timeSlot) {
-        System.out.println(timeSlot.getDate());
         if (!timeSlot.getClicked()) {
             timeSlot.getButton().setBackgroundColor(Color.GREEN);
             timeSlot.setClicked(true);
