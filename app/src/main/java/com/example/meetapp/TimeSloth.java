@@ -2,14 +2,14 @@ package com.example.meetapp;
 
 import android.widget.Button;
 
-public class CalendarTime {
+public class TimeSloth {
     private Button btn;
     private boolean isClicked;
     private String date;
     private String hour;
     private int chosenCounter;
 
-    CalendarTime(Button button, String date, String hour){
+    TimeSloth(Button button, String date, String hour){
         this.btn = button;
         this.date = date;
         this.hour = hour;

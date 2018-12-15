@@ -1,9 +1,6 @@
 package com.example.meetapp;
 
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,11 +8,10 @@ import android.widget.Button;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GroupActivity extends AppCompatActivity {
 
-    ArrayList<CalendarTime> button = new ArrayList<>();
+    ArrayList<TimeSloth> button = new ArrayList<>();
     static boolean clicked = false;
 
     @Override
@@ -28,11 +24,11 @@ public class GroupActivity extends AppCompatActivity {
             int idAfternoon = getResources().getIdentifier("d"+i+"a", "id", getPackageName());
             int idEvening = getResources().getIdentifier("d"+i+"e", "id", getPackageName());
             final Button btnMorning = findViewById(idMorning);
-            final CalendarTime ctMorning = new CalendarTime(btnMorning,btnMorning.getParent().toString(), "Morning");
+            final TimeSloth ctMorning = new TimeSloth(btnMorning,btnMorning.getParent().toString(), "Morning");
             final Button btnAfternoon = findViewById(idAfternoon);
-            final CalendarTime ctAfternoon = new CalendarTime(btnAfternoon,btnMorning.getParent().toString(), "Afernoon");
+            final TimeSloth ctAfternoon = new TimeSloth(btnAfternoon,btnMorning.getParent().toString(), "Afernoon");
             final Button btnEvening = findViewById(idEvening);
-            final CalendarTime ctEvening = new CalendarTime(btnEvening,btnMorning.getParent().toString(), "Evening");
+            final TimeSloth ctEvening = new TimeSloth(btnEvening,btnMorning.getParent().toString(), "Evening");
             btnMorning.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -53,7 +49,7 @@ public class GroupActivity extends AppCompatActivity {
 
         }
     }
-    public void buttonSelection(CalendarTime ct) {
+    public void buttonSelection(TimeSloth ct) {
         System.out.println(ct.getDate());
         if (!ct.getClicked()) {
             ct.getButton().setBackgroundColor(Color.GREEN);
