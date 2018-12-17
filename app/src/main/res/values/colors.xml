@@ -7,7 +7,7 @@
     <color name="colorGreen">#45bc62</color>
     <color name="colorOrange">#eaad43</color>
     <color name="colorRed">#FF0000</color>
-    <color name="colorWhite">#fff</color>
+    <color name="colorWhite">#ffffff</color>
     <color name="colorAccent">#D81B60</color>
     <color name="backgroundColor">#c6c6c6</color>
 </resources>
