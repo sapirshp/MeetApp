@@ -22,6 +22,7 @@ public class GroupActivity extends AppCompatActivity {
             Arrays.asList("17/12/18", "18/12/18", "19/12/18", "20/12/18", "21/12/18", "22/12/18", "23/12/18"));
 
     private ArrayList<Integer> buttonsIdForListeners = new ArrayList<>();
+    private int membersAmount = 5;
 
     private int DAYS_IN_CALENDAR = 7;
     private int TOP_SELECTIONS_TO_DISPLAY = 3;
@@ -50,7 +51,8 @@ public class GroupActivity extends AppCompatActivity {
     public void clickedOn(TimeSlot timeSlot) {
         slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) + 1 : 1);
         timeSlot.getButton().setBackgroundColor(Color.GREEN);
-        String textWithSelectionNumber = timeSlot.getHour() + "\n(" + slotSelections.get(timeSlot) + ")";
+        String textWithSelectionNumber = timeSlot.getHour() + "\n" + slotSelections.get(timeSlot) +
+                                         "/" + membersAmount;
         timeSlot.getButton().setText(textWithSelectionNumber);
         timeSlot.setClicked(true);
     }
