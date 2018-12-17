@@ -1,6 +1,7 @@
 package com.example.meetapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -41,7 +41,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "pressed "+ newGroup.getAdmin(), Toast.LENGTH_SHORT).show();
+                Intent goToGroupScreen = new Intent(context, GroupActivity.class);
+                context.startActivity(goToGroupScreen);
+//                Toast.makeText(context, "pressed "+ newGroup.getAdmin(), Toast.LENGTH_SHORT).show();
             }
         });
     }
