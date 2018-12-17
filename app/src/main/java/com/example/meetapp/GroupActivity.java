@@ -127,7 +127,7 @@ public class GroupActivity extends AppCompatActivity {
         for (int i = 0; i < iterationNumber; i++){
             TimeSlot topSlot = (TimeSlot) slotSelections.keySet().toArray()[i];
             topSelections = topSelections + topSlot.getDate() + " " + topSlot.getHour() + " - " +
-                    + slotSelections.get(topSlot) + "\n";
+                    + slotSelections.get(topSlot) + "/" + membersAmount + "\n";
         }
         selectionsDisplayTextView.setText(topSelections);
     }
