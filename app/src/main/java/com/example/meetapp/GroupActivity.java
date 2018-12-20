@@ -192,10 +192,8 @@ public class GroupActivity extends AppCompatActivity {
         Drawable[] drawablesForBackGroundAndBorder = new Drawable[2];
         drawablesForBackGroundAndBorder[0] = getBorder();
         drawablesForBackGroundAndBorder[1] = getBackGround(color);
-
         LayerDrawable layerDrawable = new LayerDrawable(drawablesForBackGroundAndBorder);
         layerDrawable.setLayerInset(1, 2, 2, 2, 2);
-
         return layerDrawable.mutate();
     }
 
