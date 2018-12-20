@@ -12,7 +12,7 @@ public class TimeSlot {
     TimeSlot(Button button, String date){
         this.timeSlotBtn = button;
         this.date = date;
-        this.hour = timeSlotBtn.getText().toString().substring(0,timeSlotBtn.getText().toString().length()-1);
+        this.hour = timeSlotBtn.getText().toString();
         isClicked = false;
         chosenCounter = 0;
     }

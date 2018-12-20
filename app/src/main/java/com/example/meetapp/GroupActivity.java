@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class GroupActivity extends AppCompatActivity {
 
-    private ArrayList<String> datesToDisplay = new ArrayList<>(
-            Arrays.asList("17/12/18", "18/12/18", "19/12/18", "20/12/18", "21/12/18", "22/12/18", "23/12/18"));
+    private Map<String, String> datesToDisplay = new LinkedHashMap<>();
+
 
     private ArrayList<Integer> buttonsIdForListeners = new ArrayList<>();
     private int membersAmount = 5;
@@ -38,6 +38,16 @@ public class GroupActivity extends AppCompatActivity {
         setListeners();
     }
 
+    public void createDatesMap(){
+        datesToDisplay.put("20", "Today");
+        datesToDisplay.put("21", "Fri");
+        datesToDisplay.put("22", "Sat");
+        datesToDisplay.put("23", "Sun");
+        datesToDisplay.put("24", "Mon");
+        datesToDisplay.put("25", "Tue");
+        datesToDisplay.put("26", "Wed");
+    }
+
     public void buttonSelection(TimeSlot timeSlot) {
         if (!timeSlot.getClicked()) {
             clickedOn(timeSlot);
@@ -51,20 +61,17 @@ public class GroupActivity extends AppCompatActivity {
     public void clickedOn(TimeSlot timeSlot) {
         slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) + 1 : 1);
         timeSlot.getButton().setBackgroundColor(Color.GREEN);
-        String textWithSelectionNumber = timeSlot.getHour() + "\n" + slotSelections.get(timeSlot) +
+        String textWithSelectionNumber = slotSelections.get(timeSlot) +
                                          "/" + membersAmount;
         timeSlot.getButton().setText(textWithSelectionNumber);
         timeSlot.setClicked(true);
     }
 
     public void clickedOff(TimeSlot timeSlot){
-        if (!timeSlot.getHour().equals("Evening")) {
-            timeSlot.getButton().setBackgroundResource(R.drawable.border_bottom);
-        }else {
-            timeSlot.getButton().setBackgroundResource(R.drawable.evening_border);
-        }
+        timeSlot.getButton().setBackgroundResource(R.drawable.custom_border);
+
         timeSlot.setClicked(false);
-        String textWithSelectionNumber = timeSlot.getHour() + "\n";
+        String textWithSelectionNumber = timeSlot.getHour();
         timeSlot.getButton().setText(textWithSelectionNumber);
         if (slotSelections.get(timeSlot)>1){
             slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) -1 : 1);
@@ -118,7 +125,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     public void displayTopSelections(){
-        TextView selectionsDisplayTextView = findViewById(R.id.selectionDisplay);
+//        TextView selectionsDisplayTextView = findViewById(R.id.selectionDisplay);
         String topSelections = "Top Suggesions:\n";
         int iterationNumber = TOP_SELECTIONS_TO_DISPLAY;
         if (iterationNumber > slotSelections.size()){
@@ -129,14 +136,18 @@ public class GroupActivity extends AppCompatActivity {
             topSelections = topSelections + topSlot.getDate() + " " + topSlot.getHour() + " - " +
                     + slotSelections.get(topSlot) + "/" + membersAmount + "\n";
         }
-        selectionsDisplayTextView.setText(topSelections);
+//        selectionsDisplayTextView.setText(topSelections);
     }
 
     public void setDatesToDisplay(){
+        createDatesMap();
         for (int i = 0; i < DAYS_IN_CALENDAR; i++){
-            int dayTextViewId = getResources().getIdentifier("d" + i , "id", getPackageName());
+            int dayNumTextViewId = getResources().getIdentifier("d" + i + "n" , "id", getPackageName());
+            TextView dayNumTextView = findViewById(dayNumTextViewId);
+            dayNumTextView.setText((String)datesToDisplay.keySet().toArray()[i]);
+            int dayTextViewId = getResources().getIdentifier("d" + i + "d" , "id", getPackageName());
             TextView dayTextView = findViewById(dayTextViewId);
-            dayTextView.setText(datesToDisplay.get(i));
+            dayTextView.setText(datesToDisplay.get((datesToDisplay.keySet().toArray()[i])));
         }
     }
 }

@@ -9,4 +9,5 @@
     <string name="Morning">Morning\n</string>
     <string name="Afternoon">Afternoon\n</string>
     <string name="Evening">Evening\n</string>
+    <string name="when_can_you_meet">When can you meet?</string>
 </resources>
