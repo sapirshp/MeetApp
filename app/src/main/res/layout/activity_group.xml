@@ -7,9 +7,32 @@
     android:background="@android:color/white"
     tools:context=".GroupActivity">
 
+    <Button
+        android:id="@+id/GroupOptionBtn"
+        android:onClick="groupActionPopup"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/three_dots_icon"
+        android:padding="15dp"
+        android:textSize="30sp"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.974"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.982"
+        />
+
     <TextView
         android:id="@+id/Header"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@color/colorPrimary"
         android:fontFamily="@font/poppins_light"

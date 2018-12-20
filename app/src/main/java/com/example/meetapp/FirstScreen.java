@@ -98,6 +98,7 @@ public class FirstScreen extends AppCompatActivity {
         }
         return false;
     }
+
     private void handleExitPopup() {
         TextView exitPopupBtn;
         exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
@@ -108,6 +109,7 @@ public class FirstScreen extends AppCompatActivity {
             }
         });
     }
+
     private void createDemoCards() {
         for (int i=0; i<=3; i++)
         {
