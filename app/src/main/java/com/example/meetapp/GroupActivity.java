@@ -125,7 +125,6 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     public void displayTopSelections(){
-//        TextView selectionsDisplayTextView = findViewById(R.id.selectionDisplay);
         String topSelections = "Top Suggesions:\n";
         int iterationNumber = TOP_SELECTIONS_TO_DISPLAY;
         if (iterationNumber > slotSelections.size()){
@@ -136,7 +135,6 @@ public class GroupActivity extends AppCompatActivity {
             topSelections = topSelections + topSlot.getDate() + " " + topSlot.getHour() + " - " +
                     + slotSelections.get(topSlot) + "/" + membersAmount + "\n";
         }
-//        selectionsDisplayTextView.setText(topSelections);
     }
 
     public void setDatesToDisplay(){
