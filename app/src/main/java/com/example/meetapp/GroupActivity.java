@@ -145,7 +145,8 @@ public class GroupActivity extends AppCompatActivity {
             dayNumTextView.setText((String)datesToDisplay.keySet().toArray()[i]);
             int dayTextViewId = getResources().getIdentifier("d" + i + "d" , "id", getPackageName());
             TextView dayTextView = findViewById(dayTextViewId);
-            dayTextView.setText(datesToDisplay.get((datesToDisplay.keySet().toArray()[i])));
+            int dayString = getResources().getIdentifier(datesToDisplay.get((datesToDisplay.keySet().toArray()[i])), "string", getPackageName());
+            dayTextView.setText(getString(dayString));
         }
     }
 }

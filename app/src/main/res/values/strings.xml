@@ -10,4 +10,12 @@
     <string name="Afternoon">Afternoon\n</string>
     <string name="Evening">Evening\n</string>
     <string name="when_can_you_meet">When can you meet?</string>
+    <string name="Sun">Sun</string>
+    <string name="Mon">Mon</string>
+    <string name="Tue">Tue</string>
+    <string name="Wed">Wed</string>
+    <string name="Thu">Thu</string>
+    <string name="Fri">Fri</string>
+    <string name="Sat">Sat</string>
+    <string name="Today">Today</string>
 </resources>
