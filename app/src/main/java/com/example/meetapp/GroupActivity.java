@@ -71,7 +71,7 @@ public class GroupActivity extends AppCompatActivity {
         timeSlot.setClicked(true);
         float percentage = ((float)slotSelections.get(timeSlot)/(float)membersAmount)*100;
         int bgColor = getColorPercentage(0xe0ffd2, 0x67a34c,(int)percentage);
-        timeSlot.getButton().setBackground(setBackGroungColorAndBorder(bgColor));
+        timeSlot.getButton().setBackground(setBackGroundColorAndBorder(bgColor));
     }
 
     public void clickedOff(TimeSlot timeSlot){
@@ -170,7 +170,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
 
-    public Drawable setBackGroungColorAndBorder(int color) {
+    public Drawable setBackGroundColorAndBorder(int color) {
         StateListDrawable states = new StateListDrawable();
         states.addState(new int[]{
                 android.R.attr.state_focused, -android.R.attr.state_pressed,
