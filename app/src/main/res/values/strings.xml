@@ -18,4 +18,8 @@
     <string name="Fri">Fri</string>
     <string name="Sat">Sat</string>
     <string name="Today">Today</string>
+    <string name="groupDetailMsg">Group Details</string>
+    <string name="resetTimesMsg">Reset Time Choice</string>
+    <string name="exitGroupMsg">Exit Group</string>
+
 </resources>

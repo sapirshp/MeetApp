@@ -44,8 +44,8 @@
             android:autofillHints="@string/groupNameHint"
             android:hint="@string/groupNameHint"
             android:inputType="text"
-            android:textColor="@color/colorBlueLight"
-            android:textColorHint="@color/colorBlueLight"
+            android:textColor="@color/colorGreen"
+            android:textColorHint="@color/colorGreen"
             />
         <Button
             android:id="@+id/AddIconBtn"

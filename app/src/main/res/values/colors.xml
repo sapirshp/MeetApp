@@ -10,4 +10,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorAccent">#D81B60</color>
     <color name="backgroundColor">#c6c6c6</color>
+    <color name="colorBlack">#000000</color>
 </resources>
