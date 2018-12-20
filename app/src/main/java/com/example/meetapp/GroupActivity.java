@@ -159,13 +159,13 @@ public class GroupActivity extends AppCompatActivity {
 
     public static int getColorPercentage(int colorStart, int colorEnd, int percent){
         return Color.rgb(
-                getColorOfPercentageCalculation(Color.red(colorStart), Color.red(colorEnd), percent),
-                getColorOfPercentageCalculation(Color.green(colorStart), Color.green(colorEnd), percent),
-                getColorOfPercentageCalculation(Color.blue(colorStart), Color.blue(colorEnd), percent)
+                ColorPercentageCalculation(Color.red(colorStart), Color.red(colorEnd), percent),
+                ColorPercentageCalculation(Color.green(colorStart), Color.green(colorEnd), percent),
+                ColorPercentageCalculation(Color.blue(colorStart), Color.blue(colorEnd), percent)
         );
     }
 
-    private static int getColorOfPercentageCalculation(int colorStart, int colorEnd, int percent){
+    private static int ColorPercentageCalculation(int colorStart, int colorEnd, int percent){
         return ((Math.max(colorStart, colorEnd)*(100-percent)) + (Math.min(colorStart, colorEnd)*percent)) / 100;
     }
 
