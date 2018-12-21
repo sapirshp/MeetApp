@@ -11,4 +11,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="backgroundColor">#c6c6c6</color>
     <color name="colorBlack">#000000</color>
+    <color name="lightGreen">#e0ffd2</color>
+    <color name="darkGreen">#67a34c</color>
 </resources>
