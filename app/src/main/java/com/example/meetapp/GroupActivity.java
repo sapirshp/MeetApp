@@ -2,6 +2,12 @@ package com.example.meetapp;
 
 import android.app.Dialog;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -132,11 +138,13 @@ public class GroupActivity extends AppCompatActivity {
 
     public void clickedOn(TimeSlot timeSlot) {
         slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) + 1 : 1);
-        timeSlot.getButton().setBackgroundColor(Color.GREEN);
         String textWithSelectionNumber = slotSelections.get(timeSlot) +
                                          "/" + membersAmount;
         timeSlot.getButton().setText(textWithSelectionNumber);
         timeSlot.setClicked(true);
+        float percentage = ((float)slotSelections.get(timeSlot)/(float)membersAmount)*100;
+        int bgColor = getColorPercentage(0xe0ffd2, 0x67a34c,(int)percentage);
+        timeSlot.getButton().setBackground(setBackGroundColorAndBorder(bgColor));
     }
 
     public void clickedOff(TimeSlot timeSlot){
@@ -220,5 +228,65 @@ public class GroupActivity extends AppCompatActivity {
             int dayString = getResources().getIdentifier(datesToDisplay.get((datesToDisplay.keySet().toArray()[i])), "string", getPackageName());
             dayTextView.setText(getString(dayString));
         }
+    }
+
+    public static int getColorPercentage(int colorStart, int colorEnd, int percent){
+        return Color.rgb(
+                ColorPercentageCalculation(Color.red(colorStart), Color.red(colorEnd), percent),
+                ColorPercentageCalculation(Color.green(colorStart), Color.green(colorEnd), percent),
+                ColorPercentageCalculation(Color.blue(colorStart), Color.blue(colorEnd), percent)
+        );
+    }
+
+    private static int ColorPercentageCalculation(int colorStart, int colorEnd, int percent){
+        return ((Math.max(colorStart, colorEnd)*(100-percent)) + (Math.min(colorStart, colorEnd)*percent)) / 100;
+    }
+
+
+    public Drawable setBackGroundColorAndBorder(int color) {
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[]{
+                android.R.attr.state_focused, -android.R.attr.state_pressed,
+        }, getBackGroundAndBorder(color));
+        states.addState(new int[]{
+                android.R.attr.state_focused, android.R.attr.state_pressed,
+        }, getBackGroundAndBorder(color));
+        states.addState(new int[]{
+                -android.R.attr.state_focused, android.R.attr.state_pressed,
+        }, getBackGroundAndBorder(color));
+        states.addState(new int[]{
+                android.R.attr.state_enabled
+        }, getBackGroundAndBorder(color));
+
+        return states;
+    }
+
+    public Drawable getBackGroundAndBorder(int color) {
+        Drawable[] drawablesForBackGroundAndBorder = new Drawable[2];
+        drawablesForBackGroundAndBorder[0] = getBorder();
+        drawablesForBackGroundAndBorder[1] = getBackGround(color);
+        LayerDrawable layerDrawable = new LayerDrawable(drawablesForBackGroundAndBorder);
+        layerDrawable.setLayerInset(1, 2, 2, 2, 2);
+        return layerDrawable.mutate();
+    }
+
+    public Drawable getBorder() {
+        RectShape rectShape = new RectShape();
+        ShapeDrawable shapeDrawable = new ShapeDrawable(rectShape);
+        shapeDrawable.getPaint().setStyle(Paint.Style.STROKE);
+        shapeDrawable.getPaint().setStrokeWidth(10f);
+        shapeDrawable.getPaint().setAntiAlias(true);
+        shapeDrawable.getPaint().setFlags(Paint.ANTI_ALIAS_FLAG);
+        return shapeDrawable.mutate();
+    }
+
+    public Drawable getBackGround(int color) {
+        RectShape rectShape = new RectShape();
+        ShapeDrawable shapeDrawable = new ShapeDrawable(rectShape);
+        shapeDrawable.getPaint().setColor(color);
+        shapeDrawable.getPaint().setStyle(Paint.Style.FILL);
+        shapeDrawable.getPaint().setAntiAlias(true);
+        shapeDrawable.getPaint().setFlags(Paint.ANTI_ALIAS_FLAG);
+        return shapeDrawable.mutate();
     }
 }
