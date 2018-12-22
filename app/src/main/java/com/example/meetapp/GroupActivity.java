@@ -40,6 +40,10 @@ public class GroupActivity extends AppCompatActivity {
     private HashMap<Integer, String> intsToDays = new HashMap();
     private HashMap<TimeSlot,Integer> slotSelections = new HashMap<>();
 
+    public GroupActivity(){
+        createIntToDayMap();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,15 +132,14 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     public void createDatesMap(){
-        createIntToDayMap();
-        Calendar cal= Calendar.getInstance();
-        int date = cal.get(Calendar.DAY_OF_MONTH);
+        Calendar groupCalender= Calendar.getInstance();
+        int date = groupCalender.get(Calendar.DAY_OF_MONTH);
         String day;
         datesToDisplay.put(Integer.toString(date), "Today");
         for (int i = 1; i < DAYS_IN_CALENDAR; i++) {
-            cal.roll(Calendar.DATE, 1);
-            date = cal.get(Calendar.DAY_OF_MONTH);
-            day = intsToDays.get(cal.get(Calendar.DAY_OF_WEEK));
+            groupCalender.roll(Calendar.DATE, 1);
+            date = groupCalender.get(Calendar.DAY_OF_MONTH);
+            day = intsToDays.get(groupCalender.get(Calendar.DAY_OF_WEEK));
             datesToDisplay.put(Integer.toString(date), day);
         }
     }
