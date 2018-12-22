@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,7 +37,12 @@ public class GroupActivity extends AppCompatActivity {
     private int DAYS_IN_CALENDAR = 7;
     private int TOP_SELECTIONS_TO_DISPLAY = 3;
 
+    private HashMap<Integer, String> intsToDays = new HashMap();
     private HashMap<TimeSlot,Integer> slotSelections = new HashMap<>();
+
+    public GroupActivity(){
+        createIntToDayMap();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,15 +121,27 @@ public class GroupActivity extends AppCompatActivity {
         });
     }
 
+    private void createIntToDayMap() {
+        intsToDays.put(1, "Sun");
+        intsToDays.put(2, "Mon");
+        intsToDays.put(3, "Tue");
+        intsToDays.put(4, "Wed");
+        intsToDays.put(5, "Thu");
+        intsToDays.put(6, "Fri");
+        intsToDays.put(7, "Sat");
+    }
 
     public void createDatesMap(){
-        datesToDisplay.put("20", "Today");
-        datesToDisplay.put("21", "Fri");
-        datesToDisplay.put("22", "Sat");
-        datesToDisplay.put("23", "Sun");
-        datesToDisplay.put("24", "Mon");
-        datesToDisplay.put("25", "Tue");
-        datesToDisplay.put("26", "Wed");
+        Calendar groupCalender= Calendar.getInstance();
+        int date = groupCalender.get(Calendar.DAY_OF_MONTH);
+        String day;
+        datesToDisplay.put(Integer.toString(date), "Today");
+        for (int i = 1; i < DAYS_IN_CALENDAR; i++) {
+            groupCalender.roll(Calendar.DATE, 1);
+            date = groupCalender.get(Calendar.DAY_OF_MONTH);
+            day = intsToDays.get(groupCalender.get(Calendar.DAY_OF_WEEK));
+            datesToDisplay.put(Integer.toString(date), day);
+        }
     }
 
     public void buttonSelection(TimeSlot timeSlot) {
