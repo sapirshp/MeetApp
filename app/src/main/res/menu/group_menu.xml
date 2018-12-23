@@ -7,7 +7,7 @@
         app:showAsAction="never"/>
 
     <item android:id="@+id/AddParticipantBtn"
-        android:title="@string/addParticipantMsg"
+        android:title="@string/addMemberMsg"
         app:showAsAction="never"/>
 
     <item android:id="@+id/resetTimeChoiceBtn"
