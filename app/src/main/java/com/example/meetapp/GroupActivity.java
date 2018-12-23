@@ -10,10 +10,13 @@ import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,73 +55,59 @@ public class GroupActivity extends AppCompatActivity {
         setButtonsIdForListeners();
         setListeners();
         groupActionsDialog = new Dialog(this);
+        Toolbar toolbar = findViewById(R.id.groupToolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Group1");
+        }
     }
 
-    public void groupActionPopup(View v)
-    {
-        groupActionsDialog.setContentView(R.layout.options_within_group_popup);
-        handleAddParticipant();
-        handleGroupDetails();
-        handleResetTimeChoice();
-        handleExitGroup();
-        groupActionsDialog.show();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.group_menu, menu);
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.AddParticipantBtn:
+                handleAddParticipant();
+                break;
+            case R.id.groupDetailsBtn:
+                handleGroupDetails();
+                break;
+            case R.id.resetTimeChoiceBtn:
+                handleResetTimeChoice();
+                break;
+            case R.id.exitGroupBtn:
+                handleExitGroup();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
     private void handleAddParticipant()
     {
-        TextView createGroup;
-        createGroup = groupActionsDialog.findViewById(R.id.AddParticipantBtn);
-        createGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext(), " 'Add Participant' Button Pressed ",
-                        Toast.LENGTH_LONG).show();
-                groupActionsDialog.dismiss();
-            }
-        });
+        Toast.makeText(this, " 'Add Participant' Button Pressed ", Toast.LENGTH_LONG).show();
     }
 
     private void handleGroupDetails()
     {
-        TextView createGroup;
-        createGroup = groupActionsDialog.findViewById(R.id.groupDetailsBtn);
-        createGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext(), " 'Group Details' Button Pressed ",
-                        Toast.LENGTH_LONG).show();
-                groupActionsDialog.dismiss();
-            }
-        });
+        Toast.makeText(this," 'Group Details' Button Pressed ", Toast.LENGTH_LONG).show();
     }
+
 
     private void handleResetTimeChoice()
     {
-        TextView createGroup;
-        createGroup = groupActionsDialog.findViewById(R.id.resetTimeChoiceBtn);
-        createGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext(), " 'Reset Time Choice' Button Pressed ",
-                        Toast.LENGTH_LONG).show();
-                groupActionsDialog.dismiss();
-            }
-        });
+        Toast.makeText(this, " 'Reset Time Choice' Button Pressed ", Toast.LENGTH_LONG).show();
     }
 
     private void handleExitGroup()
     {
-        TextView createGroup;
-        createGroup = groupActionsDialog.findViewById(R.id.exitGroupBtn);
-        createGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext(), " 'Exit Group' Button Pressed ",
-                        Toast.LENGTH_LONG).show();
-                groupActionsDialog.dismiss();
-            }
-        });
+        Toast.makeText(this, " 'Exit Group' Button Pressed ", Toast.LENGTH_LONG).show();
     }
 
     private void createIntToDayMap() {
