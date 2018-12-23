@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/groupDetailsBtn"
+        android:title="@string/groupDetailMsg"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/AddParticipantBtn"
+        android:title="@string/addParticipantMsg"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/resetTimeChoiceBtn"
+        android:title="@string/resetTimesMsg"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/exitGroupBtn"
+        android:title="@string/exitGroupMsg"
+        app:showAsAction="never"/>
+
+</menu>
