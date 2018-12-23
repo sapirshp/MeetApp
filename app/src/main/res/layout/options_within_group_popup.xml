@@ -27,7 +27,7 @@
             android:background="@drawable/black_rounded_frame"
             android:gravity="center"
             android:padding="5dp"
-            android:text="@string/addParticipantMsg"
+            android:text="@string/addMemberMsg"
             android:textStyle="bold"
 
             />
