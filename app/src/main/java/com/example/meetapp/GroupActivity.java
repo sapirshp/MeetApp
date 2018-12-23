@@ -47,6 +47,17 @@ public class GroupActivity extends AppCompatActivity {
         createIntToDayMap();
     }
 
+    private void setToolbar() {
+        Toolbar toolbar = findViewById(R.id.groupToolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            String groupName = getIntent().getExtras().getString("groupName");
+            getSupportActionBar().setTitle(groupName);
+        }
+        String groupMembers = getIntent().getExtras().getString("groupMembers");
+        toolbar.setSubtitle(groupMembers);
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,11 +66,7 @@ public class GroupActivity extends AppCompatActivity {
         setButtonsIdForListeners();
         setListeners();
         groupActionsDialog = new Dialog(this);
-        Toolbar toolbar = findViewById(R.id.groupToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Group1");
-        }
+        setToolbar();
     }
 
     @Override
