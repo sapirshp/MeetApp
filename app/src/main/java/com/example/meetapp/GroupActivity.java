@@ -1,6 +1,10 @@
 package com.example.meetapp;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -8,11 +12,20 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RectShape;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.Menu;
@@ -30,15 +43,20 @@ import java.util.Map;
 
 public class GroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
+    Dialog addMemberDialog;
 
+    private RecyclerView contactRecyclerView;
+    private RecyclerView.Adapter contactAdapter;
+
+    private ArrayList<String> membersToAdd = new ArrayList<>();
     private Map<String, String> datesToDisplay = new LinkedHashMap<>();
-
-
     private ArrayList<Integer> buttonsIdForListeners = new ArrayList<>();
     private int membersAmount = 5;
+    String groupMembers;
 
     private int DAYS_IN_CALENDAR = 7;
     private int TOP_SELECTIONS_TO_DISPLAY = 3;
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     private HashMap<Integer, String> intsToDays = new HashMap();
     private HashMap<TimeSlot,Integer> slotSelections = new HashMap<>();
@@ -54,8 +72,9 @@ public class GroupActivity extends AppCompatActivity {
             String groupName = getIntent().getExtras().getString("groupName");
             getSupportActionBar().setTitle(groupName);
         }
-        String groupMembers = getIntent().getExtras().getString("groupMembers");
+        groupMembers = getIntent().getExtras().getString("groupMembers");
         toolbar.setSubtitle(groupMembers);
+        membersAmount = groupMembers.split(",").length;
     }
 
     @Override
@@ -66,6 +85,7 @@ public class GroupActivity extends AppCompatActivity {
         setButtonsIdForListeners();
         setListeners();
         groupActionsDialog = new Dialog(this);
+        addMemberDialog = new Dialog(this);
         setToolbar();
     }
 
@@ -98,7 +118,13 @@ public class GroupActivity extends AppCompatActivity {
 
     private void handleAddParticipant()
     {
-        Toast.makeText(this, " 'Add Participant' Button Pressed ", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, " 'Add Participant' Button Pressed ", Toast.LENGTH_LONG).show();
+        addMemberDialog.setContentView(R.layout.add_member_popup);
+        contactRecyclerView = addMemberDialog.findViewById(R.id.contactsRecyclerView);
+        handleExitPopup();
+        showContacts();
+        chooseMembers();
+        addMemberDialog.show();
     }
 
     private void handleGroupDetails()
@@ -115,6 +141,66 @@ public class GroupActivity extends AppCompatActivity {
     private void handleExitGroup()
     {
         Toast.makeText(this, " 'Exit Group' Button Pressed ", Toast.LENGTH_LONG).show();
+    }
+
+    private void handleExitPopup()
+    {
+        TextView exitPopupBtn;
+        exitPopupBtn = addMemberDialog.findViewById(R.id.addMemberExitBtn);
+        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addMemberDialog.dismiss();
+                membersToAdd.clear();
+            }
+        });
+    }
+
+    public void onContactClick(View v){
+        RelativeLayout contactLayout = v.findViewById(R.id.contactLayout);
+        TextView contactName = v.findViewById(R.id.contactName);
+        if (contactLayout.getTag() != "chosen") {
+            setButtonEnabled();
+            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+            contactLayout.setTag("chosen");
+            membersToAdd.add((String) contactName.getText());
+        }else{
+            membersToAdd.remove((String) contactName.getText());
+            if (membersToAdd.isEmpty()){
+                setButtonDisabled();
+            }
+            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            contactLayout.setTag("notChosen");
+        }
+    }
+
+    private void setButtonDisabled() {
+        Button okButton = addMemberDialog.findViewById(R.id.chooseMembers);
+        okButton.setBackgroundResource(R.drawable.disabled_button_background);
+    }
+
+    private void setButtonEnabled() {
+        Button okButton = addMemberDialog.findViewById(R.id.chooseMembers);
+        okButton.setBackgroundResource(R.drawable.green_round_backround);
+    }
+
+    private void chooseMembers(){
+        Button okBtn = addMemberDialog.findViewById(R.id.chooseMembers);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (String memberName : membersToAdd) {
+                    addMemberDialog.dismiss();
+                    groupMembers += ", " + memberName;
+                    String addingMemberMsg = memberName + " was added to group";
+                    Toast.makeText(v.getContext(),addingMemberMsg, Toast.LENGTH_LONG).show();
+                }
+                membersAmount+=membersToAdd.size();
+                Toolbar toolbar = findViewById(R.id.groupToolbar);
+                toolbar.setSubtitle(groupMembers);
+                membersToAdd.clear();
+            }
+        });
     }
 
     private void createIntToDayMap() {
@@ -198,6 +284,8 @@ public class GroupActivity extends AppCompatActivity {
             });
         }
     }
+
+
 
     public static HashMap<TimeSlot, Integer> sortByValue(HashMap<TimeSlot, Integer> hm)
     {
@@ -303,4 +391,59 @@ public class GroupActivity extends AppCompatActivity {
         shapeDrawable.getPaint().setFlags(Paint.ANTI_ALIAS_FLAG);
         return shapeDrawable.mutate();
     }
+
+    private void showContacts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+        } else {
+            final ArrayList<ContactItem> contacts = getContacts();
+            contactRecyclerView.setHasFixedSize(true);
+            contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            contactAdapter = new ContactsAdapter(contacts);
+            contactRecyclerView.setAdapter(contactAdapter);
+
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    Comparator<ContactItem> contactsComparator = new Comparator<ContactItem>() {
+
+        @Override
+        public int compare(ContactItem o1, ContactItem o2) {
+            int res = o1.getContactName().compareTo(o2.getContactName());
+            return res;
+        }
+    };
+
+    private ArrayList<ContactItem> getContacts() {
+        ArrayList<ContactItem> contacts = new ArrayList<>();
+        ContentResolver resolver = getContentResolver();
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        while (cursor.moveToNext()){
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null ,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ id }, null);
+            while (phoneCursor.moveToNext()){
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                contacts.add(new ContactItem(name, phoneNumber));
+                break;
+            }
+        }
+        cursor.close();
+        Collections.sort(contacts, contactsComparator);
+        return contacts;
+    }
+
 }
