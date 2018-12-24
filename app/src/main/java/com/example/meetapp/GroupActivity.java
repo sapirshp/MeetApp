@@ -15,14 +15,11 @@ import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -181,7 +178,7 @@ public class GroupActivity extends AppCompatActivity {
 
     private void setButtonEnabled() {
         Button okButton = addMemberDialog.findViewById(R.id.chooseMembers);
-        okButton.setBackgroundResource(R.drawable.green_round_backround);
+        okButton.setBackgroundResource(R.drawable.green_round_background);
     }
 
     private void chooseMembers(){
