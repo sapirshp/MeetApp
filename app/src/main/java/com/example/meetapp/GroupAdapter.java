@@ -43,7 +43,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
             public void onClick(View v) {
                 Intent goToGroupScreen = new Intent(context, GroupActivity.class);
                 goToGroupScreen.putExtra("groupName", newGroup.getName());
-                goToGroupScreen.putExtra("groupMembers", newGroup.getMembersString());
+                goToGroupScreen.putExtra("groupMembers", newGroup.getMembers());
                 context.startActivity(goToGroupScreen);
             }
         });
