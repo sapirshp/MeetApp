@@ -37,7 +37,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         final Group newGroup = groups.get(position);
         viewHolder.textViewGroupName.setText(newGroup.getName());
-        viewHolder.textViewParticipants.setText(newGroup.getMembers());
+        viewHolder.textViewParticipants.setText(newGroup.getMembersString());
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
