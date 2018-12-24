@@ -57,7 +57,7 @@ public class GroupActivity extends AppCompatActivity {
         String groupMembers = getIntent().getExtras().getString("groupMembers");
         toolbar.setSubtitle(groupMembers);
     }
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "343347441283-oeuph9v2fnt6a7038k4joh9ku3fkbdlc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.meetapp",
+            "certificate_hash": "16c96039fbcf7327e0325ba17773a3ed3b18bf18"
+          }
+        },
+        {
           "client_id": "343347441283-elnulullb8s8d18ou69m02sqmolg2ode.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343347441283-elnulullb8s8d18ou69m02sqmolg2ode.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
