@@ -37,15 +37,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         final Group newGroup = groups.get(position);
         viewHolder.textViewGroupName.setText(newGroup.getName());
-        viewHolder.textViewParticipants.setText(newGroup.getMembers());
+        viewHolder.textViewParticipants.setText(newGroup.getMembersString());
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent goToGroupScreen = new Intent(context, GroupActivity.class);
                 goToGroupScreen.putExtra("groupName", newGroup.getName());
-                goToGroupScreen.putExtra("groupMembers", newGroup.getMembers());
+                goToGroupScreen.putExtra("groupMembers", newGroup.getMembersString());
                 context.startActivity(goToGroupScreen);
-//                Toast.makeText(context, "pressed "+ newGroup.getAdmin(), Toast.LENGTH_SHORT).show();
             }
         });
     }

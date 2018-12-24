@@ -37,7 +37,7 @@ public class FirstScreen extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        createDemoCards();
+        loadGroups();
 
         adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
@@ -78,7 +78,7 @@ public class FirstScreen extends AppCompatActivity {
         }
         else {
             List<String> members = Arrays.asList(new String[]{"Oren", "Chen", "Sapir"});
-            Group newGroup = new Group(newGroupName, userName, members, false);
+            Group newGroup = new Group(newGroupName, "1", userName, members, false);
             groups.add(newGroup);
             Toast.makeText(getBaseContext(), NEW_GROUP_CREATED_MSG, Toast.LENGTH_SHORT).show();
         }
@@ -111,11 +111,11 @@ public class FirstScreen extends AppCompatActivity {
         });
     }
 
-    private void createDemoCards() {
+    private void loadGroups() {
         for (int i=0; i<=3; i++)
         {
             List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
-            Group newGroup = new Group("Group" + i, userName, members, false);
+            Group newGroup = new Group("Group" + i, "2", userName, members, false);
             groups.add(newGroup);
         }
     }

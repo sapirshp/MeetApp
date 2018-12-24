@@ -2,6 +2,9 @@ package com.example.meetapp;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Group {
@@ -12,13 +15,21 @@ public class Group {
     //    private @ServerTimestamp Date timestamp;
     private boolean isScheduled;
 
-    public Group(String name, String admin, List<String> members, boolean isScheduled) {
+    public Group(String name, String groupId, String admin, List<String> members, boolean isScheduled) {
         this.name = name;
 //        this.timestamp = timestamp;
-//        this.groupId = groupId;
+        this.groupId = groupId;
         this.admin = admin;
         this.members = members;
-//        this.participants = new String[]{};
+        this.isScheduled = isScheduled;
+    }
+
+    public Group(String name, String groupId, String admin, boolean isScheduled) {
+        this.name = name;
+//        this.timestamp = timestamp;
+        this.groupId = groupId;
+        this.admin = admin;
+        this.members = new ArrayList<>(Arrays.asList(admin));
         this.isScheduled = isScheduled;
     }
 
@@ -30,19 +41,27 @@ public class Group {
         return name;
     }
 
+    public String getGroupId() {
+        return groupId;
+    }
+
     public String getAdmin() {
         return admin;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public String getMembers() {
-        String allMembers = "";
-        for (String member:members)
-        {
-            allMembers += member  + ", ";
-        }
-        allMembers = allMembers.substring(0, allMembers.length() - 2);
-        return allMembers;
+    public boolean getIsScheduled() {
+        return isScheduled;
     }
 
+    public List<String> getMembers() {
+        return members;
+    }
+
+    public String getMembersString() {
+        String allMembers = "";
+        for (String member : members) {
+            allMembers += member + ", ";
+        }
+        return allMembers.substring(0, allMembers.length() - 2);
+    }
 }

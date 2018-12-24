@@ -67,8 +67,7 @@ public class GroupActivity extends AppCompatActivity {
     public GroupActivity(){
         createIntToDayMap();
     }
-
-
+  
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.groupToolbar);
         setSupportActionBar(toolbar);
@@ -88,9 +87,9 @@ public class GroupActivity extends AppCompatActivity {
         setDatesToDisplay();
         setButtonsIdForListeners();
         setListeners();
-        setToolbar();
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
+        setToolbar();
     }
 
     @Override
