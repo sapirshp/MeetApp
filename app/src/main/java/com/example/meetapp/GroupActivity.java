@@ -49,10 +49,7 @@ public class GroupActivity extends AppCompatActivity {
     private RecyclerView.Adapter contactAdapter;
 
     private ArrayList<String> membersToAdd = new ArrayList<>();
-
     private Map<String, String> datesToDisplay = new LinkedHashMap<>();
-
-
     private ArrayList<Integer> buttonsIdForListeners = new ArrayList<>();
     private int membersAmount = 5;
     String groupMembers;
@@ -67,8 +64,7 @@ public class GroupActivity extends AppCompatActivity {
     public GroupActivity(){
         createIntToDayMap();
     }
-
-
+    
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.groupToolbar);
         setSupportActionBar(toolbar);
