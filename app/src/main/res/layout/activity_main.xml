@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/green_round_backround"
+        android:background="@drawable/green_round_background"
         android:gravity="center_horizontal"
         android:onClick="showNewGroupPopup"
         android:padding="15dp"
