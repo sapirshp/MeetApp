@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,8 +57,30 @@ public class FirstScreen extends AppCompatActivity {
 
     private void handleCreateNewGroup()
     {
-        Button createGroup;
+        final Button createGroup;
         createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
+        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+        userInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0){
+                    createGroup.setBackgroundResource(R.drawable.disabled_button_background);
+                }else {
+                    createGroup.setBackgroundResource(R.drawable.green_round_background);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         createGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
