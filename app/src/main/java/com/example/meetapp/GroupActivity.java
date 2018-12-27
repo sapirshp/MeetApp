@@ -48,6 +48,7 @@ public class GroupActivity extends AppCompatActivity {
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private Map<String, String> datesToDisplay = new LinkedHashMap<>();
     private ArrayList<Integer> buttonsIdForListeners = new ArrayList<>();
+    private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
     private int membersAmount = 5;
     String groupMembers;
 
@@ -117,7 +118,6 @@ public class GroupActivity extends AppCompatActivity {
 
     private void handleAddParticipant()
     {
-        //Toast.makeText(this, " 'Add Participant' Button Pressed ", Toast.LENGTH_LONG).show();
         addMemberDialog.setContentView(R.layout.add_member_popup);
         contactRecyclerView = addMemberDialog.findViewById(R.id.contactsRecyclerView);
         handleExitPopup();
@@ -134,7 +134,7 @@ public class GroupActivity extends AppCompatActivity {
 
     private void handleResetTimeChoice()
     {
-        Toast.makeText(this, " 'Reset Time Choice' Button Pressed ", Toast.LENGTH_LONG).show();
+        resetUserSelection();
     }
 
     private void handleExitGroup()
@@ -153,6 +153,16 @@ public class GroupActivity extends AppCompatActivity {
                 membersToAdd.clear();
             }
         });
+    }
+
+    public void resetUserSelection() {
+
+        for (TimeSlot selectedSlot : slotSelections.keySet()) {
+            slotsToReset.add(selectedSlot);
+        }
+        for (TimeSlot slotToReset : slotsToReset){
+            clickedOff(slotToReset);
+        }
     }
 
     public void onContactClick(View v){
