@@ -68,6 +68,8 @@ public class GroupActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             String groupName = getIntent().getExtras().getString("groupName");
             getSupportActionBar().setTitle(groupName);
+            getSupportActionBar().setLogo(R.drawable.calendar_icon);
+            getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
         groupMembers = getIntent().getExtras().getString("groupMembers");
         toolbar.setSubtitle(groupMembers);

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -41,10 +42,21 @@ public class FirstScreen extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         loadGroups();
+        setToolbar();
 
         adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
         newGroupDialog = new Dialog(this);
+    }
+
+    public void setToolbar() {
+        Toolbar toolbar = findViewById(R.id.mainToolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("MeetApp");
+            getSupportActionBar().setLogo(R.drawable.calendar_icon);
+            getSupportActionBar().setDisplayUseLogoEnabled(true);
+        }
     }
 
     public void showNewGroupPopup(View v)
