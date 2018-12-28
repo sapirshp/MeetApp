@@ -2,6 +2,7 @@ package com.example.meetapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -9,8 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.amulyakhare.textdrawable.TextDrawable;
 
 import java.util.ArrayList;
 
@@ -38,6 +42,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         final Group newGroup = groups.get(position);
         viewHolder.textViewGroupName.setText(newGroup.getName());
         viewHolder.textViewParticipants.setText(newGroup.getMembersString());
+
+
+
+        if(newGroup.getIsScheduled())
+        {
+            TextDrawable dayLetterRepr = TextDrawable.builder().buildRound("Sat", Color.BLUE);
+            viewHolder.dayScheduled.setImageDrawable(dayLetterRepr);
+            viewHolder.timeInDay.setImageResource(R.drawable.afternoon_icon);
+        }
+
+
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +64,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         });
     }
 
+
+
+
+
     @Override
     public int getItemCount() {
         return groups.size();
@@ -59,13 +78,16 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         public TextView textViewGroupName;
         public TextView textViewParticipants;
         public LinearLayout linearLayout;
-
+        public ImageView dayScheduled;
+        public ImageView timeInDay;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewGroupName = itemView.findViewById(R.id.textViewGroupName);
             textViewParticipants = itemView.findViewById(R.id.textViewParticipantsName);
             linearLayout = itemView.findViewById(R.id.linearLayout);
+            dayScheduled = itemView.findViewById(R.id.dayRepresentation);
+            timeInDay = itemView.findViewById(R.id.timeInDay);
         }
     }
 }

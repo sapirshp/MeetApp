@@ -14,29 +14,62 @@
         android:focusable="true"
         >
 
-
         <LinearLayout
-            android:id="@+id/linearLayout"
-            android:orientation="vertical"
-            android:padding="16dp"
+            android:id="@+id/chennn"
+            android:orientation="horizontal"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
 
 
-            <TextView
-                android:id="@+id/textViewGroupName"
-                android:text="Group Name"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:orientation="vertical"
+                android:padding="13dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                />
+                >
 
-            <TextView
-                android:id="@+id/textViewParticipantsName"
-                android:text="Participant names"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/textViewGroupName"
+                    android:text="Group Name"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+                <TextView
+                    android:id="@+id/textViewParticipantsName"
+                    android:text="Participant names"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lin222"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="right"
+                >
+
+                <ImageView android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/dayRepresentation"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center"/>
+
+                <ImageView android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/timeInDay"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center"
+                    />
+
+            </LinearLayout>
 
 
         </LinearLayout>

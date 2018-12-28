@@ -155,6 +155,12 @@ public class FirstScreen extends AppCompatActivity {
             Group newGroup = new Group("Group" + i, "2", userName, members, false);
             groups.add(newGroup);
         }
+        for (int i=4; i<=6; i++)
+        {
+            List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
+            Group newGroup = new Group("Group" + i, "2", userName, members, true);
+            groups.add(newGroup);
+        }
     }
     
     @Override
