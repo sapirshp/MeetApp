@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,9 +30,7 @@ public class FirstScreen extends AppCompatActivity {
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
     String NEW_GROUP_CREATED_MSG = "New Group Created Successfully!";
-    String EMPTY_GROUP_NAME_MSG = "Empty Group Name Not Allowed!";
     String GROUP_NAME_EXISTS_MSG = "The Name You Chose Already exists!";
-    String EMPTY_GROUP_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +73,7 @@ public class FirstScreen extends AppCompatActivity {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         userInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -88,16 +85,13 @@ public class FirstScreen extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) { }
         });
 
         createGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addNewGroup();
-                newGroupDialog.dismiss();
             }
         });
     }
@@ -106,25 +100,25 @@ public class FirstScreen extends AppCompatActivity {
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         String newGroupName = userInput.getText().toString();
-        if(newGroupName.equals(EMPTY_GROUP_NAME)){
-            makeToastAndDismissDialog(newGroupDialog,EMPTY_GROUP_NAME_MSG);
-        }
-        else if(groupNameAlreadyExists(newGroupName))
+        // when no input is given - the button is gray, therefore no action needed
+        if(groupNameAlreadyExists(newGroupName))
         {
-            makeToastAndDismissDialog(newGroupDialog,GROUP_NAME_EXISTS_MSG);
+            makeToastToCenterOfScreen(GROUP_NAME_EXISTS_MSG);
         }
         else {
             List<String> members = Arrays.asList(new String[]{"Oren", "Chen", "Sapir"});
             Group newGroup = new Group(newGroupName, "1", userName, members, false);
             groups.add(newGroup);
-            Toast.makeText(getBaseContext(), NEW_GROUP_CREATED_MSG, Toast.LENGTH_SHORT).show();
+            makeToastToCenterOfScreen(NEW_GROUP_CREATED_MSG);
+            newGroupDialog.dismiss();
         }
     }
 
-    private void makeToastAndDismissDialog(Dialog currentDialog, String message)
+    private void makeToastToCenterOfScreen(String message)
     {
-        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
-        currentDialog.dismiss();
+        Toast toast = Toast.makeText(getBaseContext(),message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     private boolean groupNameAlreadyExists(String newGroupName)
