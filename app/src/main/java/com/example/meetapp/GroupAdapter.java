@@ -43,15 +43,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         viewHolder.textViewGroupName.setText(newGroup.getName());
         viewHolder.textViewParticipants.setText(newGroup.getMembersString());
 
-
-
         if(newGroup.getIsScheduled())
         {
-            TextDrawable dayLetterRepr = daySymbolFactory(position % 7);
-            viewHolder.dayScheduled.setImageDrawable(dayLetterRepr);
-            viewHolder.timeInDay.setImageResource(R.drawable.afternoon_icon);
+            showScheduledTimeSymbols(viewHolder, position);
         }
-
 
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +57,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
                 context.startActivity(goToGroupScreen);
             }
         });
+    }
+
+    private void showScheduledTimeSymbols(@NonNull ViewHolder viewHolder, int position)
+    {
+        TextDrawable dayLetterRepr = daySymbolFactory(position % 7);
+        viewHolder.dayScheduled.setImageDrawable(dayLetterRepr);
+        int timeInDaySymbol = timeInDayFactory(position % 3);
+        viewHolder.timeInDay.setImageResource(timeInDaySymbol);
     }
 
 
@@ -80,11 +83,26 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
                 return TextDrawable.builder().buildRound("Thu", Color.LTGRAY);
             case 6:
                 return TextDrawable.builder().buildRound("Fri", Color.DKGRAY);
+            case 7:
+                return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
             default:
                 return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
         }
     }
 
+
+    public int timeInDayFactory(int timeRepr) {
+        switch (timeRepr) {
+            case 1:
+                return R.drawable.morning_icon;
+            case 2:
+                return R.drawable.afternoon_icon;
+            case 3:
+                return R.drawable.evening_icon;
+            default:
+                return R.drawable.evening_icon;
+        }
+    }
 
 
     @Override
