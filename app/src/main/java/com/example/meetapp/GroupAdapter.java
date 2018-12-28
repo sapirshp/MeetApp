@@ -61,9 +61,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
 
     private void showScheduledTimeSymbols(@NonNull ViewHolder viewHolder, int position)
     {
-        TextDrawable dayLetterRepr = daySymbolFactory(position % 7);
+        TextDrawable dayLetterRepr = daySymbolFactory(position % 7);    // OREN - CHANGE HERE
         viewHolder.dayScheduled.setImageDrawable(dayLetterRepr);
-        int timeInDaySymbol = timeInDayFactory(position % 3);
+        int timeInDaySymbol = timeInDayFactory(position % 3);           // OREN - CHANGE HERE
         viewHolder.timeInDay.setImageResource(timeInDaySymbol);
     }
 
@@ -76,20 +76,19 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
             case 2:
                 return TextDrawable.builder().buildRound("Mon", Color.RED);
             case 3:
-                return TextDrawable.builder().buildRound("Tue", Color.GREEN);
+                return TextDrawable.builder().buildRound("Tue", Color.DKGRAY);
             case 4:
                 return TextDrawable.builder().buildRound("Wed", Color.BLUE);
             case 5:
                 return TextDrawable.builder().buildRound("Thu", Color.LTGRAY);
             case 6:
-                return TextDrawable.builder().buildRound("Fri", Color.DKGRAY);
+                return TextDrawable.builder().buildRound("Fri", Color.GREEN);
             case 7:
                 return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
             default:
                 return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
         }
     }
-
 
     public int timeInDayFactory(int timeRepr) {
         switch (timeRepr) {
