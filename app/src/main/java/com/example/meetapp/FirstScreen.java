@@ -149,13 +149,13 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     private void loadGroups() {
-        for (int i=0; i<=3; i++)
+        for (int i=0; i<=1; i++)
         {
             List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
             Group newGroup = new Group("Group" + i, "2", userName, members, false);
             groups.add(newGroup);
         }
-        for (int i=4; i<=6; i++)
+        for (int i=2; i<=4; i++)
         {
             List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
             Group newGroup = new Group("Group" + i, "2", userName, members, true);

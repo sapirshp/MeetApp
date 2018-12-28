@@ -56,8 +56,8 @@
                 android:layout_gravity="right"
                 >
 
-                <ImageView android:layout_width="40dp"
-                    android:layout_height="40dp"
+                <ImageView android:layout_width="52dp"
+                    android:layout_height="52dp"
                     android:id="@+id/dayRepresentation"
                     android:layout_margin="5dp"
                     android:layout_gravity="center"/>

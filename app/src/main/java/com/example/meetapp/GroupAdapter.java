@@ -47,7 +47,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
 
         if(newGroup.getIsScheduled())
         {
-            TextDrawable dayLetterRepr = TextDrawable.builder().buildRound("Sat", Color.BLUE);
+            TextDrawable dayLetterRepr = daySymbolFactory(position % 7);
             viewHolder.dayScheduled.setImageDrawable(dayLetterRepr);
             viewHolder.timeInDay.setImageResource(R.drawable.afternoon_icon);
         }
@@ -65,6 +65,25 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
     }
 
 
+    public TextDrawable daySymbolFactory(int dayRepr)
+    {
+        switch (dayRepr){
+            case 1:
+                return TextDrawable.builder().buildRound("Sun", Color.BLUE);
+            case 2:
+                return TextDrawable.builder().buildRound("Mon", Color.RED);
+            case 3:
+                return TextDrawable.builder().buildRound("Tue", Color.GREEN);
+            case 4:
+                return TextDrawable.builder().buildRound("Wed", Color.BLUE);
+            case 5:
+                return TextDrawable.builder().buildRound("Thu", Color.LTGRAY);
+            case 6:
+                return TextDrawable.builder().buildRound("Fri", Color.DKGRAY);
+            default:
+                return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
+        }
+    }
 
 
 
