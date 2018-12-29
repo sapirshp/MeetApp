@@ -61,14 +61,10 @@ import java.util.ArrayList;
             }
             new UndoBarController.UndoBar(activity).message("Reset Selection").style(UndoBarController.UNDOSTYLE).listener(new UndoBarController.AdvancedUndoListener() {
                 @Override
-                public void onHide(@Nullable Parcelable token) {
-
-                }
+                public void onHide(@Nullable Parcelable token) {}
 
                 @Override
-                public void onClear(@NonNull Parcelable[] token) {
-
-                }
+                public void onClear(@NonNull Parcelable[] token) {}
 
                 @Override
                 public void onUndo(@Nullable Parcelable token) {
