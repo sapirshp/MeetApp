@@ -31,6 +31,8 @@ public class FirstScreen extends AppCompatActivity {
     private String phoneNumber = "972528240512";
     String NEW_GROUP_CREATED_MSG = "New Group Created Successfully!";
     String GROUP_NAME_EXISTS_MSG = "The Name You Chose Already exists!";
+    String EMPTY_GROUP_NAME_MSG = "Empty Group Name Not Allowed!";
+    String EMPTY_GROUP_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,17 +93,21 @@ public class FirstScreen extends AppCompatActivity {
         createGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addNewGroup();
+                handleNewGroupRequest();
             }
         });
     }
 
-    private void addNewGroup()
+    private void handleNewGroupRequest()
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         String newGroupName = userInput.getText().toString();
-        // when no input is given - the button is gray, therefore no action needed
-        if(groupNameAlreadyExists(newGroupName))
+
+        if(newGroupName.equals(EMPTY_GROUP_NAME)){
+        // when no input is given - the button is gray and frozen, therefore no action needed
+//            makeToastToCenterOfScreen(EMPTY_GROUP_NAME_MSG);
+        }
+        else if(groupNameAlreadyExists(newGroupName))
         {
             makeToastToCenterOfScreen(GROUP_NAME_EXISTS_MSG);
         }
