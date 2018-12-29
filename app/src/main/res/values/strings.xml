@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">MeetApp</string>
     <string name="XBtn">X</string>
+    <string name="groupName">Group Name</string>
+    <string name="ParticipantNames">Participant Names</string>
+    <string name="dayRepresentation">Day Representation</string>
+    <string name="timeInDayRepresentation">Time In Day Representation</string>
+
+
+
+
     <string name="enterGroupName">Enter Group Name</string>
     <string name="groupNameHint">Group Name Here</string>
     <string name="addGroupIcon">Add Group Icon</string>
