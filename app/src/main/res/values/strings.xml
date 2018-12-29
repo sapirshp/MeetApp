@@ -23,5 +23,6 @@
     <string name="resetTimesMsg">Reset Time Choice</string>
     <string name="exitGroupMsg">Exit Group</string>
     <string name="ContactsPermissionError">Until you grant the permission, we can not display the contacts</string>
+    <string name="resetEmptySelection">No Selection To Reset</string>
 
 </resources>

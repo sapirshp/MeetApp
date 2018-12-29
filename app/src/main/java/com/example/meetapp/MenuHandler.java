@@ -1,30 +1,29 @@
 package com.example.meetapp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Method;
+import com.cocosw.undobar.UndoBarController;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
-public class MenuHandler {
+ class MenuHandler {
 
-    private RecyclerView contactRecyclerView;
     private Dialog addMemberDialog;
-    private ArrayList<String> membersToAdd;
+    private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
+    ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
 
 
     MenuHandler(Dialog dialog, int memberNum, String membersNames){
@@ -48,16 +47,36 @@ public class MenuHandler {
     }
 
 
-    void handleResetTimeChoice(Consumer<TimeSlot> resetFunction, Set<TimeSlot> slotSelection)
-    {
-        ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
-        for (TimeSlot selectedSlot : slotSelection) {
-            slotsToReset.add(selectedSlot);
-        }
-        for (TimeSlot slotToReset : slotsToReset){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                resetFunction.accept(slotToReset);
+    void handleResetTimeChoice(Activity activity, final CalendarSlotsHandler calendarSlotsHandler) {
+        slotsToReset.clear();
+        if (calendarSlotsHandler.getSlotSelections().isEmpty()){
+            Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
+        }else {
+            for (TimeSlot selectedSlot : calendarSlotsHandler.getSlotSelections().keySet()) {
+                slotsToReset.add(selectedSlot);
+                System.out.println(selectedSlot.getDate());
             }
+            for (TimeSlot slotToReset : slotsToReset) {
+                calendarSlotsHandler.clickedOff(slotToReset);
+            }
+            new UndoBarController.UndoBar(activity).message("Reset Selection").style(UndoBarController.UNDOSTYLE).listener(new UndoBarController.AdvancedUndoListener() {
+                @Override
+                public void onHide(@Nullable Parcelable token) {
+
+                }
+
+                @Override
+                public void onClear(@NonNull Parcelable[] token) {
+
+                }
+
+                @Override
+                public void onUndo(@Nullable Parcelable token) {
+                    for (TimeSlot slot : slotsToReset) {
+                        calendarSlotsHandler.clickedOn(slot, false);
+                    }
+                }
+            }).show();
         }
     }
 
