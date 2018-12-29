@@ -6,7 +6,17 @@
     <string name="dayRepresentation">Day Representation</string>
     <string name="timeInDayRepresentation">Time In Day Representation</string>
 
+    <string name="EXIT_GROUP_TITLE">Exit Group</string>
+    <string name="EXIT_GROUP_MESSAGE">Are you sure You want To Exit Group?</string>
+    <string name="EXIT_ANSWER">Exit</string>
+    <string name="DONT_EXIT_ANSWER">No, Stay</string>
 
+
+
+    <!--private String EXIT_GROUP_TITLE = "Exit Group";-->
+    <!--private String EXIT_GROUP_MESSAGE = "Are you sure You want To Exit Group?";-->
+    <!--private String EXIT_ANSWER = "Exit";-->
+    <!--private String DONT_EXIT_ANSWER = "No, Stay";-->
 
 
     <string name="enterGroupName">Enter Group Name</string>
