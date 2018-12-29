@@ -87,12 +87,7 @@ public class GroupActivity extends AppCompatActivity {
                 menuHandler.handleGroupDetails(this);
                 break;
             case R.id.resetTimeChoiceBtn:
-                    menuHandler.handleResetTimeChoice(new Consumer<TimeSlot>() {
-                        @Override
-                        public void accept(TimeSlot timeSlot) {
-                            calendarSlotsHandler.clickedOff(timeSlot);
-                        }
-                    },calendarSlotsHandler.getSlotSelections().keySet());
+                    menuHandler.handleResetTimeChoice(this, calendarSlotsHandler);
                 break;
             case R.id.exitGroupBtn:
                 menuHandler.handleExitGroup(this);
