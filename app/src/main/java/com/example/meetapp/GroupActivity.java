@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class GroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
@@ -63,7 +62,7 @@ public class GroupActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             String groupName = getIntent().getExtras().getString("groupName");
             getSupportActionBar().setTitle(groupName);
-            getSupportActionBar().setLogo(R.drawable.calendar_icon);
+            getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
         groupMembers = getIntent().getExtras().getString("groupMembers");
