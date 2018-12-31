@@ -15,7 +15,7 @@
         app:showAsAction="never"/>
 
     <item android:id="@+id/exitGroupBtn"
-        android:title="@string/exitGroupMsg"
+        android:title="@string/leaveGroupMsg"
         app:showAsAction="never"/>
 
 </menu>

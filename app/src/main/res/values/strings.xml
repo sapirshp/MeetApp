@@ -5,20 +5,10 @@
     <string name="ParticipantNames">Participant Names</string>
     <string name="dayRepresentation">Day Representation</string>
     <string name="timeInDayRepresentation">Time In Day Representation</string>
-
-    <string name="EXIT_GROUP_TITLE">Exit Group</string>
-    <string name="EXIT_GROUP_MESSAGE">Are you sure You want To Exit Group?</string>
-    <string name="EXIT_ANSWER">Exit</string>
-    <string name="DONT_EXIT_ANSWER">No, Stay</string>
-
-
-
-    <!--private String EXIT_GROUP_TITLE = "Exit Group";-->
-    <!--private String EXIT_GROUP_MESSAGE = "Are you sure You want To Exit Group?";-->
-    <!--private String EXIT_ANSWER = "Exit";-->
-    <!--private String DONT_EXIT_ANSWER = "No, Stay";-->
-
-
+    <string name="leaveGroupTitle">Leave Group</string>
+    <string name="leaveGroupQuestion">Are You Sure You Want To Leave Group?</string>
+    <string name="leaveAnswer">Leave</string>
+    <string name="dontLeaveAnswer">No, Stay</string>
     <string name="enterGroupName">Enter Group Name</string>
     <string name="groupNameHint">Group Name Here</string>
     <string name="addGroupIcon">Add Group Icon</string>
@@ -39,7 +29,7 @@
     <string name="Today">Today</string>
     <string name="groupDetailMsg">Group Details</string>
     <string name="resetTimesMsg">Reset Time Choice</string>
-    <string name="exitGroupMsg">Exit Group</string>
+    <string name="leaveGroupMsg">Leave Group</string>
     <string name="ContactsPermissionError">Until you grant the permission, we can not display the contacts</string>
     <string name="resetEmptySelection">No Selection To Reset</string>
 

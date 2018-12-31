@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
      MenuHandler(Dialog dialog, int memberNum, String membersNames){
         this.addMemberDialog = dialog;
-        membersAmount = memberNum;
+        this.membersAmount = memberNum;
         this.groupMembers = membersNames;
     }
 
@@ -82,13 +82,9 @@ import java.util.ArrayList;
 
     void handleExitGroup(final Context context)
     {
-
-//        String ids = context.getString(R.string.DONT_EXIT_ANSWER);
-
-
         AlertDialog exitGroupDialog = new AlertDialog.Builder(context).create();
-        exitGroupDialog.setTitle(context.getString(R.string.EXIT_GROUP_TITLE));
-        exitGroupDialog.setMessage(context.getString(R.string.EXIT_GROUP_MESSAGE));
+        exitGroupDialog.setTitle(context.getString(R.string.leaveGroupTitle));
+        exitGroupDialog.setMessage(context.getString(R.string.leaveGroupQuestion));
         handlePositiveExitAnswer(context, exitGroupDialog);
         handleNegativeExitAnswer(context, exitGroupDialog);
         exitGroupDialog.show();
@@ -111,7 +107,7 @@ import java.util.ArrayList;
 
      private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog) {
 
-         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.EXIT_ANSWER),
+         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.leaveAnswer),
                  new DialogInterface.OnClickListener() {
                      public void onClick(DialogInterface dialog, int which) {
                          dialog.dismiss();
@@ -124,7 +120,7 @@ import java.util.ArrayList;
      }
 
      private void handleNegativeExitAnswer(final Context context,AlertDialog alertDialog) {
-         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.DONT_EXIT_ANSWER),
+         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.dontLeaveAnswer),
                  new DialogInterface.OnClickListener() {
                      public void onClick(DialogInterface dialog, int which) {
                          dialog.dismiss();
