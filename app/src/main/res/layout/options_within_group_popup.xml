@@ -63,7 +63,7 @@
             android:background="@drawable/black_rounded_frame"
             android:gravity="center"
             android:padding="5dp"
-            android:text="@string/exitGroupMsg"
+            android:text="@string/leaveGroupMsg"
             android:textColor="@color/colorRed"
             android:textStyle="bold" />
 

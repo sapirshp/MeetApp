@@ -5,10 +5,10 @@
     <string name="ParticipantNames">Participant Names</string>
     <string name="dayRepresentation">Day Representation</string>
     <string name="timeInDayRepresentation">Time In Day Representation</string>
-
-
-
-
+    <string name="leaveGroupTitle">Leave Group</string>
+    <string name="leaveGroupQuestion">Are You Sure You Want To Leave Group?</string>
+    <string name="leaveAnswer">Leave</string>
+    <string name="dontLeaveAnswer">No, Stay</string>
     <string name="enterGroupName">Enter Group Name</string>
     <string name="groupNameHint">Group Name Here</string>
     <string name="addGroupIcon">Add Group Icon</string>
@@ -29,7 +29,7 @@
     <string name="Today">Today</string>
     <string name="groupDetailMsg">Group Details</string>
     <string name="resetTimesMsg">Reset Time Choice</string>
-    <string name="exitGroupMsg">Exit Group</string>
+    <string name="leaveGroupMsg">Leave Group</string>
     <string name="ContactsPermissionError">Until you grant the permission, we can not display the contacts</string>
     <string name="resetEmptySelection">No Selection To Reset</string>
 
