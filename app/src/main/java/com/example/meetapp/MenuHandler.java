@@ -72,7 +72,7 @@ import java.util.ArrayList;
                     .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
                     .setText("Your Selection Has Been Reset")
                     .setDuration(Style.DURATION_LONG)
-                    .setColor(activity.getResources().getColor(R.color.colorPrimary))
+                    .setColor(activity.getResources().getColor(R.color.undoDark))
                     .setAnimations(Style.ANIMATIONS_POP).show();
         }
     }

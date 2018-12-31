@@ -14,4 +14,5 @@
     <color name="colorBlack">#000000</color>
     <color name="lightGreen">#e0ffd2</color>
     <color name="darkGreen">#67a34c</color>
+    <color name="undoDark">#454545</color>
 </resources>
