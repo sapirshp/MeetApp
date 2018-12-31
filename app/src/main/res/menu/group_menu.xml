@@ -18,4 +18,8 @@
         android:title="@string/leaveGroupMsg"
         app:showAsAction="never"/>
 
+    <item android:id="@+id/createMeetingBtn"
+        android:title="Meet!"
+        app:showAsAction="always"/>
+
 </menu>

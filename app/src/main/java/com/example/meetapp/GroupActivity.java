@@ -91,6 +91,9 @@ public class GroupActivity extends AppCompatActivity {
             case R.id.exitGroupBtn:
                 menuHandler.handleExitGroup(this);
                 break;
+            case R.id.createMeetingBtn:
+                // TODO: CHENS CODE HERE
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
