@@ -55,7 +55,7 @@ public class FirstScreen extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("MeetApp");
-            getSupportActionBar().setLogo(R.drawable.calendar_icon);
+            getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
     }

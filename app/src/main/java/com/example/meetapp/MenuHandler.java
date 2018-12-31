@@ -14,8 +14,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.cocosw.undobar.UndoBarController;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ import java.util.ArrayList;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
-    ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
+    private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
 
 
      MenuHandler(Dialog dialog, int memberNum, String membersNames){
@@ -61,22 +62,24 @@ import java.util.ArrayList;
             for (TimeSlot slotToReset : slotsToReset) {
                 calendarSlotsHandler.clickedOff(slotToReset);
             }
-            new UndoBarController.UndoBar(activity).message("Reset Selection").
-                    style(UndoBarController.UNDOSTYLE).
-                    listener(new UndoBarController.AdvancedUndoListener() {
-                @Override
-                public void onHide(@Nullable Parcelable token) {}
 
-                @Override
-                public void onClear(@NonNull Parcelable[] token) {}
+            SuperActivityToast.OnButtonClickListener onButtonClickListener =
+                    new SuperActivityToast.OnButtonClickListener() {
 
-                @Override
-                public void onUndo(@Nullable Parcelable token) {
-                    for (TimeSlot slot : slotsToReset) {
-                        calendarSlotsHandler.clickedOn(slot, false);
-                    }
-                }
-            }).show();
+                        @Override
+                        public void onClick(View view, Parcelable token) {
+                            for (TimeSlot slotToReset : slotsToReset) {
+                                calendarSlotsHandler.clickedOn(slotToReset, false);
+                            }
+                        }
+                    };
+            SuperActivityToast.create(activity, new Style(), Style.TYPE_BUTTON)
+                    .setButtonText("UNDO")
+                    .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
+                    .setText("Your Selection Has Been Reset")
+                    .setDuration(Style.DURATION_LONG)
+                    .setColor(activity.getResources().getColor(R.color.undoDark))
+                    .setAnimations(Style.ANIMATIONS_POP).show();
         }
     }
 
