@@ -65,9 +65,11 @@ class CalendarSlotsHandler {
         if (!isMemberAmountRefresh) {
             slotSelections.put(timeSlot, slotSelections.containsKey(timeSlot) ? slotSelections.get(timeSlot) + 1 : 1);
         }
-        String textWithSelectionNumber = slotSelections.get(timeSlot) +
-                "/" + membersAmount;
-        timeSlot.getButton().setText(textWithSelectionNumber);
+        if (membersAmount > 1) {
+            String textWithSelectionNumber = slotSelections.get(timeSlot) +
+                    "/" + membersAmount;
+            timeSlot.getButton().setText(textWithSelectionNumber);
+        }
         timeSlot.setClicked(true);
         float percentage = ((float)slotSelections.get(timeSlot)/(float)membersAmount)*100;
         int bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c,(int)percentage);

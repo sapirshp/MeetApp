@@ -112,7 +112,7 @@ public class FirstScreen extends AppCompatActivity {
             makeToastToCenterOfScreen(GROUP_NAME_EXISTS_MSG);
         }
         else {
-            List<String> members = Arrays.asList(new String[]{"Oren", "Chen", "Sapir"});
+            List<String> members = Arrays.asList("You");
             Group newGroup = new Group(newGroupName, "1", userName, members, false);
             groups.add(newGroup);
             makeToastToCenterOfScreen(NEW_GROUP_CREATED_MSG);
