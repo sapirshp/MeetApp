@@ -32,6 +32,13 @@ class DateSetter {
         for (int i = 1; i < DAYS_IN_CALENDAR; i++) {
             groupCalender.roll(Calendar.DATE, 1);
             date = groupCalender.get(Calendar.DAY_OF_MONTH);
+            if (date == 1){
+                groupCalender.roll(Calendar.MONTH, 1);
+                int month = groupCalender.get(Calendar.MONTH);
+                if (month == 0){
+                    groupCalender.roll(Calendar.YEAR, 1);
+                }
+            }
             day = intsToDays.get(groupCalender.get(Calendar.DAY_OF_WEEK));
             datesToDisplay.put(Integer.toString(date), day);
         }
