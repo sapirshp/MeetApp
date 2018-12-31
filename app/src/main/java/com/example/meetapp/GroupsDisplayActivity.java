@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FirstScreen extends AppCompatActivity {
+public class GroupsDisplayActivity extends AppCompatActivity {
     Dialog newGroupDialog;
     private static long back_pressed;
     private final int EXIT_DELAY = 2000;
@@ -29,10 +29,6 @@ public class FirstScreen extends AppCompatActivity {
     private ArrayList<Group> groups = new ArrayList<>();
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
-    String NEW_GROUP_CREATED_MSG = "New Group Created Successfully!";
-    String GROUP_NAME_EXISTS_MSG = "The Name You Chose Already exists!";
-    String EMPTY_GROUP_NAME_MSG = "Empty Group Name Not Allowed!";
-    String EMPTY_GROUP_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +37,8 @@ public class FirstScreen extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         loadGroups();
         setToolbar();
-
         adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
         newGroupDialog = new Dialog(this);
@@ -83,18 +77,16 @@ public class FirstScreen extends AppCompatActivity {
                     createGroup.setBackgroundResource(R.drawable.disabled_button_background);
                 }else {
                     createGroup.setBackgroundResource(R.drawable.green_round_background);
+                    createGroup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handleNewGroupRequest();
+                        }
+                    });
                 }
             }
-
             @Override
-            public void afterTextChanged(Editable s) { }
-        });
-
-        createGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleNewGroupRequest();
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -103,19 +95,15 @@ public class FirstScreen extends AppCompatActivity {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         String newGroupName = userInput.getText().toString();
 
-        if(newGroupName.equals(EMPTY_GROUP_NAME)){
-        // when no input is given - the button is gray and frozen, therefore no action needed
-//            makeToastToCenterOfScreen(EMPTY_GROUP_NAME_MSG);
-        }
-        else if(groupNameAlreadyExists(newGroupName))
+        if(groupNameAlreadyExists(newGroupName))
         {
-            makeToastToCenterOfScreen(GROUP_NAME_EXISTS_MSG);
+            makeToastToCenterOfScreen(getString(R.string.groupNameExists));
         }
         else {
             List<String> members = Arrays.asList("You");
             Group newGroup = new Group(newGroupName, "1", userName, members, false);
             groups.add(newGroup);
-            makeToastToCenterOfScreen(NEW_GROUP_CREATED_MSG);
+            makeToastToCenterOfScreen(getString(R.string.newGroupCreated));
             newGroupDialog.dismiss();
         }
     }

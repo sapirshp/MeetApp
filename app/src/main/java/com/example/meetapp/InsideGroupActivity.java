@@ -19,7 +19,7 @@ import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
-public class GroupActivity extends AppCompatActivity {
+public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
     Dialog addMemberDialog;
     private MenuHandler menuHandler;
@@ -30,7 +30,7 @@ public class GroupActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
 
-    public GroupActivity(){
+    public InsideGroupActivity(){
         DateSetter.createIntToDayMap();
     }
 
