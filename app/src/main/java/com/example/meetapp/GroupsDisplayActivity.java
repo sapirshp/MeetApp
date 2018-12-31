@@ -94,7 +94,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         String newGroupName = userInput.getText().toString();
-
         if(groupNameAlreadyExists(newGroupName))
         {
             makeToastToCenterOfScreen(getString(R.string.groupNameExists));
