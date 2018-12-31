@@ -51,7 +51,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToGroupScreen = new Intent(context, GroupActivity.class);
+                Intent goToGroupScreen = new Intent(context, InsideGroupActivity.class);
                 goToGroupScreen.putExtra("groupName", newGroup.getName());
                 goToGroupScreen.putExtra("groupMembers", newGroup.getMembersString());
                 context.startActivity(goToGroupScreen);
