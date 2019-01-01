@@ -41,9 +41,9 @@ public class InsideGroupActivity extends AppCompatActivity {
         View layout = findViewById(R.id.calendarView);
         DateSetter.setDatesToDisplay(layout);
         setToolbar();
-        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount);
+        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout);
         calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
-        calendarSlotsHandler.setListeners(layout, DateSetter.getDatesToDisplay());
+        calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
     }
