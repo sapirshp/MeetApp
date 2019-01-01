@@ -40,37 +40,51 @@
             />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:id="@+id/option1"
             android:text="option1"
             android:layout_margin="10dp"
-            android:textStyle="bold"
             android:background="@drawable/custom_border"
 
             />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:id="@+id/option2"
             android:text="option2"
             android:layout_margin="10dp"
-            android:textStyle="bold"
             android:background="@drawable/custom_border"
 
             />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:id="@+id/option3"
             android:text="option3"
             android:layout_margin="10dp"
-            android:textStyle="bold"
             android:background="@drawable/custom_border"
 
             />
+
+
+
+        <Button
+            android:id="@+id/CreateMeetupBtn"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/disabled_button_background"
+            android:text="Set Meetup!"
+            android:textColor="@color/blueDark"
+            android:textSize="13sp" />
 
 
 

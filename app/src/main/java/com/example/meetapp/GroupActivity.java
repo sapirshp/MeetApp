@@ -31,6 +31,8 @@ public class GroupActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
+    boolean isTopChoicePressed = false;
+
 
     public GroupActivity(){
         DateSetter.createIntToDayMap();
@@ -99,7 +101,7 @@ public class GroupActivity extends AppCompatActivity {
 //                 menuHandler.handleTopSuggestions(this, calendarSlotsHandler, topSuggestionsDialog);
 
 
-                ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
+//                ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
                 topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
 
                 // exit btn
@@ -112,19 +114,54 @@ public class GroupActivity extends AppCompatActivity {
                     }
                 });
 
-                //
-                final Button option1, option2, option3;
+                final Button option1, option2, option3, createMeeting;
                 option1 = topSuggestionsDialog.findViewById(R.id.option1);
                 option2 = topSuggestionsDialog.findViewById(R.id.option2);
                 option3 = topSuggestionsDialog.findViewById(R.id.option3);
+                createMeeting = topSuggestionsDialog.findViewById(R.id.CreateMeetupBtn);
 
-                option1.setText(stringTopSuggestionsArr.get(0));
-                option2.setText(stringTopSuggestionsArr.get(1));
-                option3.setText(stringTopSuggestionsArr.get(2));
+                option1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setSingleChoiceAndDisableOthers(option1, option2, option3, createMeeting);
+                    }
+                });
+
+                option2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setSingleChoiceAndDisableOthers(option2, option1, option3, createMeeting);
+                    }
+                });
+
+
+                option3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setSingleChoiceAndDisableOthers(option3, option2, option1, createMeeting);
+                    }
+                });
+
+                createMeeting.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(isTopChoicePressed)
+                        {
+                            Toast.makeText(v.getContext(), "create group implementation - to come...", Toast.LENGTH_SHORT).show();
+                            // implement here
+                        }
+                    }
+                });
 
 
 
-//        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+                // after sapir's fix
+//                option1.setText(stringTopSuggestionsArr.get(0));
+//                option2.setText(stringTopSuggestionsArr.get(1));
+//                option3.setText(stringTopSuggestionsArr.get(2));
+                option1.setText("#1:" + "Monday Morning");
+                option2.setText("#2:" + "Sunday Afternoon");
+                option3.setText("#3:" + "Saturday Evening");
 
 
                 topSuggestionsDialog.show();
@@ -136,6 +173,17 @@ public class GroupActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void setSingleChoiceAndDisableOthers(Button makeGreen, Button disable1, Button disable2,
+                                                 Button createMeeting)
+    {
+        makeGreen.setBackgroundResource(R.drawable.green_round_background);
+        disable1.setBackgroundResource(R.drawable.custom_border);
+        disable2.setBackgroundResource(R.drawable.custom_border);
+        createMeeting.setBackgroundResource(R.drawable.green_round_background);
+        isTopChoicePressed = true;
+
     }
 
     // ============== Contacts Handlers ======================
