@@ -9,10 +9,10 @@ public class TimeSlot {
     private String hour;
     private int chosenCounter;
 
-    TimeSlot(Button button, String date){
+    TimeSlot(Button button, String date, String hour){
         this.timeSlotBtn = button;
         this.date = date;
-        this.hour = timeSlotBtn.getText().toString();
+        this.hour = hour;
         isClicked = false;
         chosenCounter = 0;
     }
