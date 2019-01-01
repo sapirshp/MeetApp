@@ -9,18 +9,20 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.Menu;
-import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
 public class GroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
+    Dialog topSuggestionsDialog;
     Dialog addMemberDialog;
     private MenuHandler menuHandler;
     private ArrayList<String> membersToAdd = new ArrayList<>();
@@ -46,13 +48,14 @@ public class GroupActivity extends AppCompatActivity {
         calendarSlotsHandler.setListeners(layout, DateSetter.getDatesToDisplay());
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
+        topSuggestionsDialog = new Dialog(this);
     }
 
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        menuHandler = new MenuHandler(addMemberDialog, membersAmount, groupMembers);
+        menuHandler = new MenuHandler(addMemberDialog, membersAmount, groupMembers, topSuggestionsDialog);
         return true;
     }
 
@@ -93,6 +96,41 @@ public class GroupActivity extends AppCompatActivity {
                 break;
             case R.id.createMeetingBtn:
                 // TODO: CHENS CODE HERE
+//                 menuHandler.handleTopSuggestions(this, calendarSlotsHandler, topSuggestionsDialog);
+
+
+                ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
+                topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
+
+                // exit btn
+                TextView exitPopupBtn;
+                exitPopupBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
+                exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        topSuggestionsDialog.dismiss();
+                    }
+                });
+
+                //
+                final Button option1, option2, option3;
+                option1 = topSuggestionsDialog.findViewById(R.id.option1);
+                option2 = topSuggestionsDialog.findViewById(R.id.option2);
+                option3 = topSuggestionsDialog.findViewById(R.id.option3);
+
+                option1.setText(stringTopSuggestionsArr.get(0));
+                option2.setText(stringTopSuggestionsArr.get(1));
+                option3.setText(stringTopSuggestionsArr.get(2));
+
+
+
+//        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+
+
+                topSuggestionsDialog.show();
+
+
+
                 break;
             default:
                 return super.onOptionsItemSelected(item);

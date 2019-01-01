@@ -18,8 +18,9 @@ import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import java.util.ArrayList;
 
- class MenuHandler {
-
+ class MenuHandler
+ {
+     private Dialog topSuggestionsDialog;
     private Dialog addMemberDialog;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
@@ -27,10 +28,11 @@ import java.util.ArrayList;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
 
 
-     MenuHandler(Dialog dialog, int memberNum, String membersNames){
-        this.addMemberDialog = dialog;
+     MenuHandler(Dialog addMemberDialog, int memberNum, String membersNames, Dialog topSuggestionsDialog){
+        this.addMemberDialog = addMemberDialog;
         this.membersAmount = memberNum;
         this.groupMembers = membersNames;
+        this.topSuggestionsDialog = topSuggestionsDialog;
     }
 
     void handleAddParticipant(Runnable showContacts, Toolbar toolbar, CalendarSlotsHandler calendarSlotsHandler)
@@ -176,4 +178,42 @@ import java.util.ArrayList;
         });
         return groupMembers;
     }
+
+    void handleTopSuggestions(Context context, final CalendarSlotsHandler calendarSlotsHandler, Dialog topSuggestionsDialog)
+    {
+//        ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
+//        topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
+//
+//        // exit btn
+//        TextView exitPopupBtn;
+//        exitPopupBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
+//        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                topSuggestionsDialog.dismiss();
+//            }
+//        });
+//
+//        //
+//        final Button option1, option2, option3;
+//        option1 = topSuggestionsDialog.findViewById(R.id.option1);
+//        option2 = topSuggestionsDialog.findViewById(R.id.option2);
+//        option3 = topSuggestionsDialog.findViewById(R.id.option3);
+//
+//        option1.setText(stringTopSuggestionsArr.get(0));
+//        option2.setText(stringTopSuggestionsArr.get(1));
+//        option3.setText(stringTopSuggestionsArr.get(2));
+//
+//
+//
+////        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+//
+//
+//        topSuggestionsDialog.show();
+
+
+    }
+
+
+
 }
