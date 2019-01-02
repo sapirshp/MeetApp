@@ -22,10 +22,13 @@ import java.util.ArrayList;
 public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
     Dialog addMemberDialog;
+    Dialog groupDetailsDialog;
+    Dialog editGroupNameDialog;
     private MenuHandler menuHandler;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
+    private String groupName;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
@@ -46,13 +49,15 @@ public class InsideGroupActivity extends AppCompatActivity {
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
+        groupDetailsDialog = new Dialog(this);
+        editGroupNameDialog = new Dialog(this);
     }
 
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        menuHandler = new MenuHandler(addMemberDialog, membersAmount, groupMembers);
+        menuHandler = new MenuHandler(addMemberDialog, groupDetailsDialog,editGroupNameDialog, membersAmount, groupMembers);
         return true;
     }
 
@@ -60,7 +65,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.groupToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            String groupName = getIntent().getExtras().getString("groupName");
+            groupName = getIntent().getExtras().getString("groupName");
             getSupportActionBar().setTitle(groupName);
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -83,7 +88,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                 }, toolbar, calendarSlotsHandler);
                 break;
             case R.id.groupDetailsBtn:
-                menuHandler.handleGroupDetails(this);
+                menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
                     menuHandler.handleResetTimeChoice(this, calendarSlotsHandler);

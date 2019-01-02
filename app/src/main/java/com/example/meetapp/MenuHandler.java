@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Parcelable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,30 +27,42 @@ import java.util.ArrayList;
  class MenuHandler {
 
     private Dialog addMemberDialog;
+    private Dialog groupDetailsDialog;
+    private Dialog editGroupName;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
 
 
-     MenuHandler(Dialog dialog, int memberNum, String membersNames){
-        this.addMemberDialog = dialog;
+     MenuHandler(Dialog addMemberDialog, Dialog groupDetailsDialog, Dialog editGroupName, int memberNum, String membersNames){
+        this.addMemberDialog = addMemberDialog;
+        this.groupDetailsDialog = groupDetailsDialog;
         this.membersAmount = memberNum;
         this.groupMembers = membersNames;
+        this.editGroupName = editGroupName;
     }
 
     void handleAddParticipant(Runnable showContacts, Toolbar toolbar, CalendarSlotsHandler calendarSlotsHandler)
     {
         addMemberDialog.setContentView(R.layout.add_member_popup);
-        handleExitPopup();
+        TextView exitPopupBtn = addMemberDialog.findViewById(R.id.addMemberExitBtn);
+        handleExitPopup(addMemberDialog, exitPopupBtn);
         showContacts.run();
         chooseMembers(toolbar, calendarSlotsHandler);
         addMemberDialog.show();
     }
 
-    void handleGroupDetails(Context context)
+    void handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar)
     {
-        Toast.makeText(context," 'Group Details' Button Pressed ", Toast.LENGTH_LONG).show();
+        groupDetailsDialog.setContentView(R.layout.group_details_popap);
+        TextView exitPopupBtn = groupDetailsDialog.findViewById(R.id.groupDetailsExitBtn);
+        handleExitPopup(groupDetailsDialog, exitPopupBtn);
+        displayGroupName(groupName);
+        displayMembersInfo(calendarSlotsHandler.getContext());
+        displayTopSelection(calendarSlotsHandler);
+        handleEditGroupName(toolbar);
+        groupDetailsDialog.show();
     }
 
 
@@ -130,17 +148,64 @@ import java.util.ArrayList;
      }
 
 
-     private void handleExitPopup()
+     private void handleExitPopup(final Dialog dialog, TextView exitBtn)
     {
-        TextView exitPopupBtn;
-        exitPopupBtn = addMemberDialog.findViewById(R.id.addMemberExitBtn);
-        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+        exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addMemberDialog.dismiss();
+                dialog.dismiss();
                 membersToAdd.clear();
             }
         });
+    }
+
+    private void handleEditGroupName(final Toolbar toolbar){
+         final Button editGroupNameBtn = groupDetailsDialog.findViewById(R.id.editGroupName);
+         editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 editGroupName.setContentView(R.layout.edit_group_name_popup);
+                 TextView exitBtn = editGroupName.findViewById(R.id.exitEditNameBtn);
+                 handleExitPopup(editGroupName, exitBtn);
+                 handleEditInput(toolbar);
+                 editGroupName.show();
+             }
+         });
+    }
+
+    private void handleEditInput(final Toolbar toolbar){
+         final Button changeNameBtn = editGroupName.findViewById(R.id.changeNameBtn);
+         EditText userInput = editGroupName.findViewById(R.id.editGroupNameInput);
+         userInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0){
+                    changeNameBtn.setBackgroundResource(R.drawable.disabled_button_background);
+                }else {
+                    changeNameBtn.setBackgroundResource(R.drawable.green_round_background);
+                    changeNameBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handleChangeNameRequest(toolbar);
+                        }
+                    });
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void handleChangeNameRequest(Toolbar toolbar){
+        EditText userInput = editGroupName.findViewById(R.id.editGroupNameInput);
+        String newGroupName = userInput.getText().toString();
+        toolbar.setTitle(newGroupName);
+        editGroupName.dismiss();
+        displayGroupName(newGroupName);
+
     }
 
     void setMembersToAdd(ArrayList<String> newMembers){
@@ -175,5 +240,36 @@ import java.util.ArrayList;
             }
         });
         return groupMembers;
+    }
+
+    private void displayMembersInfo(Context context) {
+        String[] groupMembers = this.groupMembers.split(", ");
+        createTextView("Members:", 20, context);
+        for (String member : groupMembers) {
+            createTextView(member, 18, context);
+        }
+    }
+
+    private void createTextView(String writeIn, int textSize, Context context){
+        LinearLayout membersInfo = groupDetailsDialog.findViewById(R.id.membersList);
+        TextView newTextView = new TextView(groupDetailsDialog.getContext());
+        newTextView.setText(writeIn);
+        newTextView.setTextColor(Color.BLACK);
+        newTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        newTextView.setTextSize(textSize);
+        Typeface fontTypeface = ResourcesCompat.getFont(context, R.font.poppins_light);
+        newTextView.setTypeface(fontTypeface);
+        membersInfo.addView(newTextView);
+    }
+
+    private void displayTopSelection (CalendarSlotsHandler calendarSlotsHandler){
+         TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
+         String topSelectionText = calendarSlotsHandler.displayTopSelections();
+         topSelectionInfo.setText(topSelectionText);
+    }
+
+    private void displayGroupName(String groupName) {
+        TextView groupNameInfo = groupDetailsDialog.findViewById(R.id.groupName);
+        groupNameInfo.setText(groupName);
     }
 }
