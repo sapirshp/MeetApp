@@ -23,24 +23,27 @@ import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
- class MenuHandler {
+class MenuHandler {
 
     private Dialog addMemberDialog;
     private Dialog groupDetailsDialog;
-    private Dialog editGroupName;
+    private Dialog editGroupNameDialog;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
-    private String groupMembers;
+    private List<String> groupMembers;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
+    String members = "";
 
 
-     MenuHandler(Dialog addMemberDialog, Dialog groupDetailsDialog, Dialog editGroupName, int memberNum, String membersNames){
-        this.addMemberDialog = addMemberDialog;
-        this.groupDetailsDialog = groupDetailsDialog;
-        this.membersAmount = memberNum;
+     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames){
+        this.addMemberDialog = dialogs.get("addMemberDialog");
+        this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
+        this.membersAmount = membersNames.size();
         this.groupMembers = membersNames;
-        this.editGroupName = editGroupName;
+        this.editGroupNameDialog = dialogs.get("editGroupNameDialog");
     }
 
     void handleAddParticipant(Runnable showContacts, Toolbar toolbar, CalendarSlotsHandler calendarSlotsHandler)
@@ -164,18 +167,18 @@ import java.util.ArrayList;
          editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 editGroupName.setContentView(R.layout.edit_group_name_popup);
-                 TextView exitBtn = editGroupName.findViewById(R.id.exitEditNameBtn);
-                 handleExitPopup(editGroupName, exitBtn);
+                 editGroupNameDialog.setContentView(R.layout.edit_group_name_popup);
+                 TextView exitBtn = editGroupNameDialog.findViewById(R.id.exitEditNameBtn);
+                 handleExitPopup(editGroupNameDialog, exitBtn);
                  handleEditInput(toolbar);
-                 editGroupName.show();
+                 editGroupNameDialog.show();
              }
          });
     }
 
     private void handleEditInput(final Toolbar toolbar){
-         final Button changeNameBtn = editGroupName.findViewById(R.id.changeNameBtn);
-         EditText userInput = editGroupName.findViewById(R.id.editGroupNameInput);
+         final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
+         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
          userInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -200,10 +203,10 @@ import java.util.ArrayList;
     }
 
     private void handleChangeNameRequest(Toolbar toolbar){
-        EditText userInput = editGroupName.findViewById(R.id.editGroupNameInput);
+        EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
         String newGroupName = userInput.getText().toString();
         toolbar.setTitle(newGroupName);
-        editGroupName.dismiss();
+        editGroupNameDialog.dismiss();
         displayGroupName(newGroupName);
 
     }
@@ -229,21 +232,21 @@ import java.util.ArrayList;
             public void onClick(View v) {
                 for (String memberName : membersToAdd) {
                     addMemberDialog.dismiss();
-                    groupMembers += ", " + memberName;
+                    groupMembers.add(memberName);
                 }
                 membersAmount += membersToAdd.size();
                 calendarSlotsHandler.setMembersAmount(membersAmount);
                 membersToAdd.clear();
-                toolbar.setSubtitle(groupMembers);
+                members = groupMembers.toString().substring(1,groupMembers.toString().length()-1);
+                toolbar.setSubtitle(members);
                 for (TimeSlot timeSlot : calendarSlotsHandler.getSlotSelections().keySet())
                 calendarSlotsHandler.clickedOn(timeSlot, true);
             }
         });
-        return groupMembers;
+        return members;
     }
 
     private void displayMembersInfo(Context context) {
-        String[] groupMembers = this.groupMembers.split(", ");
         createTextView("Members:", 20, context);
         for (String member : groupMembers) {
             createTextView(member, 18, context);

@@ -18,12 +18,17 @@ import android.view.Menu;
 import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
     Dialog addMemberDialog;
     Dialog groupDetailsDialog;
     Dialog editGroupNameDialog;
+    HashMap<String, Dialog> dialogs = new HashMap<>();
     private MenuHandler menuHandler;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
@@ -51,13 +56,21 @@ public class InsideGroupActivity extends AppCompatActivity {
         addMemberDialog = new Dialog(this);
         groupDetailsDialog = new Dialog(this);
         editGroupNameDialog = new Dialog(this);
+        setDialogsMap();
+    }
+
+    public void setDialogsMap(){
+        dialogs.put("addMemberDialog", addMemberDialog);
+        dialogs.put("groupDetailsDialog", groupDetailsDialog);
+        dialogs.put("editGroupNameDialog", editGroupNameDialog);
     }
 
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        menuHandler = new MenuHandler(addMemberDialog, groupDetailsDialog,editGroupNameDialog, membersAmount, groupMembers);
+        List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.split(",")));
+        menuHandler = new MenuHandler(dialogs, groupMembersList);
         return true;
     }
 

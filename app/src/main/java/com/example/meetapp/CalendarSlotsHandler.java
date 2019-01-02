@@ -146,8 +146,7 @@ class CalendarSlotsHandler {
         }
         for (int i = 0; i < iterationNumber; i++) {
             TimeSlot topSlot = (TimeSlot) slotSelections.keySet().toArray()[i];
-            topSelections = topSelections + topSlot.getDate() + " " + topSlot.getHour() + " - " +
-                    +slotSelections.get(topSlot) + "/" + membersAmount + "\n";
+            topSelections = String.format("%s %s %s - %d/%d \n", topSelections, topSlot.getDate(), topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
         }
         return topSelections;
     }
