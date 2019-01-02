@@ -18,14 +18,22 @@ import android.view.Menu;
 import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
     Dialog addMemberDialog;
+    Dialog groupDetailsDialog;
+    Dialog editGroupNameDialog;
+    HashMap<String, Dialog> dialogs = new HashMap<>();
     private MenuHandler menuHandler;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
+    private String groupName;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
@@ -46,13 +54,23 @@ public class InsideGroupActivity extends AppCompatActivity {
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
+        groupDetailsDialog = new Dialog(this);
+        editGroupNameDialog = new Dialog(this);
+        setDialogsMap();
+    }
+
+    public void setDialogsMap(){
+        dialogs.put("addMemberDialog", addMemberDialog);
+        dialogs.put("groupDetailsDialog", groupDetailsDialog);
+        dialogs.put("editGroupNameDialog", editGroupNameDialog);
     }
 
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        menuHandler = new MenuHandler(addMemberDialog, membersAmount, groupMembers);
+        List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.split(",")));
+        menuHandler = new MenuHandler(dialogs, groupMembersList);
         return true;
     }
 
@@ -60,7 +78,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.groupToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            String groupName = getIntent().getExtras().getString("groupName");
+            groupName = getIntent().getExtras().getString("groupName");
             getSupportActionBar().setTitle(groupName);
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -83,7 +101,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                 }, toolbar, calendarSlotsHandler);
                 break;
             case R.id.groupDetailsBtn:
-                menuHandler.handleGroupDetails(this);
+                menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
                     menuHandler.handleResetTimeChoice(this, calendarSlotsHandler);
