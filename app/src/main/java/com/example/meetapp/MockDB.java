@@ -28,8 +28,8 @@ public class MockDB {
         }
         for (int id : buttonsIdForMockDB.keySet()) {
             final Button timeSlotButton = v.findViewById(id);
-            String indexOfDate = timeSlotButton.getTag().toString();
-            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, datesToDisplay.get(indexOfDate), buttonsIdForMockDB.get(id));
+            int indexOfDate = Integer.valueOf(timeSlotButton.getTag().toString());
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, datesToDisplay.get(datesToDisplay.keySet().toArray()[indexOfDate]), buttonsIdForMockDB.get(id));
             calendarSlots.add(timeSlot);
         }
         for (TimeSlot ts : calendarSlots){
