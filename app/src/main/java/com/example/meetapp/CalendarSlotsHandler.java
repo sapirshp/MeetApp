@@ -53,7 +53,9 @@ class CalendarSlotsHandler {
         for (int id : buttonsIdForListeners.keySet()) {
             final Button timeSlotButton = view.findViewById(id);
             int indexOfDate = Integer.valueOf(timeSlotButton.getTag().toString());
-            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, datesToDisplay.get(datesToDisplay.keySet().toArray()[indexOfDate]), buttonsIdForListeners.get(id));
+            String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[indexOfDate]);
+            String hour = buttonsIdForListeners.get(id);
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour);
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
