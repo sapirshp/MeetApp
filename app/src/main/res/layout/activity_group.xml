@@ -107,7 +107,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="1"
+                android:tag="0"
                 android:text="" />
 
             <Button
@@ -116,7 +116,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="1"
+                android:tag="0"
                 android:text="" />
 
             <Button
@@ -125,7 +125,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="1"
+                android:tag="0"
                 android:text="" />
         </LinearLayout>
 
@@ -164,7 +164,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="2"
+                android:tag="1"
                 android:text="" />
 
             <Button
@@ -173,7 +173,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="2"
+                android:tag="1"
                 android:text="" />
 
             <Button
@@ -182,7 +182,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="2"
+                android:tag="1"
                 android:text="" />
         </LinearLayout>
 
@@ -221,7 +221,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="3"
+                android:tag="2"
                 android:text="" />
 
             <Button
@@ -230,7 +230,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="3"
+                android:tag="2"
                 android:text="" />
 
             <Button
@@ -239,7 +239,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="3"
+                android:tag="2"
                 android:text="" />
         </LinearLayout>
 
@@ -278,7 +278,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="4"
+                android:tag="3"
                 android:text="" />
 
             <Button
@@ -287,7 +287,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="4"
+                android:tag="3"
                 android:text="" />
 
             <Button
@@ -296,7 +296,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="4"
+                android:tag="3"
                 android:text="" />
         </LinearLayout>
 
@@ -335,7 +335,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="5"
+                android:tag="4"
                 android:text="" />
 
             <Button
@@ -344,7 +344,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="5"
+                android:tag="4"
                 android:text="" />
 
             <Button
@@ -353,7 +353,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="5"
+                android:tag="4"
                 android:text="" />
         </LinearLayout>
 
@@ -392,7 +392,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="6"
+                android:tag="5"
                 android:text="" />
 
             <Button
@@ -401,7 +401,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="6"
+                android:tag="5"
                 android:text="" />
 
             <Button
@@ -410,7 +410,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="6"
+                android:tag="5"
                 android:text="" />
         </LinearLayout>
 
@@ -448,7 +448,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="7"
+                android:tag="6"
                 android:text="" />
 
             <Button
@@ -457,7 +457,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="7"
+                android:tag="6"
                 android:text="" />
 
             <Button
@@ -466,7 +466,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/custom_border"
-                android:tag="7"
+                android:tag="6"
                 android:text="" />
         </LinearLayout>
 

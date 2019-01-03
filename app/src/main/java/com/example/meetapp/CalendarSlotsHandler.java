@@ -52,8 +52,10 @@ class CalendarSlotsHandler {
     void setListeners(Map<String, String> datesToDisplay) {
         for (int id : buttonsIdForListeners.keySet()) {
             final Button timeSlotButton = view.findViewById(id);
-            String indexOfDate = timeSlotButton.getTag().toString();
-            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, datesToDisplay.get(indexOfDate), buttonsIdForListeners.get(id));
+            int indexOfDate = Integer.valueOf(timeSlotButton.getTag().toString());
+            String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[indexOfDate]);
+            String hour = buttonsIdForListeners.get(id);
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour);
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -78,7 +80,7 @@ class CalendarSlotsHandler {
         if (!isMemberAmountRefresh) {
             setSelectionNumber(timeSlot, true);
             timeSlot.setClicked(true);
-            userChooseMark = context.getDrawable(R.drawable.v);
+            userChooseMark = context.getDrawable(R.drawable.v_green);
             userClicks.add(timeSlot);
         }
         if (getSelectionNumber(timeSlot) > 0) {
@@ -88,9 +90,9 @@ class CalendarSlotsHandler {
                 timeSlot.getButton().setText(textWithSelectionNumber);
             }
             if (isMemberAmountRefresh) {
-                userChooseMark = context.getDrawable(R.drawable.v_empty);
+                userChooseMark = context.getDrawable(R.drawable.empty);
                 if (containsInUserClicked(timeSlot)){
-                    userChooseMark = context.getDrawable(R.drawable.v);
+                    userChooseMark = context.getDrawable(R.drawable.v_green);
                 }
             }
             float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
@@ -110,7 +112,7 @@ class CalendarSlotsHandler {
                 textWithSelectionNumber = getSelectionNumber(timeSlot) +
                         "/" + membersAmount;
             }
-            userChooseMark = context.getDrawable(R.drawable.v_empty);
+            userChooseMark = context.getDrawable(R.drawable.empty);
         }
         else {
             bgColor = Color.WHITE;
@@ -139,6 +141,7 @@ class CalendarSlotsHandler {
     }
 
     String displayTopSelections() {
+        slotSelections = sortByValue(slotSelections);
         String topSelections = "Top Suggesions:\n";
         int iterationNumber = topSelectionToDisplay;
         if (iterationNumber > slotSelections.size()) {
@@ -208,7 +211,7 @@ class CalendarSlotsHandler {
                             "/" + membersAmount;
                     ts.getButton().setText(textWithSelectionNumber);
                 }
-                userChooseMark = context.getDrawable(R.drawable.v_empty);
+                userChooseMark = context.getDrawable(R.drawable.empty);
                 float percentage = ((float) slotSelections.get(ts) / (float) membersAmount) * 100;
                 bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
             } else {
