@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GroupsDisplayActivity"
-    tools:layout_editor_absoluteY="81dp"
     android:background="@color/blueDark"
-    >
+    tools:context=".GroupsDisplayActivity"
+    tools:layout_editor_absoluteY="81dp">
 
     <include
         android:id="@+id/mainToolbar"
-        layout="@layout/toolbar"/>
+        layout="@layout/toolbar" />
 
     <Button
         android:id="@+id/AddGroupBtn"
@@ -23,7 +22,7 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/green_round_background"
         android:gravity="center_horizontal"
-        android:onClick="showNewGroupPopup"
+        android:onClick="handleAddNewMembers"
         android:padding="15dp"
         android:text="+"
         android:textColor="@color/colorWhite"
@@ -41,7 +40,13 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/mainToolbar">
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainToolbar"
+        app:layout_constraintVertical_bias="0.0">
 
 
     </android.support.v7.widget.RecyclerView>
