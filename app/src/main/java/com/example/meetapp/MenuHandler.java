@@ -15,6 +15,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -216,17 +217,17 @@ class MenuHandler {
     }
 
     void setButtonDisabled() {
-        Button okButton = addMemberDialog.findViewById(R.id.chooseMembers);
+        ImageButton okButton = addMemberDialog.findViewById(R.id.chooseMembers);
         okButton.setBackgroundResource(R.drawable.disabled_button_background);
     }
 
     void setButtonEnabled() {
-        Button okButton = addMemberDialog.findViewById(R.id.chooseMembers);
+        ImageButton okButton = addMemberDialog.findViewById(R.id.chooseMembers);
         okButton.setBackgroundResource(R.drawable.green_round_background);
     }
 
     String chooseMembers(final Toolbar toolbar, final CalendarSlotsHandler calendarSlotsHandler){
-        Button okBtn = addMemberDialog.findViewById(R.id.chooseMembers);
+        ImageButton okBtn = addMemberDialog.findViewById(R.id.chooseMembers);
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
