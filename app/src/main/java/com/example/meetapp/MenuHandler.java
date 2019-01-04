@@ -18,14 +18,19 @@ import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 
 import java.util.ArrayList;
 
+
  class MenuHandler
  {
+     private final int NO_OPTION_CHOSEN = -1;
+     private int currentMeetingChoice = NO_OPTION_CHOSEN;
      private Dialog topSuggestionsDialog;
     private Dialog addMemberDialog;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
+     private final int NO_SLOTS_CHOSEN = 0;
+
 
 
      MenuHandler(Dialog addMemberDialog, int memberNum, String membersNames, Dialog topSuggestionsDialog){
@@ -179,41 +184,149 @@ import java.util.ArrayList;
         return groupMembers;
     }
 
-    void handleTopSuggestions(Context context, final CalendarSlotsHandler calendarSlotsHandler, Dialog topSuggestionsDialog)
+
+    void handleCreateMeeting(final Activity activity, final CalendarSlotsHandler calendarSlotsHandler)
     {
-//        ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
-//        topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
-//
-//        // exit btn
-//        TextView exitPopupBtn;
-//        exitPopupBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
-//        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                topSuggestionsDialog.dismiss();
-//            }
-//        });
-//
-//        //
-//        final Button option1, option2, option3;
-//        option1 = topSuggestionsDialog.findViewById(R.id.option1);
-//        option2 = topSuggestionsDialog.findViewById(R.id.option2);
-//        option3 = topSuggestionsDialog.findViewById(R.id.option3);
-//
-//        option1.setText(stringTopSuggestionsArr.get(0));
-//        option2.setText(stringTopSuggestionsArr.get(1));
-//        option3.setText(stringTopSuggestionsArr.get(2));
-//
-//
-//
-////        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
-//
-//
-//        topSuggestionsDialog.show();
-
-
+        ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
+        int numOfOptionsToDisplay = stringTopSuggestionsArr.size();
+        if(numOfOptionsToDisplay == NO_SLOTS_CHOSEN) {
+            Toast.makeText(activity, R.string.noTimeSlotsSelected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
+        handleExitBtnOfCreateMeetingPopup();
+        Button[] allOptionsLst = createAllOptionsLst();
+        final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst,
+                numOfOptionsToDisplay);
+        setTextForOptions(allOptionsLst);   // TODO: CHANGE TO currentOptionLst AFTER USING SAPIR'S FUNCTION
+        handleAllOptionPresses(currentOptionLst, allOptionsLst);
+        handleCreateMeetingBtnPress(activity, currentOptionLst.get(currentOptionLst.size()-1));
+        topSuggestionsDialog.show();
     }
 
+
+    private Button[] createAllOptionsLst()
+    {
+        final Button option1, option2, option3, createMeeting;
+        option1 = topSuggestionsDialog.findViewById(R.id.option1);
+        option2 = topSuggestionsDialog.findViewById(R.id.option2);
+        option3 = topSuggestionsDialog.findViewById(R.id.option3);
+        createMeeting = topSuggestionsDialog.findViewById(R.id.CreateMeetupBtn);
+        return new Button[]{option1, option2, option3, createMeeting};
+    }
+
+
+    private ArrayList<Button> activateOnlyRelevantButtons(Button[] allOptionsLst, int numOfOptionsToDisplay)
+    {
+        final ArrayList<Button> currentOptionLst = new ArrayList<>();
+        Button createMeeting = allOptionsLst[3];
+        // build button list according to numOfOptionsToDisplay
+        switch (numOfOptionsToDisplay){
+            case 3:
+                currentOptionLst.add(allOptionsLst[2]);
+            case 2:
+                currentOptionLst.add(0, allOptionsLst[1]);
+            case 1:
+                currentOptionLst.add(0, allOptionsLst[0]);
+            default:
+                currentOptionLst.add(createMeeting);
+        }
+        // show only the relevant buttons
+        switch(numOfOptionsToDisplay)
+        {
+            case 1:
+                allOptionsLst[1].setVisibility(View.GONE);
+            case 2:
+                allOptionsLst[2].setVisibility(View.GONE);
+        }
+        return currentOptionLst;
+    }
+
+
+    private void setTextForOptions(Button[] AllOptionsLst)
+    {
+        // TODO: GET REAL CHOICES FROM SAPIR'S FUNCTION
+        AllOptionsLst[0].setText("#1:" + "Monday Morning");
+        AllOptionsLst[1].setText("#2:" + "Sunday Afternoon");
+        AllOptionsLst[2].setText("#3:" + "Saturday Evening");
+    }
+
+
+    private void handleAllOptionPresses(final ArrayList<Button> currentOptionLst, Button[] allOptionsLst)
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            final int curOptionNum = i;
+            allOptionsLst[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleOptionPress(curOptionNum, currentOptionLst);
+                }
+            });
+        }
+    }
+
+
+     private void handleExitBtnOfCreateMeetingPopup() {
+         TextView exitPopupBtn;
+         exitPopupBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
+         exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 topSuggestionsDialog.dismiss();
+             }
+         });
+     }
+
+
+     private void handleOptionPress(int newButtonPressed, ArrayList<Button> btnList)
+     {
+         if(newButtonPressed == currentMeetingChoice)
+         {
+             turnOffCurrentBtn(newButtonPressed, btnList);
+         }
+         else{
+             setSingleChoiceAndDisableOthers(newButtonPressed, btnList);
+         }
+     }
+
+
+     private void turnOffCurrentBtn(int newButtonPressed, ArrayList<Button> btnList)
+     {
+         btnList.get(newButtonPressed).setBackgroundResource(R.drawable.custom_border);
+         btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.disabled_button_background);
+         currentMeetingChoice = NO_OPTION_CHOSEN;
+     }
+
+
+     private void setSingleChoiceAndDisableOthers(int buttonToTurnOn, ArrayList<Button> btnList)
+     {
+         if(currentMeetingChoice != NO_OPTION_CHOSEN) {
+             btnList.get(currentMeetingChoice).setBackgroundResource(R.drawable.custom_border);
+         }
+         btnList.get(buttonToTurnOn).setBackgroundResource(R.drawable.green_regular_background);
+
+         btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.green_round_background);
+         currentMeetingChoice = buttonToTurnOn;
+
+     }
+
+
+     private void handleCreateMeetingBtnPress(final Activity activity, android.widget.Button createMeeting)
+     {
+         createMeeting.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 if(currentMeetingChoice != NO_OPTION_CHOSEN)
+                 {
+//                    cretaeMeetup();       //TODO: MEETUP IMPLEMENTATION HERE
+                     int currentRealChoice = currentMeetingChoice + 1;
+                     Toast.makeText(activity, "You Chose Option" + currentRealChoice, Toast.LENGTH_SHORT).show();
+
+                 }
+             }
+         });
+     }
 
 
 }

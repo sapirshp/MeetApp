@@ -32,5 +32,7 @@
     <string name="leaveGroupMsg">Leave Group</string>
     <string name="ContactsPermissionError">Until you grant the permission, we can not display the contacts</string>
     <string name="resetEmptySelection">No Selection To Reset</string>
+    <string name="noTimeSlotsSelected">No Time Slots Selected</string>
+
 
 </resources>
