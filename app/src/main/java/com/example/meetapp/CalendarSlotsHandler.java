@@ -140,18 +140,22 @@ class CalendarSlotsHandler {
         return sortedList;
     }
 
-    String displayTopSelections() {
+    public ArrayList<String> displayTopSelections(){
         slotSelections = sortByValue(slotSelections);
-        String topSelections = "Top Suggesions:\n";
+        ArrayList<String> topSuggestions = new ArrayList<>();
         int iterationNumber = topSelectionToDisplay;
         if (iterationNumber > slotSelections.size()) {
             iterationNumber = slotSelections.size();
         }
         for (int i = 0; i < iterationNumber; i++) {
+            String currentSlot = "";
             TimeSlot topSlot = (TimeSlot) slotSelections.keySet().toArray()[i];
-            topSelections = String.format("%s %s %s - %d/%d \n", topSelections, topSlot.getDate(), topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
+            currentSlot = String.format("%s%s %s - %d/%d\n", currentSlot, topSlot.getDate(), topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
+            if (getSelectionNumber(topSlot) > 0) {
+                topSuggestions.add(currentSlot);
+            }
         }
-        return topSelections;
+        return topSuggestions;
     }
 
     HashMap<TimeSlot, Integer> getSlotSelections() {

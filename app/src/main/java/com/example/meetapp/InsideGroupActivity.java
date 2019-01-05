@@ -9,13 +9,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.Menu;
-import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +25,7 @@ import java.util.List;
 
 public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
+    Dialog topSuggestionsDialog;
     Dialog addMemberDialog;
     Dialog groupDetailsDialog;
     Dialog editGroupNameDialog;
@@ -37,6 +38,8 @@ public class InsideGroupActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
+    boolean isTopChoicePressed = false;
+
 
     public InsideGroupActivity(){
         DateSetter.createIntToDayMap();
@@ -54,6 +57,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
+        topSuggestionsDialog = new Dialog(this);
         groupDetailsDialog = new Dialog(this);
         editGroupNameDialog = new Dialog(this);
         setDialogsMap();
@@ -63,6 +67,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         dialogs.put("addMemberDialog", addMemberDialog);
         dialogs.put("groupDetailsDialog", groupDetailsDialog);
         dialogs.put("editGroupNameDialog", editGroupNameDialog);
+        dialogs.put("topSuggestionsDialog", topSuggestionsDialog);
     }
 
     // ================= Toolbar and Menu ==================
@@ -109,11 +114,15 @@ public class InsideGroupActivity extends AppCompatActivity {
             case R.id.exitGroupBtn:
                 menuHandler.handleExitGroup(this);
                 break;
+            case R.id.createMeetingBtn:
+                menuHandler.handleCreateMeeting(this, calendarSlotsHandler);
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
     }
+
 
     // ============== Contacts Handlers ======================
 

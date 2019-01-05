@@ -27,8 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-class MenuHandler {
-
+ class MenuHandler {
+    private final int NO_OPTION_CHOSEN = -1;
+    private int currentMeetingChoice = NO_OPTION_CHOSEN;
+    private Dialog topSuggestionsDialog;
     private Dialog addMemberDialog;
     private Dialog groupDetailsDialog;
     private Dialog editGroupNameDialog;
@@ -37,6 +39,7 @@ class MenuHandler {
     private List<String> groupMembers;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
     String members = "";
+     private final int NO_SLOTS_CHOSEN = 0;
 
 
      MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames){
@@ -44,6 +47,7 @@ class MenuHandler {
         this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
         this.membersAmount = membersNames.size();
         this.groupMembers = membersNames;
+        this.topSuggestionsDialog = dialogs.get("topSuggestionsDialog");
         this.editGroupNameDialog = dialogs.get("editGroupNameDialog");
     }
 
@@ -268,7 +272,11 @@ class MenuHandler {
 
     private void displayTopSelection (CalendarSlotsHandler calendarSlotsHandler){
          TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
-         String topSelectionText = calendarSlotsHandler.displayTopSelections();
+         ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
+         String topSelectionText = "Suggestions:";
+         for (String suggestion: topSelections){
+             topSelectionText = String.format("%s%s", topSelectionText, suggestion);
+         }
          topSelectionInfo.setText(topSelectionText);
     }
 
@@ -276,4 +284,133 @@ class MenuHandler {
         TextView groupNameInfo = groupDetailsDialog.findViewById(R.id.groupName);
         groupNameInfo.setText(groupName);
     }
+
+
+    void handleCreateMeeting(final Activity activity, final CalendarSlotsHandler calendarSlotsHandler)
+    {
+        ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
+        int numOfOptionsToDisplay = stringTopSuggestionsArr.size();
+        if(numOfOptionsToDisplay == NO_SLOTS_CHOSEN) {
+            Toast.makeText(activity, R.string.noTimeSlotsSelected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
+        TextView exitBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
+        handleExitPopup(topSuggestionsDialog, exitBtn);
+        Button[] allOptionsLst = createAllOptionsLst();
+        final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst,
+                numOfOptionsToDisplay);
+        setTextForOptions(currentOptionLst, calendarSlotsHandler);
+        handleAllOptionPresses(currentOptionLst, allOptionsLst);
+        handleCreateMeetingBtnPress(activity, currentOptionLst.get(currentOptionLst.size()-1));
+        topSuggestionsDialog.show();
+    }
+
+
+    private Button[] createAllOptionsLst()
+    {
+        final Button option1, option2, option3, createMeeting;
+        option1 = topSuggestionsDialog.findViewById(R.id.option1);
+        option2 = topSuggestionsDialog.findViewById(R.id.option2);
+        option3 = topSuggestionsDialog.findViewById(R.id.option3);
+        createMeeting = topSuggestionsDialog.findViewById(R.id.CreateMeetupBtn);
+        return new Button[]{option1, option2, option3, createMeeting};
+    }
+
+
+    private ArrayList<Button> activateOnlyRelevantButtons(Button[] allOptionsLst, int numOfOptionsToDisplay)
+    {
+        final ArrayList<Button> currentOptionLst = new ArrayList<>();
+        Button createMeeting = allOptionsLst[3];
+        // build button list according to numOfOptionsToDisplay
+        switch (numOfOptionsToDisplay){
+            case 3:
+                currentOptionLst.add(allOptionsLst[2]);
+            case 2:
+                currentOptionLst.add(0, allOptionsLst[1]);
+            case 1:
+                currentOptionLst.add(0, allOptionsLst[0]);
+            default:
+                currentOptionLst.add(createMeeting);
+        }
+        // show only the relevant buttons
+        switch(numOfOptionsToDisplay)
+        {
+            case 1:
+                allOptionsLst[1].setVisibility(View.GONE);
+            case 2:
+                allOptionsLst[2].setVisibility(View.GONE);
+        }
+        return currentOptionLst;
+    }
+
+
+    private void setTextForOptions(ArrayList<Button> buttonsSuggestion, CalendarSlotsHandler calendarSlotsHandler)
+    {
+        ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
+        for (int i = 0; i< buttonsSuggestion.size()-1; i++){
+            buttonsSuggestion.get(i).setText(topSelections.get(i));
+        }
+    }
+
+
+    private void handleAllOptionPresses(final ArrayList<Button> currentOptionLst, Button[] allOptionsLst)
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            final int curOptionNum = i;
+            allOptionsLst[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleOptionPress(curOptionNum, currentOptionLst);
+                }
+            });
+        }
+    }
+
+     private void handleOptionPress(int newButtonPressed, ArrayList<Button> btnList)
+     {
+         if(newButtonPressed == currentMeetingChoice)
+         {
+             turnOffCurrentBtn(newButtonPressed, btnList);
+         }
+         else{
+             setSingleChoiceAndDisableOthers(newButtonPressed, btnList);
+         }
+     }
+
+
+     private void turnOffCurrentBtn(int newButtonPressed, ArrayList<Button> btnList)
+     {
+         btnList.get(newButtonPressed).setBackgroundResource(R.drawable.custom_border);
+         btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.disabled_button_background);
+         currentMeetingChoice = NO_OPTION_CHOSEN;
+     }
+
+
+     private void setSingleChoiceAndDisableOthers(int buttonToTurnOn, ArrayList<Button> btnList)
+     {
+         if(currentMeetingChoice != NO_OPTION_CHOSEN) {
+             btnList.get(currentMeetingChoice).setBackgroundResource(R.drawable.custom_border);
+         }
+         btnList.get(buttonToTurnOn).setBackgroundResource(R.drawable.green_regular_background);
+         btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.green_round_background);
+         currentMeetingChoice = buttonToTurnOn;
+     }
+
+
+     private void handleCreateMeetingBtnPress(final Activity activity, android.widget.Button createMeeting)
+     {
+         createMeeting.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 if(currentMeetingChoice != NO_OPTION_CHOSEN) {
+//                    cretaeMeetup();       //TODO: MEETUP IMPLEMENTATION HERE
+                     int currentRealChoice = currentMeetingChoice + 1;
+                     Toast.makeText(activity, "You Chose Option" + currentRealChoice,
+                             Toast.LENGTH_SHORT).show();
+                 }
+             }
+         });
+     }
 }
