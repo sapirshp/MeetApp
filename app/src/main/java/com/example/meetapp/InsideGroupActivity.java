@@ -18,22 +18,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
-public class GroupActivity extends AppCompatActivity {
+public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupActionsDialog;
     Dialog topSuggestionsDialog;
     Dialog addMemberDialog;
+    Dialog groupDetailsDialog;
+    Dialog editGroupNameDialog;
+    HashMap<String, Dialog> dialogs = new HashMap<>();
     private MenuHandler menuHandler;
     private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
+    private String groupName;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
     boolean isTopChoicePressed = false;
 
 
-    public GroupActivity(){
+    public InsideGroupActivity(){
         DateSetter.createIntToDayMap();
     }
 
@@ -44,19 +52,30 @@ public class GroupActivity extends AppCompatActivity {
         View layout = findViewById(R.id.calendarView);
         DateSetter.setDatesToDisplay(layout);
         setToolbar();
-        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount);
+        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout);
         calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
-        calendarSlotsHandler.setListeners(layout, DateSetter.getDatesToDisplay());
+        calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
         topSuggestionsDialog = new Dialog(this);
+        groupDetailsDialog = new Dialog(this);
+        editGroupNameDialog = new Dialog(this);
+        setDialogsMap();
+    }
+
+    public void setDialogsMap(){
+        dialogs.put("addMemberDialog", addMemberDialog);
+        dialogs.put("groupDetailsDialog", groupDetailsDialog);
+        dialogs.put("editGroupNameDialog", editGroupNameDialog);
+        dialogs.put("topSuggestionsDialog"", topSuggestionsDialog)
     }
 
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        menuHandler = new MenuHandler(addMemberDialog, membersAmount, groupMembers, topSuggestionsDialog);
+        List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.split(",")));
+        menuHandler = new MenuHandler(dialogs, groupMembersList);
         return true;
     }
 
@@ -64,7 +83,7 @@ public class GroupActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.groupToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            String groupName = getIntent().getExtras().getString("groupName");
+            groupName = getIntent().getExtras().getString("groupName");
             getSupportActionBar().setTitle(groupName);
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -87,7 +106,7 @@ public class GroupActivity extends AppCompatActivity {
                 }, toolbar, calendarSlotsHandler);
                 break;
             case R.id.groupDetailsBtn:
-                menuHandler.handleGroupDetails(this);
+                menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
                     menuHandler.handleResetTimeChoice(this, calendarSlotsHandler);
