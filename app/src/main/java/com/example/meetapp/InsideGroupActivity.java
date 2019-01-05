@@ -67,7 +67,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         dialogs.put("addMemberDialog", addMemberDialog);
         dialogs.put("groupDetailsDialog", groupDetailsDialog);
         dialogs.put("editGroupNameDialog", editGroupNameDialog);
-        dialogs.put("topSuggestionsDialog"", topSuggestionsDialog)
+        dialogs.put("topSuggestionsDialog", topSuggestionsDialog);
     }
 
     // ================= Toolbar and Menu ==================

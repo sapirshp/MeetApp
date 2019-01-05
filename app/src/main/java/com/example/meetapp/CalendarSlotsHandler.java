@@ -151,7 +151,9 @@ class CalendarSlotsHandler {
             String currentSlot = "";
             TimeSlot topSlot = (TimeSlot) slotSelections.keySet().toArray()[i];
             currentSlot = String.format("%s%s %s - %d/%d\n", currentSlot, topSlot.getDate(), topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
-            topSuggestions.add(currentSlot);
+            if (getSelectionNumber(topSlot) > 0) {
+                topSuggestions.add(currentSlot);
+            }
         }
         return topSuggestions;
     }

@@ -275,7 +275,7 @@ import java.util.List;
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
          String topSelectionText = "Suggestions:";
          for (String suggestion: topSelections){
-             topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
+             topSelectionText = String.format("%s%s", topSelectionText, suggestion);
          }
          topSelectionInfo.setText(topSelectionText);
     }
@@ -295,11 +295,12 @@ import java.util.List;
             return;
         }
         topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
-        handleExitBtnOfCreateMeetingPopup();
+        TextView exitBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
+        handleExitPopup(topSuggestionsDialog, exitBtn);
         Button[] allOptionsLst = createAllOptionsLst();
         final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst,
                 numOfOptionsToDisplay);
-        setTextForOptions(allOptionsLst);   // TODO: CHANGE TO currentOptionLst AFTER USING SAPIR'S FUNCTION
+        setTextForOptions(currentOptionLst, calendarSlotsHandler);
         handleAllOptionPresses(currentOptionLst, allOptionsLst);
         handleCreateMeetingBtnPress(activity, currentOptionLst.get(currentOptionLst.size()-1));
         topSuggestionsDialog.show();
@@ -344,12 +345,12 @@ import java.util.List;
     }
 
 
-    private void setTextForOptions(Button[] AllOptionsLst)
+    private void setTextForOptions(ArrayList<Button> buttonsSuggestion, CalendarSlotsHandler calendarSlotsHandler)
     {
-        // TODO: GET REAL CHOICES FROM SAPIR'S FUNCTION
-        AllOptionsLst[0].setText("#1:" + "Monday Morning");
-        AllOptionsLst[1].setText("#2:" + "Sunday Afternoon");
-        AllOptionsLst[2].setText("#3:" + "Saturday Evening");
+        ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
+        for (int i = 0; i< buttonsSuggestion.size()-1; i++){
+            buttonsSuggestion.get(i).setText(topSelections.get(i));
+        }
     }
 
 
@@ -366,19 +367,6 @@ import java.util.List;
             });
         }
     }
-
-
-     private void handleExitBtnOfCreateMeetingPopup() {
-         TextView exitPopupBtn;
-         exitPopupBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
-         exitPopupBtn.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 topSuggestionsDialog.dismiss();
-             }
-         });
-     }
-
 
      private void handleOptionPress(int newButtonPressed, ArrayList<Button> btnList)
      {
@@ -416,8 +404,7 @@ import java.util.List;
          createMeeting.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-                 if(currentMeetingChoice != NO_OPTION_CHOSEN)
-                 {
+                 if(currentMeetingChoice != NO_OPTION_CHOSEN) {
 //                    cretaeMeetup();       //TODO: MEETUP IMPLEMENTATION HERE
                      int currentRealChoice = currentMeetingChoice + 1;
                      Toast.makeText(activity, "You Chose Option" + currentRealChoice,
