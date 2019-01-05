@@ -305,10 +305,8 @@ import java.util.ArrayList;
              btnList.get(currentMeetingChoice).setBackgroundResource(R.drawable.custom_border);
          }
          btnList.get(buttonToTurnOn).setBackgroundResource(R.drawable.green_regular_background);
-
          btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.green_round_background);
          currentMeetingChoice = buttonToTurnOn;
-
      }
 
 
@@ -321,12 +319,10 @@ import java.util.ArrayList;
                  {
 //                    cretaeMeetup();       //TODO: MEETUP IMPLEMENTATION HERE
                      int currentRealChoice = currentMeetingChoice + 1;
-                     Toast.makeText(activity, "You Chose Option" + currentRealChoice, Toast.LENGTH_SHORT).show();
-
+                     Toast.makeText(activity, "You Chose Option" + currentRealChoice,
+                             Toast.LENGTH_SHORT).show();
                  }
              }
          });
      }
-
-
 }
