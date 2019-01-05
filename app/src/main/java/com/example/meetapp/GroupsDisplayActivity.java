@@ -189,11 +189,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
             contactLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
             contactLayout.setTag("notChosen");
         }
-        setMembersToAdd(membersToAdd);
-    }
-
-    private void setMembersToAdd(ArrayList<String> newMembers){
-        membersToAdd = newMembers;
     }
 
     private void showContacts() {
