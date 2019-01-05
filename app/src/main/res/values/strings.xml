@@ -33,6 +33,7 @@
     <string name="ContactsPermissionError">Until you grant the permission, we can not display the contacts</string>
     <string name="resetEmptySelection">No Selection To Reset</string>
     <string name="noTimeSlotsSelected">No Time Slots Selected</string>
-
+    <string name="newGroupCreated">New Group Created Successfully!</string>
+    <string name="groupNameExists">The Name You Chose Already Exists!</string>
 
 </resources>
