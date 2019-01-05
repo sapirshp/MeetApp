@@ -1,7 +1,10 @@
 package com.example.meetapp;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,15 +16,16 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
     Dialog newGroupDialog;
+    Dialog addMembersDialog;
     private static long back_pressed;
     private final int EXIT_DELAY = 2000;
     private RecyclerView recyclerView;
@@ -29,6 +33,9 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private ArrayList<Group> groups = new ArrayList<>();
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
+    private ArrayList<String> membersToAdd = new ArrayList<>();
+    private ArrayList<String> members = new ArrayList<>();
+    private ArrayList<ContactItem> contacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,9 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
         newGroupDialog = new Dialog(this);
+        addMembersDialog = new Dialog(this);
+        members.add("You");
+        contacts = ContactsGetter.getContacts(this);
     }
 
     public void setToolbar() {
@@ -54,10 +64,13 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         }
     }
 
-    public void showNewGroupPopup(View v)
+    private void showNewGroupPopup(String members)
     {
         newGroupDialog.setContentView(R.layout.new_group_popup);
-        handleExitPopup();
+        TextView membersList = newGroupDialog.findViewById(R.id.membersList);
+        membersList.setText(members);
+        TextView exitBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
+        handleExitPopup(newGroupDialog, exitBtn);
         handleCreateNewGroup();
         newGroupDialog.show();
     }
@@ -99,7 +112,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
             makeToastToCenterOfScreen(getString(R.string.groupNameExists));
         }
         else {
-            List<String> members = Arrays.asList("You");
             Group newGroup = new Group(newGroupName, "1", userName, members, false);
             groups.add(newGroup);
             makeToastToCenterOfScreen(getString(R.string.newGroupCreated));
@@ -123,14 +135,13 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         return false;
     }
 
-    private void handleExitPopup()
+    private void handleExitPopup(final Dialog dialog, TextView exitBtn)
     {
-        TextView exitPopupBtn;
-        exitPopupBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
-        exitPopupBtn.setOnClickListener(new View.OnClickListener() {
+        exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newGroupDialog.dismiss();
+                dialog.dismiss();
+                membersToAdd.clear();
             }
         });
     }
@@ -138,7 +149,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private void loadGroups() {
         groups = MockDB.buildMockGroups(userName, groups);
     }
-    
+
     @Override
     public void onBackPressed()
     {
@@ -152,4 +163,68 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         back_pressed = System.currentTimeMillis();
     }
 
+    public void handleAddNewMembers(View v){
+        addMembersDialog.setContentView(R.layout.add_member_popup);
+        TextView exitBtn = addMembersDialog.findViewById(R.id.addMemberExitBtn);
+        handleExitPopup(addMembersDialog, exitBtn);
+        showContacts();
+        ChooseMembers();
+        addMembersDialog.show();
+    }
+
+    public void onContactClick(View v){
+        RelativeLayout contactLayout = v.findViewById(R.id.contactLayout);
+        TextView contactName = v.findViewById(R.id.contactName);
+        ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
+        if (contactLayout.getTag() != "chosen") {
+            okButton.setBackgroundResource(R.drawable.green_round_background);
+            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+            contactLayout.setTag("chosen");
+            membersToAdd.add((String) contactName.getText());
+        }else{
+            membersToAdd.remove((String) contactName.getText());
+            if (membersToAdd.isEmpty()){
+                okButton.setBackgroundResource(R.drawable.disabled_button_background);
+            }
+            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            contactLayout.setTag("notChosen");
+        }
+    }
+
+    private void showContacts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 100);
+        } else {
+            RecyclerView contactRecyclerView = addMembersDialog.findViewById(R.id.contactsRecyclerView);
+            contactRecyclerView.setHasFixedSize(true);
+            contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            RecyclerView.Adapter contactAdapter = new ContactsAdapter(contacts);
+            contactRecyclerView.setAdapter(contactAdapter);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 100) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showContacts();
+            } else {
+                Toast.makeText(this, getString(R.string.ContactsPermissionError), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void ChooseMembers(){
+        ImageButton okBtn = addMembersDialog.findViewById(R.id.chooseMembers);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                members.addAll(membersToAdd);
+                addMembersDialog.dismiss();
+                String membersNames = String.format("Group Members: %s",members.toString().substring(1,members.toString().length()-1));
+                showNewGroupPopup(membersNames);
+                membersToAdd.clear();
+            }
+        });
+    }
 }
