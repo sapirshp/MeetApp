@@ -112,7 +112,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                     menuHandler.handleResetTimeChoice(this, calendarSlotsHandler);
                 break;
             case R.id.exitGroupBtn:
-                menuHandler.handleExitGroup(this);
+                menuHandler.handleExitGroup(this, toolbar.getTitle().toString(), this);
                 break;
             case R.id.createMeetingBtn:
                 menuHandler.handleCreateMeeting(this, calendarSlotsHandler);

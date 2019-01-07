@@ -20,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
@@ -28,9 +27,9 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     Dialog addMembersDialog;
     private static long back_pressed;
     private final int EXIT_DELAY = 2000;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private ArrayList<Group> groups = new ArrayList<>();
+    private static RecyclerView recyclerView;
+    private static RecyclerView.Adapter adapter;
+    public static ArrayList<Group> groups = new ArrayList<>();
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
     private ArrayList<String> membersToAdd = new ArrayList<>();
@@ -227,5 +226,24 @@ public class GroupsDisplayActivity extends AppCompatActivity {
                 membersToAdd.clear();
             }
         });
+    }
+
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+             if(resultCode == RESULT_OK) {
+                 String groupName = data.getStringExtra("groupName");
+                 Group groupToRemove = null;
+                 for(Group group: groups){
+                     if (group.getName().equals(groupName)){
+                         groupToRemove = group;
+                         break;
+                     }
+                 }
+                 adapter.notifyItemRemoved(groups.indexOf(groupToRemove));
+                 groups.remove(groupToRemove);
+                 adapter.notifyDataSetChanged();
+             }
+        }
     }
 }
