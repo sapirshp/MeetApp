@@ -33,7 +33,6 @@ class CalendarSlotsHandler {
         this.topSelectionToDisplay = 3;
         this.context = context;
         this.view = view;
-        this.slotSelections.clear();
     }
 
 
