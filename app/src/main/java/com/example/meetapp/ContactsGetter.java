@@ -32,6 +32,7 @@ class ContactsGetter {
                 contacts.add(new ContactItem(name, phoneNumber));
                 break;
             }
+            phoneCursor.close();
         }
         cursor.close();
         Collections.sort(contacts, contactsComparator);
