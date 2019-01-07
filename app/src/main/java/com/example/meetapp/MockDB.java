@@ -17,6 +17,18 @@ public class MockDB {
     private static HashMap<Integer, String> buttonsIdForMockDB = new HashMap<>();
     private static ArrayList<TimeSlot> calendarSlots = new ArrayList<>();
 
+    private static int getHourIndex(String dayPart)
+    {
+        switch(dayPart) {
+            case "Morning":
+                return 0;
+            case "Afternoon":
+                return 1;
+            default:
+                return 2;
+        }
+    }
+
     private static void createMockSelections(View v, Context context, Map<String, String> datesToDisplay, int membersNum) {
         for (int i = 0; i < 7; i++) {
             int morningBtnId = context.getResources().getIdentifier("d" + i + "m", "id", context.getPackageName());
@@ -28,10 +40,12 @@ public class MockDB {
         }
         for (int id : buttonsIdForMockDB.keySet()) {
             final Button timeSlotButton = v.findViewById(id);
-            int indexOfDate = Integer.valueOf(timeSlotButton.getTag().toString());
-            String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[indexOfDate]);
+            int dateIndex = Integer.valueOf(timeSlotButton.getTag().toString());
+            String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[dateIndex]);
             String hour = buttonsIdForMockDB.get(id);
-            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour);
+            int hourIndex = getHourIndex(hour);
+            int slotIndex = (3 * dateIndex) + hourIndex;
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour, slotIndex);
             calendarSlots.add(timeSlot);
         }
         for (TimeSlot ts : calendarSlots){

@@ -7,12 +7,14 @@ public class TimeSlot {
     private boolean isClicked;
     private String date;
     private String hour;
+    private int slotIndex;
     private int chosenCounter;
 
-    TimeSlot(Button button, String date, String hour){
+    TimeSlot(Button button, String date, String hour, int slotIndex){
         this.timeSlotBtn = button;
         this.date = date;
         this.hour = hour;
+        this.slotIndex = slotIndex;
         isClicked = false;
         chosenCounter = 0;
     }
@@ -35,6 +37,10 @@ public class TimeSlot {
 
     public String getDate(){
         return date;
+    }
+
+    public int getSlotIndex(){
+        return slotIndex;
     }
 
     public void upperCounter(){
