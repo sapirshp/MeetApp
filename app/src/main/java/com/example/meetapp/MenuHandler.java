@@ -76,35 +76,36 @@ import java.util.List;
 
     void handleResetTimeChoice(Activity activity, final CalendarSlotsHandler calendarSlotsHandler) {
         slotsToReset.clear();
-        if (calendarSlotsHandler.getSlotSelections().isEmpty()){
+        if (calendarSlotsHandler.getUserClicks().isEmpty()){
             Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
         }else {
-            for (TimeSlot selectedSlot : calendarSlotsHandler.getSlotSelections().keySet()) {
-                slotsToReset.add(selectedSlot);
-                System.out.println(selectedSlot.getDate());
-            }
+            slotsToReset.addAll(calendarSlotsHandler.getUserClicks());
             for (TimeSlot slotToReset : slotsToReset) {
                 calendarSlotsHandler.clickedOff(slotToReset);
             }
+            setUndoBar(calendarSlotsHandler, activity);
 
-            SuperActivityToast.OnButtonClickListener onButtonClickListener =
-                    new SuperActivityToast.OnButtonClickListener() {
-
-                        @Override
-                        public void onClick(View view, Parcelable token) {
-                            for (TimeSlot slotToReset : slotsToReset) {
-                                calendarSlotsHandler.clickedOn(slotToReset, false);
-                            }
-                        }
-                    };
-            SuperActivityToast.create(activity, new Style(), Style.TYPE_BUTTON)
-                    .setButtonText("UNDO")
-                    .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
-                    .setText("Your Selection Has Been Reset")
-                    .setDuration(Style.DURATION_LONG)
-                    .setColor(activity.getResources().getColor(R.color.undoDark))
-                    .setAnimations(Style.ANIMATIONS_POP).show();
         }
+    }
+
+    private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler, Activity activity){
+        SuperActivityToast.OnButtonClickListener onButtonClickListener =
+                new SuperActivityToast.OnButtonClickListener() {
+
+                    @Override
+                    public void onClick(View view, Parcelable token) {
+                        for (TimeSlot slotToReset : slotsToReset) {
+                            calendarSlotsHandler.clickedOn(slotToReset, false);
+                        }
+                    }
+                };
+        SuperActivityToast.create(activity, new Style(), Style.TYPE_BUTTON)
+                .setButtonText("UNDO")
+                .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
+                .setText("Your Selection Has Been Reset")
+                .setDuration(Style.DURATION_LONG)
+                .setColor(activity.getResources().getColor(R.color.undoDark))
+                .setAnimations(Style.ANIMATIONS_POP).show();
     }
 
     void handleExitGroup(final Context context)

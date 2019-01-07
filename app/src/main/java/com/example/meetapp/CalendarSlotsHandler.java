@@ -229,4 +229,8 @@ class CalendarSlotsHandler {
     Context getContext(){
         return context;
     }
+
+    ArrayList<TimeSlot> getUserClicks() {
+        return userClicks;
+    }
 }
