@@ -22,20 +22,19 @@ class ContactsGetter {
         ArrayList<ContactItem> contacts = new ArrayList<>();
         Cursor managedCursor = context.getContentResolver()
                 .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                        new String[] {
-//                                    ContactsContract.CommonDataKinds.Phone._ID,
-                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                                    ContactsContract.CommonDataKinds.Phone.NUMBER},
-                        null, null,  ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+                        new String[] {  ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                                        ContactsContract.CommonDataKinds.Phone.NUMBER},
+                                        null, null,
+                                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         while (managedCursor.moveToNext())
         {
-//            String id = managedCursor.getString(managedCursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = managedCursor.getString(managedCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-            String phoneNumber = managedCursor.getString(managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            String name = managedCursor.getString
+                    (managedCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            String phoneNumber = managedCursor.getString
+                    (managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 contacts.add(new ContactItem(name, phoneNumber));
         }
         managedCursor.close();
-        
         Collections.sort(contacts, contactsComparator);
         return contacts;
     }
