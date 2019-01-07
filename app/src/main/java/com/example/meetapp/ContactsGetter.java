@@ -1,6 +1,5 @@
 package com.example.meetapp;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
@@ -21,20 +20,21 @@ class ContactsGetter {
 
     static ArrayList<ContactItem> getContacts(Context context) {
         ArrayList<ContactItem> contacts = new ArrayList<>();
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        while (cursor.moveToNext()){
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null ,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ id }, null);
-            while (phoneCursor.moveToNext()){
-                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        Cursor managedCursor = context.getContentResolver()
+                .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        new String[] {  ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                                        ContactsContract.CommonDataKinds.Phone.NUMBER},
+                                        null, null,
+                                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        while (managedCursor.moveToNext())
+        {
+            String name = managedCursor.getString
+                    (managedCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            String phoneNumber = managedCursor.getString
+                    (managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 contacts.add(new ContactItem(name, phoneNumber));
-                break;
-            }
-            phoneCursor.close();
         }
-        cursor.close();
+        managedCursor.close();
         Collections.sort(contacts, contactsComparator);
         return contacts;
     }
