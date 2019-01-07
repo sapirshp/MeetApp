@@ -51,7 +51,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         newGroupDialog = new Dialog(this);
         addMembersDialog = new Dialog(this);
         members.add("You");
-        contacts = ContactsGetter.getContacts(this);
     }
 
     public void setToolbar() {
@@ -198,6 +197,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
             RecyclerView contactRecyclerView = addMembersDialog.findViewById(R.id.contactsRecyclerView);
             contactRecyclerView.setHasFixedSize(true);
             contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            contacts = ContactsGetter.getContacts(this);
             RecyclerView.Adapter contactAdapter = new ContactsAdapter(contacts);
             contactRecyclerView.setAdapter(contactAdapter);
         }
