@@ -41,20 +41,40 @@ public class Group {
         return name;
     }
 
+    public void setName(String name) {
+        this.name =  name;
+    }
+
     public String getGroupId() {
         return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId =  groupId;
     }
 
     public String getAdmin() {
         return admin;
     }
 
+    public void setAdmin(String admin) {
+        this.admin =  admin;
+    }
+
     public boolean getIsScheduled() {
         return isScheduled;
     }
 
+    public void setIsScheduled(boolean isScheduled) {
+        this.isScheduled =  isScheduled;
+    }
+
     public List<String> getMembers() {
         return members;
+    }
+
+    public void setMembers(List<String> members) {
+        this.members =  members;
     }
 
     public String getMembersString() {
