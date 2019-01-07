@@ -49,13 +49,27 @@ class CalendarSlotsHandler {
         }
     }
 
+    private int getHourIndex(String dayPart)
+    {
+        switch(dayPart) {
+            case "Morning":
+                return 0;
+            case "Afternoon":
+                return 1;
+            default:
+                return 2;
+        }
+    }
+
     void setListeners(Map<String, String> datesToDisplay) {
         for (int id : buttonsIdForListeners.keySet()) {
             final Button timeSlotButton = view.findViewById(id);
-            int indexOfDate = Integer.valueOf(timeSlotButton.getTag().toString());
-            String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[indexOfDate]);
+            int dateIndex = Integer.valueOf(timeSlotButton.getTag().toString());
+            String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[dateIndex]);
             String hour = buttonsIdForListeners.get(id);
-            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour);
+            int hourIndex = getHourIndex(hour);
+            int slotIndex = (3 * dateIndex) + hourIndex;
+            final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour, slotIndex);
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -129,7 +143,13 @@ class CalendarSlotsHandler {
         Collections.sort(list, new Comparator<Map.Entry<TimeSlot, Integer>>() {
             public int compare(Map.Entry<TimeSlot, Integer> o1,
                                Map.Entry<TimeSlot, Integer> o2) {
-                return (o2.getValue()).compareTo(o1.getValue());
+                int selectionCompare = o2.getValue().compareTo(o1.getValue());
+                if (selectionCompare != 0) {
+                    return selectionCompare;
+                }
+                int firstSlot = o1.getKey().getSlotIndex();
+                int secondSlot = o2.getKey().getSlotIndex();
+                return Integer.compare(firstSlot, secondSlot);
             }
         });
 
