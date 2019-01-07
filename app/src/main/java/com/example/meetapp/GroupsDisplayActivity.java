@@ -50,7 +50,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         newGroupDialog = new Dialog(this);
         addMembersDialog = new Dialog(this);
-        members.add("You");
     }
 
     public void setToolbar() {
@@ -215,6 +214,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     }
 
     private void ChooseMembers(){
+        members.clear();
+        members.add("You");
         ImageButton okBtn = addMembersDialog.findViewById(R.id.chooseMembers);
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
