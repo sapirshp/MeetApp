@@ -2,6 +2,7 @@ package com.example.meetapp;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,7 +39,14 @@ public class InsideGroupActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
+    private Intent goToGroupsDisplay;
     boolean isTopChoicePressed = false;
+    private final int EDIT_NAME_RESULT_CODE = 2;
+    private final int ADD_MEMBERS_RESULT_CODE = 3;
+    private final int BOTH_RESULT = 4;
+    private boolean nameChanged;
+    private boolean membersAdded;
+    private String oldNameIfChanged;
 
 
     public InsideGroupActivity(){
@@ -60,6 +68,10 @@ public class InsideGroupActivity extends AppCompatActivity {
         topSuggestionsDialog = new Dialog(this);
         groupDetailsDialog = new Dialog(this);
         editGroupNameDialog = new Dialog(this);
+        goToGroupsDisplay = new Intent();
+        membersAdded = false;
+        nameChanged = false;
+        oldNameIfChanged = toolbar.getTitle().toString();
         setDialogsMap();
     }
 
@@ -70,12 +82,34 @@ public class InsideGroupActivity extends AppCompatActivity {
         dialogs.put("topSuggestionsDialog", topSuggestionsDialog);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (nameChanged && membersAdded){
+            goToGroupsDisplay.putExtra("EditGroupName", toolbar.getTitle().toString());
+            goToGroupsDisplay.putExtra("OldName", oldNameIfChanged);
+            goToGroupsDisplay.putExtra("AddMembers", toolbar.getSubtitle().toString());
+            goToGroupsDisplay.putExtra("GroupName", toolbar.getTitle().toString());
+            setResult(BOTH_RESULT, goToGroupsDisplay);
+        }
+        if (nameChanged) {
+            goToGroupsDisplay.putExtra("EditGroupName", toolbar.getTitle().toString());
+            goToGroupsDisplay.putExtra("OldName", oldNameIfChanged);
+            setResult(EDIT_NAME_RESULT_CODE, goToGroupsDisplay);
+        }
+        if (membersAdded) {
+            goToGroupsDisplay.putExtra("AddMembers", toolbar.getSubtitle().toString());
+            goToGroupsDisplay.putExtra("GroupName", toolbar.getTitle().toString());
+            setResult(ADD_MEMBERS_RESULT_CODE, goToGroupsDisplay);
+        }
+        finish();
+    }
+
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
         List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.split(",")));
-        menuHandler = new MenuHandler(dialogs, groupMembersList);
+        menuHandler = new MenuHandler(dialogs, groupMembersList, this);
         return true;
     }
 
@@ -104,18 +138,20 @@ public class InsideGroupActivity extends AppCompatActivity {
                         showContacts();
                     }
                 }, toolbar, calendarSlotsHandler);
+                membersAdded = true;
                 break;
             case R.id.groupDetailsBtn:
-                menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
+                oldNameIfChanged = toolbar.getTitle().toString();
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
-                    menuHandler.handleResetTimeChoice(this, calendarSlotsHandler);
+                    menuHandler.handleResetTimeChoice(calendarSlotsHandler);
                 break;
             case R.id.exitGroupBtn:
-                menuHandler.handleExitGroup(this, toolbar.getTitle().toString(), this);
+                menuHandler.handleExitGroup(this, toolbar.getTitle().toString());
                 break;
             case R.id.createMeetingBtn:
-                menuHandler.handleCreateMeeting(this, calendarSlotsHandler);
+                menuHandler.handleCreateMeeting(calendarSlotsHandler);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
