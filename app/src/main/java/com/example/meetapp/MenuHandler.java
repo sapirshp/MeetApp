@@ -106,7 +106,6 @@ import java.util.List;
                 .setDuration(Style.DURATION_LONG)
                 .setColor(activity.getResources().getColor(R.color.undoDark))
                 .setAnimations(Style.ANIMATIONS_POP).show();
-        System.out.println(calendarSlotsHandler.getUserClicks().toString());
     }
 
     void handleExitGroup(final Context context)
