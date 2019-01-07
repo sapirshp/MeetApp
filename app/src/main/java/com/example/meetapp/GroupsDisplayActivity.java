@@ -21,10 +21,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
-    Dialog newGroupDialog;
-    Dialog addMembersDialog;
+    private final int LEAVE_GROUP_RESULT_CODE = 1;
+    private final int EDIT_NAME_RESULT_CODE = 2;
+    private final int ADD_MEMBERS_RESULT_CODE = 3;
+    private final int CHANGE_NAME_AND_MEMBERS = 4;
+    private Dialog newGroupDialog;
+    private Dialog addMembersDialog;
     private static long back_pressed;
     private final int EXIT_DELAY = 2000;
     private static RecyclerView recyclerView;
@@ -228,21 +235,77 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         });
     }
 
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    private void handleLeaveGroupResult(Intent data){
+        String groupName = data.getStringExtra("groupName");
+        Group groupToRemove = null;
+        for(Group group: groups){
+            if (group.getName().equals(groupName)){
+                groupToRemove = group;
+                break;
+            }
+        }
+        adapter.notifyItemRemoved(groups.indexOf(groupToRemove));
+        groups.remove(groupToRemove);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void handleAddMembersResult(Intent data){
+        Group groupToAddMembers = null;
+        String newMembers = data.getStringExtra("AddMembers");
+        List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.split(", ")));
+        String groupName = data.getStringExtra("GroupName");
+        for(Group group: groups){
+            if (group.getName().equals(groupName)){
+                groupToAddMembers = group;
+                break;
+            }
+        }
+        groupToAddMembers.setMembers(newMembersList);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void handleEditNameResult(Intent data){
+        Group groupToChangeName = null;
+        String newGroupName = data.getStringExtra("EditGroupName");
+        String oldName = data.getStringExtra("OldName");
+        for(Group group: groups){
+            if (group.getName().equals(oldName)){
+                groupToChangeName = group;
+                break;
+            }
+        }
+        groupToChangeName.setName(newGroupName);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void handleChangeNameAndMembersResult(Intent data){
+        Group groupToChange = null;
+        String newGroupName = data.getStringExtra("EditGroupName");
+        String oldName = data.getStringExtra("OldName");
+        String newMembers = data.getStringExtra("AddMembers");
+        List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.split(", ")));
+        for(Group group: groups){
+            if (group.getName().equals(oldName)){
+                groupToChange = group;
+                break;
+            }
+        }
+        groupToChange.setName(newGroupName);
+        groupToChange.setMembers(newMembersList);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-             if(resultCode == RESULT_OK) {
-                 String groupName = data.getStringExtra("groupName");
-                 Group groupToRemove = null;
-                 for(Group group: groups){
-                     if (group.getName().equals(groupName)){
-                         groupToRemove = group;
-                         break;
-                     }
-                 }
-                 adapter.notifyItemRemoved(groups.indexOf(groupToRemove));
-                 groups.remove(groupToRemove);
-                 adapter.notifyDataSetChanged();
+             if(resultCode == LEAVE_GROUP_RESULT_CODE) {
+                handleLeaveGroupResult(data);
+             }else if (resultCode == EDIT_NAME_RESULT_CODE){
+                 handleEditNameResult(data);
+             }else if (resultCode == ADD_MEMBERS_RESULT_CODE){
+                 handleAddMembersResult(data);
+             }else if (resultCode == CHANGE_NAME_AND_MEMBERS){
+                 handleChangeNameAndMembersResult(data);
              }
         }
     }

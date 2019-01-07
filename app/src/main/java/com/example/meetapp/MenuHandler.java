@@ -31,6 +31,7 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 
 class MenuHandler {
+    private final int LEAVE_GROUP_RESULT_CODE = 1;
     private final int NO_OPTION_CHOSEN = -1;
     private int currentMeetingChoice = NO_OPTION_CHOSEN;
     private Dialog topSuggestionsDialog;
@@ -41,17 +42,19 @@ class MenuHandler {
     private int membersAmount;
     private List<String> groupMembers;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
-    String members = "";
-     private final int NO_SLOTS_CHOSEN = 0;
+    private String members = "";
+    private final int NO_SLOTS_CHOSEN = 0;
+    private Activity activity;
 
 
-     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames){
+     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity){
         this.addMemberDialog = dialogs.get("addMemberDialog");
         this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
         this.membersAmount = membersNames.size();
         this.groupMembers = membersNames;
         this.topSuggestionsDialog = dialogs.get("topSuggestionsDialog");
         this.editGroupNameDialog = dialogs.get("editGroupNameDialog");
+        this.activity = activity;
     }
 
     void handleAddParticipant(Runnable showContacts, Toolbar toolbar, CalendarSlotsHandler calendarSlotsHandler)
@@ -64,8 +67,9 @@ class MenuHandler {
         addMemberDialog.show();
     }
 
-    void handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar)
+    boolean handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar)
     {
+        String oldName = toolbar.getTitle().toString();
         groupDetailsDialog.setContentView(R.layout.group_details_popap);
         TextView exitPopupBtn = groupDetailsDialog.findViewById(R.id.groupDetailsExitBtn);
         handleExitPopup(groupDetailsDialog, exitPopupBtn);
@@ -73,11 +77,13 @@ class MenuHandler {
         displayMembersInfo(calendarSlotsHandler.getContext());
         displayTopSelection(calendarSlotsHandler);
         handleEditGroupName(toolbar);
+        String newName = toolbar.getTitle().toString();
         groupDetailsDialog.show();
+        return (newName.equals(oldName));
     }
 
 
-    void handleResetTimeChoice(Activity activity, final CalendarSlotsHandler calendarSlotsHandler) {
+    void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler) {
         slotsToReset.clear();
         if (calendarSlotsHandler.getUserClicks().isEmpty()){
             Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
@@ -86,11 +92,11 @@ class MenuHandler {
             for (TimeSlot slotToReset : slotsToReset) {
                 calendarSlotsHandler.clickedOff(slotToReset);
             }
-            setUndoBar(calendarSlotsHandler, activity);
+            setUndoBar(calendarSlotsHandler);
         }
     }
 
-    private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler, Activity activity){
+    private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler){
         SuperActivityToast.OnButtonClickListener onButtonClickListener =
                 new SuperActivityToast.OnButtonClickListener() {
 
@@ -110,12 +116,12 @@ class MenuHandler {
                 .setAnimations(Style.ANIMATIONS_POP).show();
     }
 
-    void handleExitGroup(final Context context, String groupName, Activity activity)
+    void handleExitGroup(final Context context, String groupName)
     {
         AlertDialog exitGroupDialog = new AlertDialog.Builder(context).create();
         exitGroupDialog.setTitle(context.getString(R.string.leaveGroupTitle));
         exitGroupDialog.setMessage(context.getString(R.string.leaveGroupQuestion));
-        handlePositiveExitAnswer(context, exitGroupDialog, groupName, activity);
+        handlePositiveExitAnswer(context, exitGroupDialog, groupName);
         handleNegativeExitAnswer(context, exitGroupDialog);
         exitGroupDialog.show();
         handleButtonsLayoutAndColor(context, exitGroupDialog);
@@ -135,7 +141,7 @@ class MenuHandler {
 
      }
 
-     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog, final String groupName, final Activity activity) {
+     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog, final String groupName) {
 
          alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.leaveAnswer),
                  new DialogInterface.OnClickListener() {
@@ -143,7 +149,7 @@ class MenuHandler {
                          dialog.dismiss();
                          Intent goToGroupsDisplay = new Intent();
                          goToGroupsDisplay.putExtra("groupName", groupName);
-                         activity.setResult(RESULT_OK, goToGroupsDisplay);
+                         activity.setResult(LEAVE_GROUP_RESULT_CODE, goToGroupsDisplay);
                          activity.finish();
                      }
                  });
@@ -213,10 +219,10 @@ class MenuHandler {
     private void handleChangeNameRequest(Toolbar toolbar){
         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
         String newGroupName = userInput.getText().toString();
+        String oldName = toolbar.getTitle().toString();
         toolbar.setTitle(newGroupName);
         editGroupNameDialog.dismiss();
         displayGroupName(newGroupName);
-
     }
 
     void setMembersToAdd(ArrayList<String> newMembers){
@@ -289,7 +295,7 @@ class MenuHandler {
     }
 
 
-    void handleCreateMeeting(final Activity activity, final CalendarSlotsHandler calendarSlotsHandler)
+    void handleCreateMeeting(final CalendarSlotsHandler calendarSlotsHandler)
     {
         ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
         int numOfOptionsToDisplay = stringTopSuggestionsArr.size();
@@ -305,7 +311,7 @@ class MenuHandler {
                 numOfOptionsToDisplay);
         setTextForOptions(currentOptionLst, calendarSlotsHandler);
         handleAllOptionPresses(currentOptionLst, allOptionsLst);
-        handleCreateMeetingBtnPress(activity, currentOptionLst.get(currentOptionLst.size()-1));
+        handleCreateMeetingBtnPress(currentOptionLst.get(currentOptionLst.size()-1));
         topSuggestionsDialog.show();
     }
 
@@ -402,7 +408,7 @@ class MenuHandler {
      }
 
 
-     private void handleCreateMeetingBtnPress(final Activity activity, android.widget.Button createMeeting)
+     private void handleCreateMeetingBtnPress(android.widget.Button createMeeting)
      {
          createMeeting.setOnClickListener(new View.OnClickListener() {
              @Override
