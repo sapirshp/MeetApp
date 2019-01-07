@@ -90,18 +90,22 @@ public class InsideGroupActivity extends AppCompatActivity {
             goToGroupsDisplay.putExtra("AddMembers", toolbar.getSubtitle().toString());
             goToGroupsDisplay.putExtra("GroupName", toolbar.getTitle().toString());
             setResult(BOTH_RESULT, goToGroupsDisplay);
+            finish();
         }
-        if (nameChanged) {
+        else if (nameChanged) {
             goToGroupsDisplay.putExtra("EditGroupName", toolbar.getTitle().toString());
             goToGroupsDisplay.putExtra("OldName", oldNameIfChanged);
             setResult(EDIT_NAME_RESULT_CODE, goToGroupsDisplay);
+            finish();
         }
-        if (membersAdded) {
+        else if (membersAdded) {
             goToGroupsDisplay.putExtra("AddMembers", toolbar.getSubtitle().toString());
             goToGroupsDisplay.putExtra("GroupName", toolbar.getTitle().toString());
             setResult(ADD_MEMBERS_RESULT_CODE, goToGroupsDisplay);
+            finish();
+        } else {
+            finish();
         }
-        finish();
     }
 
     // ================= Toolbar and Menu ==================
