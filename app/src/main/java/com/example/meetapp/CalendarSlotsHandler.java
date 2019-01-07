@@ -33,8 +33,6 @@ class CalendarSlotsHandler {
         this.topSelectionToDisplay = 3;
         this.context = context;
         this.view = view;
-        slotSelections = MockDB.getMockSlotSelections(view, context, DateSetter.getDatesToDisplay(), membersAmount);
-
     }
 
 
@@ -70,6 +68,7 @@ class CalendarSlotsHandler {
             int hourIndex = getHourIndex(hour);
             int slotIndex = (3 * dateIndex) + hourIndex;
             final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour, slotIndex);
+            slotSelections.put(timeSlot, 0);
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -119,19 +118,15 @@ class CalendarSlotsHandler {
         timeSlot.setClicked(false);
         userClicks.remove(timeSlot);
         setSelectionNumber(timeSlot, false);
+        userChooseMark = context.getDrawable(R.drawable.empty);
         if (getSelectionNumber(timeSlot)>0){
             float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
             bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
-            if (membersAmount >1) {
-                textWithSelectionNumber = getSelectionNumber(timeSlot) +
-                        "/" + membersAmount;
-            }
-            userChooseMark = context.getDrawable(R.drawable.empty);
+                textWithSelectionNumber = getSelectionNumber(timeSlot) + "/" + membersAmount;
         }
         else {
             bgColor = Color.WHITE;
             textWithSelectionNumber = "";
-            userChooseMark = context.getDrawable(R.drawable.empty);
         }
         timeSlot.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
         timeSlot.getButton().setText(textWithSelectionNumber);
@@ -209,14 +204,14 @@ class CalendarSlotsHandler {
         for (TimeSlot slot : slotSelections.keySet()) {
             if (slot.getDate() == timeSlot.getDate() && slot.getHour() == (timeSlot.getHour())) {
                 if (add) {
-                    if (slotSelections.get(slot) < membersAmount) {
-                        slotSelections.put(slot, slotSelections.get(slot) + 1);
+                    if (getSelectionNumber(timeSlot) < membersAmount) {
+                        slotSelections.put(slot, getSelectionNumber(timeSlot) + 1);
                     }
                     doneSetting = true;
                     break;
                 } else {
-                    if (slotSelections.get(slot) > 0) {
-                        slotSelections.put(slot, slotSelections.get(slot) - 1);
+                    if (getSelectionNumber(slot) > 0) {
+                        slotSelections.put(slot, getSelectionNumber(slot) - 1);
                         break;
                     }
                 }
@@ -228,15 +223,13 @@ class CalendarSlotsHandler {
     }
 
     private void displayInitSelections() {
+        MockDB.createMockSelections(slotSelections, membersAmount);
         for (TimeSlot ts : slotSelections.keySet()) {
-            if (slotSelections.get(ts) > 0) {
-                if (membersAmount > 1) {
-                    textWithSelectionNumber = slotSelections.get(ts) +
-                            "/" + membersAmount;
-                    ts.getButton().setText(textWithSelectionNumber);
-                }
+            if (getSelectionNumber(ts) > 0) {
+                textWithSelectionNumber = getSelectionNumber(ts) + "/" + membersAmount;
+                ts.getButton().setText(textWithSelectionNumber);
                 userChooseMark = context.getDrawable(R.drawable.empty);
-                float percentage = ((float) slotSelections.get(ts) / (float) membersAmount) * 100;
+                float percentage = ((float) getSelectionNumber(ts) / (float) membersAmount) * 100;
                 bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
             } else {
                 userChooseMark = context.getDrawable(R.drawable.empty);
