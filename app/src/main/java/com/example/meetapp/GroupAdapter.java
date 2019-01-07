@@ -1,6 +1,6 @@
 package com.example.meetapp;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -21,11 +21,11 @@ import java.util.ArrayList;
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
 {
     private ArrayList<Group> groups;
-    private Context context;
+    private Activity activity;
 
-    public GroupAdapter(ArrayList<Group> groups, Context context) {
+    public GroupAdapter(ArrayList<Group> groups, Activity activity) {
         this.groups = groups;
-        this.context = context;
+        this.activity = activity;
     }
 
     @NonNull
@@ -51,10 +51,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToGroupScreen = new Intent(context, InsideGroupActivity.class);
+                Intent goToGroupScreen = new Intent(activity, InsideGroupActivity.class);
                 goToGroupScreen.putExtra("groupName", newGroup.getName());
                 goToGroupScreen.putExtra("groupMembers", newGroup.getMembersString());
-                context.startActivity(goToGroupScreen);
+                activity.startActivityForResult(goToGroupScreen, 1);
             }
         });
     }
@@ -66,7 +66,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         int timeInDaySymbol = timeInDayFactory(position % 3);           // OREN - CHANGE HERE
         viewHolder.timeInDay.setImageResource(timeInDaySymbol);
     }
-
 
     public TextDrawable daySymbolFactory(int dayRepr)
     {

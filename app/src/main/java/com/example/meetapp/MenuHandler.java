@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Parcelable;
@@ -27,7 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
- class MenuHandler {
+import static android.app.Activity.RESULT_OK;
+
+class MenuHandler {
     private final int NO_OPTION_CHOSEN = -1;
     private int currentMeetingChoice = NO_OPTION_CHOSEN;
     private Dialog topSuggestionsDialog;
@@ -84,7 +87,6 @@ import java.util.List;
                 calendarSlotsHandler.clickedOff(slotToReset);
             }
             setUndoBar(calendarSlotsHandler, activity);
-
         }
     }
 
@@ -108,12 +110,12 @@ import java.util.List;
                 .setAnimations(Style.ANIMATIONS_POP).show();
     }
 
-    void handleExitGroup(final Context context)
+    void handleExitGroup(final Context context, String groupName, Activity activity)
     {
         AlertDialog exitGroupDialog = new AlertDialog.Builder(context).create();
         exitGroupDialog.setTitle(context.getString(R.string.leaveGroupTitle));
         exitGroupDialog.setMessage(context.getString(R.string.leaveGroupQuestion));
-        handlePositiveExitAnswer(context, exitGroupDialog);
+        handlePositiveExitAnswer(context, exitGroupDialog, groupName, activity);
         handleNegativeExitAnswer(context, exitGroupDialog);
         exitGroupDialog.show();
         handleButtonsLayoutAndColor(context, exitGroupDialog);
@@ -133,16 +135,16 @@ import java.util.List;
 
      }
 
-     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog) {
+     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog, final String groupName, final Activity activity) {
 
          alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.leaveAnswer),
                  new DialogInterface.OnClickListener() {
                      public void onClick(DialogInterface dialog, int which) {
                          dialog.dismiss();
-                         // TODO: erase group from user's groups - implement here.
-                         // for now:
-                         Toast.makeText(context, " 'Exit Group' Button Pressed ",
-                                 Toast.LENGTH_LONG).show();
+                         Intent goToGroupsDisplay = new Intent();
+                         goToGroupsDisplay.putExtra("groupName", groupName);
+                         activity.setResult(RESULT_OK, goToGroupsDisplay);
+                         activity.finish();
                      }
                  });
      }
