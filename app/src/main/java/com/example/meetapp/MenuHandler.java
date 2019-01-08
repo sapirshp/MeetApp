@@ -284,7 +284,7 @@ class MenuHandler {
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
          String topSelectionText = "Suggestions:";
          for (String suggestion: topSelections){
-             topSelectionText = String.format("%s%s", topSelectionText, suggestion);
+             topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
          }
          topSelectionInfo.setText(topSelectionText);
     }
@@ -399,11 +399,12 @@ class MenuHandler {
 
      private void setSingleChoiceAndDisableOthers(int buttonToTurnOn, ArrayList<Button> btnList)
      {
+         Button setMeetingBtn = btnList.get(btnList.size()-1);
          if(currentMeetingChoice != NO_OPTION_CHOSEN) {
              btnList.get(currentMeetingChoice).setBackgroundResource(R.drawable.custom_border);
          }
          btnList.get(buttonToTurnOn).setBackgroundResource(R.drawable.green_regular_background);
-         btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.green_round_background);
+         setMeetingBtn.setBackgroundResource(R.drawable.green_round_background);
          currentMeetingChoice = buttonToTurnOn;
      }
 
