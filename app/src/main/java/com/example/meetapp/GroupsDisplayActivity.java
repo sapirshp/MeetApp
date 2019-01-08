@@ -117,7 +117,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         }
         else {
             Group newGroup = new Group(newGroupName, "1", userName, members, false);
-            groups.add(newGroup);
+            groups.add(0, newGroup);
+            adapter.notifyDataSetChanged();
             makeToastToCenterOfScreen(getString(R.string.newGroupCreated));
             newGroupDialog.dismiss();
         }
