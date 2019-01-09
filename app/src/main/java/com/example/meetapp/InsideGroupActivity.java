@@ -1,24 +1,15 @@
 package com.example.meetapp;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,7 +23,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     Dialog editGroupNameDialog;
     HashMap<String, Dialog> dialogs = new HashMap<>();
     private MenuHandler menuHandler;
-    private ArrayList<String> membersToAdd = new ArrayList<>();
     private int membersAmount;
     private String groupMembers;
     private String groupName;
@@ -41,12 +31,10 @@ public class InsideGroupActivity extends AppCompatActivity {
     private CalendarSlotsHandler calendarSlotsHandler;
     private Intent goToGroupsDisplay;
     boolean isTopChoicePressed = false;
-    private final int EDIT_NAME_RESULT_CODE = 2;
-    private final int ADD_MEMBERS_RESULT_CODE = 3;
-    private final int BOTH_RESULT = 4;
     private boolean nameChanged;
     private boolean membersAdded;
     private String oldNameIfChanged;
+    IntentHandler insideGroupIntentHandler;
 
 
     public InsideGroupActivity(){
@@ -60,22 +48,32 @@ public class InsideGroupActivity extends AppCompatActivity {
         View layout = findViewById(R.id.calendarView);
         DateSetter.setDatesToDisplay(layout);
         setToolbar();
+        createSlotHandler(layout);
+        setIntentHandler();
+        setDialogsMap();
+    }
+
+    private void createSlotHandler(View layout){
         calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout);
         calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
+    }
+
+    private void setIntentHandler(){
+        goToGroupsDisplay = new Intent();
+        insideGroupIntentHandler = new IntentHandler();
+        membersAdded = false;
+        nameChanged = false;
+        oldNameIfChanged = toolbar.getTitle().toString();
+    }
+
+    public void setDialogsMap(){
         groupActionsDialog = new Dialog(this);
         addMemberDialog = new Dialog(this);
         topSuggestionsDialog = new Dialog(this);
         groupDetailsDialog = new Dialog(this);
         editGroupNameDialog = new Dialog(this);
-        goToGroupsDisplay = new Intent();
-        membersAdded = false;
-        nameChanged = false;
-        oldNameIfChanged = toolbar.getTitle().toString();
-        setDialogsMap();
-    }
-
-    public void setDialogsMap(){
+        AddMembersHandler.setDialog(addMemberDialog);
         dialogs.put("addMemberDialog", addMemberDialog);
         dialogs.put("groupDetailsDialog", groupDetailsDialog);
         dialogs.put("editGroupNameDialog", editGroupNameDialog);
@@ -85,26 +83,15 @@ public class InsideGroupActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (nameChanged && membersAdded){
-            goToGroupsDisplay.putExtra("EditGroupName", toolbar.getTitle().toString());
-            goToGroupsDisplay.putExtra("OldName", oldNameIfChanged);
-            goToGroupsDisplay.putExtra("AddMembers", toolbar.getSubtitle().toString());
-            goToGroupsDisplay.putExtra("GroupName", toolbar.getTitle().toString());
-            setResult(BOTH_RESULT, goToGroupsDisplay);
-            finish();
+            insideGroupIntentHandler.groupNameAndMemberChanged(goToGroupsDisplay, this, toolbar, oldNameIfChanged);
         }
         else if (nameChanged) {
-            goToGroupsDisplay.putExtra("EditGroupName", toolbar.getTitle().toString());
-            goToGroupsDisplay.putExtra("OldName", oldNameIfChanged);
-            setResult(EDIT_NAME_RESULT_CODE, goToGroupsDisplay);
-            finish();
+            insideGroupIntentHandler.groupNameChanged(goToGroupsDisplay, this, toolbar, oldNameIfChanged);
         }
         else if (membersAdded) {
-            goToGroupsDisplay.putExtra("AddMembers", toolbar.getSubtitle().toString());
-            goToGroupsDisplay.putExtra("GroupName", toolbar.getTitle().toString());
-            setResult(ADD_MEMBERS_RESULT_CODE, goToGroupsDisplay);
-            finish();
+            insideGroupIntentHandler.groupMembersAdded(goToGroupsDisplay, this, toolbar);
         } else {
-            finish();
+            insideGroupIntentHandler.defaultFinish(this);
         }
     }
 
@@ -112,7 +99,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.split(",")));
+        List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
         menuHandler = new MenuHandler(dialogs, groupMembersList, this);
         return true;
     }
@@ -131,21 +118,14 @@ public class InsideGroupActivity extends AppCompatActivity {
         membersAmount = groupMembers.split(",").length;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.AddParticipantBtn:
-                menuHandler.handleAddParticipant(new Runnable() {
-                    @Override
-                    public void run() {
-                        showContacts();
-                    }
-                }, toolbar, calendarSlotsHandler);
+                menuHandler.handleAddParticipant(toolbar, calendarSlotsHandler);
                 membersAdded = true;
                 break;
             case R.id.groupDetailsBtn:
-                oldNameIfChanged = toolbar.getTitle().toString();
                 nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
@@ -164,45 +144,13 @@ public class InsideGroupActivity extends AppCompatActivity {
     }
 
 
-    // ============== Contacts Handlers ======================
-
-    public void onContactClick(View v){
-        RelativeLayout contactLayout = v.findViewById(R.id.contactLayout);
-        TextView contactName = v.findViewById(R.id.contactName);
-        if (contactLayout.getTag() != "chosen") {
-            menuHandler.setButtonEnabled();
-            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorGreen));
-            contactLayout.setTag("chosen");
-            membersToAdd.add((String) contactName.getText());
-        }else{
-            membersToAdd.remove((String) contactName.getText());
-            if (membersToAdd.isEmpty()){
-                menuHandler.setButtonDisabled();
-            }
-            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-            contactLayout.setTag("notChosen");
-        }
-        menuHandler.setMembersToAdd(membersToAdd);
-    }
-
-    private void showContacts() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
-        } else {
-            final ArrayList<ContactItem> contacts = ContactsGetter.getContacts(this);
-            RecyclerView contactRecyclerView = addMemberDialog.findViewById(R.id.contactsRecyclerView);
-            contactRecyclerView.setHasFixedSize(true);
-            contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            RecyclerView.Adapter contactAdapter = new ContactsAdapter(contacts);
-            contactRecyclerView.setAdapter(contactAdapter);
-        }
-    }
+    // ============== Permission for Contacts Handlers ======================
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showContacts();
+                ContactsGetter.showContacts(this, addMemberDialog);
             } else {
                 Toast.makeText(this, getString(R.string.ContactsPermissionError), Toast.LENGTH_SHORT).show();
             }

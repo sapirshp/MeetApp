@@ -1,29 +1,18 @@
 package com.example.meetapp;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
     private final int LEAVE_GROUP_RESULT_CODE = 1;
@@ -32,30 +21,55 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private final int CHANGE_NAME_AND_MEMBERS = 4;
     private Dialog newGroupDialog;
     private Dialog addMembersDialog;
+    private HashMap<String, Dialog> dialogs= new HashMap<>();
     private static long back_pressed;
     private final int EXIT_DELAY = 2000;
-    private static RecyclerView recyclerView;
-    private static RecyclerView.Adapter adapter;
-    public static ArrayList<Group> groups = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    public ArrayList<Group> groups = new ArrayList<>();
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
-    private ArrayList<String> membersToAdd = new ArrayList<>();
-    private ArrayList<String> members = new ArrayList<>();
-    private ArrayList<ContactItem> contacts;
+    IntentHandler groupsIntentHandler;
+    GroupsDisplayFeaturesHandler groupsDisplayFeaturesHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRecyclerViewAndAdapter();
+        setToolbar();
+        setDialogs();
+        groupsIntentHandler = new IntentHandler();
+        setCreateNewGroupListener();
+    }
+
+    private void setRecyclerViewAndAdapter(){
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         loadGroups();
-        setToolbar();
         adapter = new GroupAdapter(groups, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void setCreateNewGroupListener(){
+        groupsDisplayFeaturesHandler = new GroupsDisplayFeaturesHandler(this, dialogs, groups);
+        Button createNewGroup = findViewById(R.id.AddGroupBtn);
+        createNewGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                groupsDisplayFeaturesHandler.handleAddNewMembers(userName);
+            }
+        });
+    }
+
+    private void setDialogs(){
         newGroupDialog = new Dialog(this);
         addMembersDialog = new Dialog(this);
+        AddMembersHandler.setDialog(addMembersDialog);
+        dialogs.put("newGroupDialog", newGroupDialog);
+        dialogs.put("addMembersDialog", addMembersDialog);
     }
 
     public void setToolbar() {
@@ -66,89 +80,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
-    }
-
-    private void showNewGroupPopup(String members)
-    {
-        newGroupDialog.setContentView(R.layout.new_group_popup);
-        TextView membersList = newGroupDialog.findViewById(R.id.membersList);
-        membersList.setText(members);
-        TextView exitBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
-        handleExitPopup(newGroupDialog, exitBtn);
-        handleCreateNewGroup();
-        newGroupDialog.show();
-    }
-
-    private void handleCreateNewGroup()
-    {
-        final Button createGroup;
-        createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
-        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
-        userInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 0){
-                    createGroup.setBackgroundResource(R.drawable.disabled_button_background);
-                }else {
-                    createGroup.setBackgroundResource(R.drawable.green_round_background);
-                    createGroup.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handleNewGroupRequest();
-                        }
-                    });
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-    }
-
-    private void handleNewGroupRequest()
-    {
-        EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
-        String newGroupName = userInput.getText().toString();
-        if(groupNameAlreadyExists(newGroupName))
-        {
-            makeToastToCenterOfScreen(getString(R.string.groupNameExists));
-        }
-        else {
-            Group newGroup = new Group(newGroupName, "1", userName, members, false);
-            groups.add(0, newGroup);
-            adapter.notifyDataSetChanged();
-            makeToastToCenterOfScreen(getString(R.string.newGroupCreated));
-            newGroupDialog.dismiss();
-        }
-    }
-
-    private void makeToastToCenterOfScreen(String message)
-    {
-        Toast toast = Toast.makeText(getBaseContext(),message, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-    }
-
-    private boolean groupNameAlreadyExists(String newGroupName)
-    {
-        for(Group group:groups)
-        {
-            if(group.getName().equals(newGroupName)) { return true; }
-        }
-        return false;
-    }
-
-    private void handleExitPopup(final Dialog dialog, TextView exitBtn)
-    {
-        exitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                membersToAdd.clear();
-            }
-        });
     }
 
     private void loadGroups() {
@@ -168,145 +99,29 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         back_pressed = System.currentTimeMillis();
     }
 
-    public void handleAddNewMembers(View v){
-        addMembersDialog.setContentView(R.layout.add_member_popup);
-        TextView exitBtn = addMembersDialog.findViewById(R.id.addMemberExitBtn);
-        handleExitPopup(addMembersDialog, exitBtn);
-        showContacts();
-        ChooseMembers();
-        addMembersDialog.show();
-    }
-
-    public void onContactClick(View v){
-        RelativeLayout contactLayout = v.findViewById(R.id.contactLayout);
-        TextView contactName = v.findViewById(R.id.contactName);
-        ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
-        if (contactLayout.getTag() != "chosen") {
-            okButton.setBackgroundResource(R.drawable.green_round_background);
-            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorGreen));
-            contactLayout.setTag("chosen");
-            membersToAdd.add((String) contactName.getText());
-        }else{
-            membersToAdd.remove((String) contactName.getText());
-            if (membersToAdd.isEmpty()){
-                okButton.setBackgroundResource(R.drawable.disabled_button_background);
-            }
-            contactLayout.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-            contactLayout.setTag("notChosen");
-        }
-    }
-
-    private void showContacts() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 100);
-        } else {
-            RecyclerView contactRecyclerView = addMembersDialog.findViewById(R.id.contactsRecyclerView);
-            contactRecyclerView.setHasFixedSize(true);
-            contactRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            contacts = ContactsGetter.getContacts(this);
-            RecyclerView.Adapter contactAdapter = new ContactsAdapter(contacts);
-            contactRecyclerView.setAdapter(contactAdapter);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 100) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showContacts();
+                ContactsGetter.showContacts(this, addMembersDialog);
             } else {
                 Toast.makeText(this, getString(R.string.ContactsPermissionError), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void ChooseMembers(){
-        members.clear();
-        members.add("You");
-        ImageButton okBtn = addMembersDialog.findViewById(R.id.chooseMembers);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                members.addAll(membersToAdd);
-                addMembersDialog.dismiss();
-                String membersNames = String.format("Group Members: %s",members.toString().substring(1,members.toString().length()-1));
-                showNewGroupPopup(membersNames);
-                membersToAdd.clear();
-            }
-        });
-    }
-
-    private void handleLeaveGroupResult(Intent data){
-        String groupName = data.getStringExtra("groupName");
-        Group groupToRemove = null;
-        for(Group group: groups){
-            if (group.getName().equals(groupName)){
-                groupToRemove = group;
-                break;
-            }
-        }
-        adapter.notifyItemRemoved(groups.indexOf(groupToRemove));
-        groups.remove(groupToRemove);
-        adapter.notifyDataSetChanged();
-    }
-
-    private void handleAddMembersResult(Intent data){
-        Group groupToAddMembers = null;
-        String newMembers = data.getStringExtra("AddMembers");
-        List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.split(", ")));
-        String groupName = data.getStringExtra("GroupName");
-        for(Group group: groups){
-            if (group.getName().equals(groupName)){
-                groupToAddMembers = group;
-                break;
-            }
-        }
-        groupToAddMembers.setMembers(newMembersList);
-        adapter.notifyDataSetChanged();
-    }
-
-    private void handleEditNameResult(Intent data){
-        Group groupToChangeName = null;
-        String newGroupName = data.getStringExtra("EditGroupName");
-        String oldName = data.getStringExtra("OldName");
-        for(Group group: groups){
-            if (group.getName().equals(oldName)){
-                groupToChangeName = group;
-                break;
-            }
-        }
-        groupToChangeName.setName(newGroupName);
-        adapter.notifyDataSetChanged();
-    }
-
-    private void handleChangeNameAndMembersResult(Intent data){
-        Group groupToChange = null;
-        String newGroupName = data.getStringExtra("EditGroupName");
-        String oldName = data.getStringExtra("OldName");
-        String newMembers = data.getStringExtra("AddMembers");
-        List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.split(", ")));
-        for(Group group: groups){
-            if (group.getName().equals(oldName)){
-                groupToChange = group;
-                break;
-            }
-        }
-        groupToChange.setName(newGroupName);
-        groupToChange.setMembers(newMembersList);
-        adapter.notifyDataSetChanged();
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
              if(resultCode == LEAVE_GROUP_RESULT_CODE) {
-                handleLeaveGroupResult(data);
+                 groupsIntentHandler.handleLeaveGroupResult(data, groups, adapter);
+                 AddMembersHandler.setDialog(addMembersDialog);
              }else if (resultCode == EDIT_NAME_RESULT_CODE){
-                 handleEditNameResult(data);
+                 groupsIntentHandler.handleEditNameResult(data, groups, adapter);
              }else if (resultCode == ADD_MEMBERS_RESULT_CODE){
-                 handleAddMembersResult(data);
+                 groupsIntentHandler.handleAddMembersResult(data, groups, adapter);
              }else if (resultCode == CHANGE_NAME_AND_MEMBERS){
-                 handleChangeNameAndMembersResult(data);
+                 groupsIntentHandler.handleChangeNameAndMembersResult(data, groups, adapter);
              }
         }
     }

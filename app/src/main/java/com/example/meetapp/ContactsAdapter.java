@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,17 +13,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
     private ArrayList<ContactItem> contactsList;
 
-    public static class ContactsViewHolder extends RecyclerView.ViewHolder {
+    static class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView contactNameTextView;
+        TextView contactNameTextView;
 
-        public ContactsViewHolder(@NonNull View itemView) {
+        ContactsViewHolder(@NonNull View itemView) {
             super(itemView);
             contactNameTextView = itemView.findViewById(R.id.contactName);
         }
     }
 
-    public ContactsAdapter(ArrayList<ContactItem> contactsList){
+    ContactsAdapter(ArrayList<ContactItem> contactsList){
         this.contactsList = contactsList;
     }
 
@@ -32,14 +31,19 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contact_item, viewGroup, false);
-        ContactsViewHolder contactsViewHolder = new ContactsViewHolder(view);
-        return contactsViewHolder;
+        return new ContactsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ContactsViewHolder contactsViewHolder, int i) {
         final ContactItem currentItem = contactsList.get(i);
         contactsViewHolder.contactNameTextView.setText(currentItem.getContactName());
+        contactsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddMembersHandler.onContactClick(v);
+            }
+        });
     }
 
     @Override
