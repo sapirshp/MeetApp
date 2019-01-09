@@ -136,7 +136,6 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                oldNameIfChanged = toolbar.getTitle().toString();
                 nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
             }
         });
