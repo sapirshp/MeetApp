@@ -103,7 +103,9 @@ class MenuHandler {
                     @Override
                     public void onClick(View view, Parcelable token) {
                         for (TimeSlot slotToReset : slotsToReset) {
-                            calendarSlotsHandler.clickedOn(slotToReset, false);
+                            if (!slotToReset.getClicked()) {
+                                calendarSlotsHandler.clickedOn(slotToReset, false);
+                            }
                         }
                     }
                 };
