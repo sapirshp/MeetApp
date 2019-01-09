@@ -129,6 +129,17 @@ public class InsideGroupActivity extends AppCompatActivity {
         groupMembers = getIntent().getExtras().getString("groupMembers");
         toolbar.setSubtitle(groupMembers);
         membersAmount = groupMembers.split(",").length;
+        setOnClickToolbarListener();
+    }
+
+    private void setOnClickToolbarListener(){
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                oldNameIfChanged = toolbar.getTitle().toString();
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
