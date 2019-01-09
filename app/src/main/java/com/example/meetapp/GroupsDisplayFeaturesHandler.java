@@ -59,6 +59,7 @@ class GroupsDisplayFeaturesHandler {
                     createGroup.setOnClickListener(onCreateGroupBtn(members, userName));
                 }
             }
+            
             @Override
             public void afterTextChanged(Editable s) {}
         };

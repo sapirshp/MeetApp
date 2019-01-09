@@ -18,22 +18,34 @@ class AddMembersHandler {
 
     static void onContactClick(View v){
         RelativeLayout contactLayout = v.findViewById(R.id.contactLayout);
-        TextView contactName = v.findViewById(R.id.contactName);
-        ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
         if (contactLayout.getTag() != "chosen") {
-            okButton.setBackgroundResource(R.drawable.green_round_background);
-            contactLayout.setBackgroundColor(v.getResources().getColor(R.color.colorGreen));
-            contactLayout.setTag("chosen");
-             addMember((String) contactName.getText());
+            clickOn(v);
         }
         else{
-             removeMember((String) contactName.getText());
-             if (isMemberToAddEmpty()){
-                 okButton.setBackgroundResource(R.drawable.disabled_button_background);
-            }
-            contactLayout.setBackgroundColor(v.getResources().getColor(R.color.colorWhite));
-            contactLayout.setTag("notChosen");
+            clickOff(v);
         }
+    }
+
+    private static void clickOn(View view){
+        RelativeLayout contactLayout = view.findViewById(R.id.contactLayout);
+        TextView contactName = view.findViewById(R.id.contactName);
+        ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
+        okButton.setBackgroundResource(R.drawable.green_round_background);
+        contactLayout.setBackgroundColor(view.getResources().getColor(R.color.colorGreen));
+        contactLayout.setTag("chosen");
+        addMember((String) contactName.getText());
+    }
+
+    private static void clickOff(View view){
+        RelativeLayout contactLayout = view.findViewById(R.id.contactLayout);
+        TextView contactName = view.findViewById(R.id.contactName);
+        ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
+        removeMember((String) contactName.getText());
+        if (isMemberToAddEmpty()){
+            okButton.setBackgroundResource(R.drawable.disabled_button_background);
+        }
+        contactLayout.setBackgroundColor(view.getResources().getColor(R.color.colorWhite));
+        contactLayout.setTag("notChosen");
     }
 
     static void chooseMembers(final Runnable onChooseMembers){
