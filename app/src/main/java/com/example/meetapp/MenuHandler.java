@@ -118,12 +118,12 @@ class MenuHandler {
                 .setAnimations(Style.ANIMATIONS_POP).show();
     }
 
-    void handleExitGroup(final Context context, String groupName)
+    void handleExitGroup(final Context context, String groupId)
     {
         AlertDialog exitGroupDialog = new AlertDialog.Builder(context).create();
         exitGroupDialog.setTitle(context.getString(R.string.leaveGroupTitle));
         exitGroupDialog.setMessage(context.getString(R.string.leaveGroupQuestion));
-        handlePositiveExitAnswer(context, exitGroupDialog, groupName);
+        handlePositiveExitAnswer(context, exitGroupDialog, groupId);
         handleNegativeExitAnswer(context, exitGroupDialog);
         exitGroupDialog.show();
         handleButtonsLayoutAndColor(context, exitGroupDialog);
@@ -143,14 +143,14 @@ class MenuHandler {
 
      }
 
-     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog, final String groupName) {
+     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog, final String groupId) {
 
          alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.leaveAnswer),
                  new DialogInterface.OnClickListener() {
                      public void onClick(DialogInterface dialog, int which) {
                          dialog.dismiss();
                          Intent goToGroupsDisplay = new Intent();
-                         goToGroupsDisplay.putExtra("groupName", groupName);
+                         goToGroupsDisplay.putExtra("groupId", groupId);
                          activity.setResult(LEAVE_GROUP_RESULT_CODE, goToGroupsDisplay);
                          activity.finish();
                      }

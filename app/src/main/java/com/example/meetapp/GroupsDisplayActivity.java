@@ -26,7 +26,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private final int EXIT_DELAY = 2000;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    public ArrayList<Group> groups = new ArrayList<>();
     private String userName = "Oren";
     private String phoneNumber = "972528240512";
     IntentHandler groupsIntentHandler;
@@ -49,12 +48,12 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         loadGroups();
-        adapter = new GroupAdapter(groups, this);
+        adapter = new GroupAdapter(MockDB.getGroupsList(), this);
         recyclerView.setAdapter(adapter);
     }
 
     private void setCreateNewGroupListener(){
-        groupsDisplayFeaturesHandler = new GroupsDisplayFeaturesHandler(this, dialogs, groups);
+        groupsDisplayFeaturesHandler = new GroupsDisplayFeaturesHandler(this, dialogs, adapter);
         Button createNewGroup = findViewById(R.id.AddGroupBtn);
         createNewGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +82,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     }
 
     private void loadGroups() {
-        groups = MockDB.buildMockGroups(userName, groups);
+        MockDB.buildMockGroups(userName);
     }
 
     @Override
@@ -114,14 +113,14 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
              if(resultCode == LEAVE_GROUP_RESULT_CODE) {
-                 groupsIntentHandler.handleLeaveGroupResult(data, groups, adapter);
+                 groupsIntentHandler.handleLeaveGroupResult(data, adapter);
                  AddMembersHandler.setDialog(addMembersDialog);
              }else if (resultCode == EDIT_NAME_RESULT_CODE){
-                 groupsIntentHandler.handleEditNameResult(data, groups, adapter);
+                 groupsIntentHandler.handleEditNameResult(data, adapter);
              }else if (resultCode == ADD_MEMBERS_RESULT_CODE){
-                 groupsIntentHandler.handleAddMembersResult(data, groups, adapter);
+                 groupsIntentHandler.handleAddMembersResult(data, adapter);
              }else if (resultCode == CHANGE_NAME_AND_MEMBERS){
-                 groupsIntentHandler.handleChangeNameAndMembersResult(data, groups, adapter);
+                 groupsIntentHandler.handleChangeNameAndMembersResult(data, adapter);
              }
         }
     }

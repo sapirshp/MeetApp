@@ -15,25 +15,24 @@ class IntentHandler {
     private final int ADD_MEMBERS_RESULT_CODE = 3;
     private final int CHANGE_NAME_AND_MEMBERS = 4;
 
-    void groupNameAndMemberChanged(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar, String oldName){
-        insideGroupIntent.putExtra("EditGroupName", toolbar.getTitle().toString());
-        insideGroupIntent.putExtra("OldName", oldName);
-        insideGroupIntent.putExtra("AddMembers", toolbar.getSubtitle().toString());
-        insideGroupIntent.putExtra("GroupName", toolbar.getTitle().toString());
+    void groupNameAndMemberChanged(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar, String groupId){
+        insideGroupIntent.putExtra("newGroupName", toolbar.getTitle().toString());
+        insideGroupIntent.putExtra("groupId", groupId);
+        insideGroupIntent.putExtra("newMembers", toolbar.getSubtitle().toString());
         insideGroupActivity.setResult(CHANGE_NAME_AND_MEMBERS, insideGroupIntent);
         insideGroupActivity.finish();
     }
 
-    void groupNameChanged(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar, String oldName){
-        insideGroupIntent.putExtra("EditGroupName", toolbar.getTitle().toString());
-        insideGroupIntent.putExtra("OldName", oldName);
+    void groupNameChanged(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar, String groupId){
+        insideGroupIntent.putExtra("newGroupName", toolbar.getTitle().toString());
+        insideGroupIntent.putExtra("groupId", groupId);
         insideGroupActivity.setResult(EDIT_NAME_RESULT_CODE, insideGroupIntent);
         insideGroupActivity.finish();
     }
 
-    void groupMembersAdded(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar){
-        insideGroupIntent.putExtra("AddMembers", toolbar.getSubtitle().toString());
-        insideGroupIntent.putExtra("GroupName", toolbar.getTitle().toString());
+    void groupMembersAdded(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar, String groupId){
+        insideGroupIntent.putExtra("newMembers", toolbar.getSubtitle().toString());
+        insideGroupIntent.putExtra("groupId", groupId);
         insideGroupActivity.setResult(ADD_MEMBERS_RESULT_CODE, insideGroupIntent);
         insideGroupActivity.finish();
     }
@@ -42,61 +41,37 @@ class IntentHandler {
         insideGroupActivity.finish();
     }
 
-    void handleLeaveGroupResult(Intent data, ArrayList<Group> groups, RecyclerView.Adapter adapter){
-        String groupName = data.getStringExtra("groupName");
-        Group groupToRemove = null;
-        for(Group group: groups){
-            if (group.getName().equals(groupName)){
-                groupToRemove = group;
-                break;
-            }
-        }
-        adapter.notifyItemRemoved(groups.indexOf(groupToRemove));
-        groups.remove(groupToRemove);
+    void handleLeaveGroupResult(Intent data, RecyclerView.Adapter adapter){
+        String groupId = data.getStringExtra("groupId");
+        Group groupToRemove = MockDB.getGroupById(groupId);
+        adapter.notifyItemRemoved(MockDB.getGroupsList().indexOf(groupToRemove));
+        MockDB.removeGroupFromList(groupToRemove);
         adapter.notifyDataSetChanged();
     }
 
-    void handleAddMembersResult(Intent data, ArrayList<Group> groups, RecyclerView.Adapter adapter){
-        Group groupToAddMembers = null;
-        String newMembers = data.getStringExtra("AddMembers");
+    void handleAddMembersResult(Intent data, RecyclerView.Adapter adapter){
+        String newMembers = data.getStringExtra("newMembers");
         List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.replaceAll(",\\s",",").split(",")));
-        String groupName = data.getStringExtra("GroupName");
-        for(Group group: groups){
-            if (group.getName().equals(groupName)){
-                groupToAddMembers = group;
-                break;
-            }
-        }
+        String groupId = data.getStringExtra("groupId");
+        Group groupToAddMembers = MockDB.getGroupById(groupId);
         groupToAddMembers.setMembers(newMembersList);
         adapter.notifyDataSetChanged();
     }
 
-    void handleEditNameResult(Intent data, ArrayList<Group> groups, RecyclerView.Adapter adapter){
-        Group groupToChangeName = null;
-        String newGroupName = data.getStringExtra("EditGroupName");
-        String oldName = data.getStringExtra("OldName");
-        for(Group group: groups){
-            if (group.getName().equals(oldName)){
-                groupToChangeName = group;
-                break;
-            }
-        }
+    void handleEditNameResult(Intent data, RecyclerView.Adapter adapter){
+        String newGroupName = data.getStringExtra("newGroupName");
+        String groupId = data.getStringExtra("groupId");
+        Group groupToChangeName = MockDB.getGroupById(groupId);
         groupToChangeName.setName(newGroupName);
         adapter.notifyDataSetChanged();
     }
 
-    void handleChangeNameAndMembersResult(Intent data, ArrayList<Group> groups, RecyclerView.Adapter adapter){
-        Group groupToChange = null;
-        String newGroupName = data.getStringExtra("EditGroupName");
-        String oldName = data.getStringExtra("OldName");
-        String newMembers = data.getStringExtra("AddMembers");
+    void handleChangeNameAndMembersResult(Intent data, RecyclerView.Adapter adapter){
+        String newGroupName = data.getStringExtra("newGroupName");
+        String groupId = data.getStringExtra("groupId");
+        String newMembers = data.getStringExtra("newMembers");
         List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.replaceAll(",\\s",",").split(",")));
-        for(Group group: groups){
-            if (group.getName().equals(oldName)){
-                groupToChange = group;
-                break;
-            }
-        }
+        Group groupToChange = MockDB.getGroupById(groupId);
         groupToChange.setName(newGroupName);
         groupToChange.setMembers(newMembersList);
         adapter.notifyDataSetChanged();
