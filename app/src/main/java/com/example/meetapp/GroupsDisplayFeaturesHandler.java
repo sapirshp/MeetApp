@@ -2,6 +2,7 @@ package com.example.meetapp;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -17,16 +18,16 @@ import java.util.List;
 class GroupsDisplayFeaturesHandler {
     private Dialog newGroupDialog;
     private Dialog addMembersDialog;
-    private ArrayList<Group> groups;
     private Activity activity;
     private ArrayList<String> members = new ArrayList<>();
+    private RecyclerView.Adapter adapter;
 
 
-    GroupsDisplayFeaturesHandler(Activity activity, HashMap<String, Dialog> dialogs, ArrayList<Group> groups){
+    GroupsDisplayFeaturesHandler(Activity activity, HashMap<String, Dialog> dialogs, RecyclerView.Adapter adapter){
         this.newGroupDialog = dialogs.get("newGroupDialog");
         this.addMembersDialog = dialogs.get("addMembersDialog");
-        this.groups = groups;
         this.activity = activity;
+        this.adapter = adapter;
     }
 
     private void showNewGroupPopup(String membersNames, String userName) {
@@ -83,8 +84,9 @@ class GroupsDisplayFeaturesHandler {
             makeToastToCenterOfScreen(activity.getString(R.string.groupNameExists));
         }
         else {
-            Group newGroup = new Group(newGroupName, "1", userName, members, false);
-            groups.add(newGroup);
+            Group newGroup = new Group(newGroupName, MockDB.findNextAvailableId(), userName, members, false);
+            MockDB.addGroupToListFirst(newGroup);
+            adapter.notifyDataSetChanged();
             makeToastToCenterOfScreen(activity.getString(R.string.newGroupCreated));
             newGroupDialog.dismiss();
         }
@@ -99,7 +101,7 @@ class GroupsDisplayFeaturesHandler {
 
     private boolean groupNameAlreadyExists(String newGroupName)
     {
-        for(Group group:groups)
+        for(Group group: MockDB.getGroupsList())
         {
             if(group.getName().equals(newGroupName)) { return true; }
         }

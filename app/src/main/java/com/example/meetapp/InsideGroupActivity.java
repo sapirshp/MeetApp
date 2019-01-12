@@ -22,10 +22,12 @@ public class InsideGroupActivity extends AppCompatActivity {
     Dialog groupDetailsDialog;
     Dialog editGroupNameDialog;
     HashMap<String, Dialog> dialogs = new HashMap<>();
+    private Group thisGroup;
     private MenuHandler menuHandler;
     private int membersAmount;
     private String groupMembers;
     private String groupName;
+    private String groupId;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
@@ -33,7 +35,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     boolean isTopChoicePressed = false;
     private boolean nameChanged;
     private boolean membersAdded;
-    private String oldNameIfChanged;
     IntentHandler insideGroupIntentHandler;
 
 
@@ -47,6 +48,8 @@ public class InsideGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group);
         View layout = findViewById(R.id.calendarView);
         DateSetter.setDatesToDisplay(layout);
+        groupId = getIntent().getExtras().getString("groupId");
+        thisGroup = MockDB.getGroupById(groupId);
         setToolbar();
         createSlotHandler(layout);
         setIntentHandler();
@@ -64,7 +67,6 @@ public class InsideGroupActivity extends AppCompatActivity {
         insideGroupIntentHandler = new IntentHandler();
         membersAdded = false;
         nameChanged = false;
-        oldNameIfChanged = toolbar.getTitle().toString();
     }
 
     public void setDialogsMap(){
@@ -83,13 +85,13 @@ public class InsideGroupActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (nameChanged && membersAdded){
-            insideGroupIntentHandler.groupNameAndMemberChanged(goToGroupsDisplay, this, toolbar, oldNameIfChanged);
+            insideGroupIntentHandler.groupNameAndMemberChanged(goToGroupsDisplay, this, toolbar, groupId);
         }
         else if (nameChanged) {
-            insideGroupIntentHandler.groupNameChanged(goToGroupsDisplay, this, toolbar, oldNameIfChanged);
+            insideGroupIntentHandler.groupNameChanged(goToGroupsDisplay, this, toolbar, groupId);
         }
         else if (membersAdded) {
-            insideGroupIntentHandler.groupMembersAdded(goToGroupsDisplay, this, toolbar);
+            insideGroupIntentHandler.groupMembersAdded(goToGroupsDisplay, this, toolbar, groupId);
         } else {
             insideGroupIntentHandler.defaultFinish(this);
         }
@@ -108,12 +110,12 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.groupToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            groupName = getIntent().getExtras().getString("groupName");
+            groupName = thisGroup.getName();
             getSupportActionBar().setTitle(groupName);
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
-        groupMembers = getIntent().getExtras().getString("groupMembers");
+        groupMembers =thisGroup.getMembersString();
         toolbar.setSubtitle(groupMembers);
         membersAmount = groupMembers.split(",").length;
         setOnClickToolbarListener();
@@ -142,7 +144,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                     menuHandler.handleResetTimeChoice(calendarSlotsHandler);
                 break;
             case R.id.exitGroupBtn:
-                menuHandler.handleExitGroup(this, toolbar.getTitle().toString());
+                menuHandler.handleExitGroup(this, groupId);
                 break;
             case R.id.createMeetingBtn:
                 menuHandler.handleCreateMeeting(calendarSlotsHandler);
