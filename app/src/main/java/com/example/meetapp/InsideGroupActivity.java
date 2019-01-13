@@ -21,6 +21,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     Dialog addMemberDialog;
     Dialog groupDetailsDialog;
     Dialog editGroupNameDialog;
+    Dialog meetingChosenDialog;
     HashMap<String, Dialog> dialogs = new HashMap<>();
     private Group thisGroup;
     private MenuHandler menuHandler;
@@ -75,11 +76,13 @@ public class InsideGroupActivity extends AppCompatActivity {
         topSuggestionsDialog = new Dialog(this);
         groupDetailsDialog = new Dialog(this);
         editGroupNameDialog = new Dialog(this);
+        meetingChosenDialog = new Dialog(this);
         AddMembersHandler.setDialog(addMemberDialog);
         dialogs.put("addMemberDialog", addMemberDialog);
         dialogs.put("groupDetailsDialog", groupDetailsDialog);
         dialogs.put("editGroupNameDialog", editGroupNameDialog);
         dialogs.put("topSuggestionsDialog", topSuggestionsDialog);
+        dialogs.put("meetingChosenDialog", meetingChosenDialog);
     }
 
     @Override

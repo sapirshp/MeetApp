@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/groupToolbar"
-        layout="@layout/toolbar"/>
+        layout="@layout/toolbar" />
 
 
     <TextView
@@ -23,6 +23,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/groupBackGround"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"></LinearLayout>
 
     <LinearLayout
         android:id="@+id/calendarView"
