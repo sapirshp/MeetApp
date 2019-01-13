@@ -103,18 +103,7 @@ class MenuHandler {
     }
 
     private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler){
-        SuperActivityToast.OnButtonClickListener onButtonClickListener =
-                new SuperActivityToast.OnButtonClickListener() {
-
-                    @Override
-                    public void onClick(View view, Parcelable token) {
-                        for (TimeSlot slotToReset : slotsToReset) {
-                            if (!slotToReset.getClicked()) {
-                                calendarSlotsHandler.clickedOn(slotToReset, false);
-                            }
-                        }
-                    }
-                };
+        SuperActivityToast.OnButtonClickListener onButtonClickListener = undoOnClickListener(calendarSlotsHandler);
         SuperActivityToast.create(activity, new Style(), Style.TYPE_BUTTON)
                 .setButtonText("UNDO")
                 .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
@@ -122,6 +111,19 @@ class MenuHandler {
                 .setDuration(Style.DURATION_LONG)
                 .setColor(activity.getResources().getColor(R.color.undoDark))
                 .setAnimations(Style.ANIMATIONS_POP).show();
+    }
+
+    private SuperActivityToast.OnButtonClickListener undoOnClickListener(final CalendarSlotsHandler calendarSlotsHandler){
+         return new SuperActivityToast.OnButtonClickListener() {
+             @Override
+             public void onClick(View view, Parcelable token) {
+                 for (TimeSlot slotToReset : slotsToReset) {
+                     if (!slotToReset.getClicked()) {
+                         calendarSlotsHandler.clickedOn(slotToReset, false);
+                         }
+                 }
+             }
+         };
     }
 
     void handleExitGroup(final Context context, String groupId)
@@ -261,19 +263,23 @@ class MenuHandler {
 
     private void displayTopSelection (CalendarSlotsHandler calendarSlotsHandler){
          TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
-        String topSelectionText = "";
+         String topSelectionText = "";
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
          if (!isDateChosen) {
-             topSelectionText = "Suggestions:";
-             for (String suggestion : topSelections) {
-                 topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
-             }
+             topSelectionText = displaySuggestions(topSelections);
          }else {
-             topSelectionText = "Next MeetUp:\n";
-             topSelectionText = String.format("%s%s", topSelectionText, dateChosen);
+             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, dateChosen);
              topSelectionInfo.setTextSize(30);
          }
         topSelectionInfo.setText(topSelectionText);
+    }
+
+    private String displaySuggestions(ArrayList<String> topSelections){
+        String topSelectionText = "Suggestions:";
+        for (String suggestion : topSelections) {
+            topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
+        }
+        return topSelectionText;
     }
 
     private void displayGroupName(String groupName) {
@@ -291,19 +297,23 @@ class MenuHandler {
             return;
         }
         if (!isDateChosen) {
-            topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
-            TextView exitBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
-            handleExitPopup(topSuggestionsDialog, exitBtn);
-            Button[] allOptionsLst = createAllOptionsLst();
-            final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst,
-                    numOfOptionsToDisplay);
-            setTextForOptions(currentOptionLst, calendarSlotsHandler);
-            handleAllOptionPresses(currentOptionLst, allOptionsLst);
-            handleCreateMeetingBtnPress(currentOptionLst);
+            displayTopSuggestionsDialog(numOfOptionsToDisplay, calendarSlotsHandler);
             topSuggestionsDialog.show();
         }else {
             createMeetUp();
         }
+    }
+
+    private void displayTopSuggestionsDialog(int numOfOptionsToDisplay, CalendarSlotsHandler calendarSlotsHandler){
+        topSuggestionsDialog.setContentView(R.layout.top_suggestions_popup);
+        TextView exitBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
+        handleExitPopup(topSuggestionsDialog, exitBtn);
+        Button[] allOptionsLst = createAllOptionsLst();
+        final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst, numOfOptionsToDisplay);
+        setTextForOptions(currentOptionLst, calendarSlotsHandler);
+        handleAllOptionPresses(currentOptionLst, allOptionsLst);
+        handleCreateMeetingBtnPress(currentOptionLst);
+        topSuggestionsDialog.show();
     }
 
 
@@ -321,8 +331,13 @@ class MenuHandler {
     private ArrayList<Button> activateOnlyRelevantButtons(Button[] allOptionsLst, int numOfOptionsToDisplay)
     {
         final ArrayList<Button> currentOptionLst = new ArrayList<>();
+        buildSuggestionsButtonsList(numOfOptionsToDisplay, currentOptionLst, allOptionsLst);
+        showRelevantSuggestionsButtons(numOfOptionsToDisplay, allOptionsLst);
+        return currentOptionLst;
+    }
+
+    private void buildSuggestionsButtonsList(int numOfOptionsToDisplay, ArrayList<Button> currentOptionLst, Button[] allOptionsLst){
         Button createMeeting = allOptionsLst[3];
-        // build button list according to numOfOptionsToDisplay
         switch (numOfOptionsToDisplay){
             case 3:
                 currentOptionLst.add(allOptionsLst[2]);
@@ -333,17 +348,16 @@ class MenuHandler {
             default:
                 currentOptionLst.add(createMeeting);
         }
-        // show only the relevant buttons
-        switch(numOfOptionsToDisplay)
-        {
+    }
+
+    private void showRelevantSuggestionsButtons(int numOfOptionsToDisplay, Button[] allOptionsLst){
+        switch(numOfOptionsToDisplay) {
             case 1:
                 allOptionsLst[1].setVisibility(View.GONE);
             case 2:
                 allOptionsLst[2].setVisibility(View.GONE);
         }
-        return currentOptionLst;
     }
-
 
     private void setTextForOptions(ArrayList<Button> buttonsSuggestion, CalendarSlotsHandler calendarSlotsHandler)
     {
@@ -370,8 +384,7 @@ class MenuHandler {
 
      private void handleOptionPress(int newButtonPressed, ArrayList<Button> btnList)
      {
-         if(newButtonPressed == currentMeetingChoice)
-         {
+         if(newButtonPressed == currentMeetingChoice) {
              turnOffCurrentBtn(newButtonPressed, btnList);
          }
          else{
