@@ -43,10 +43,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         viewHolder.textViewGroupName.setText(newGroup.getName());
         viewHolder.textViewParticipants.setText(newGroup.getMembersString());
 
-        if(newGroup.getIsScheduled())
-        {
-            showScheduledTimeSymbols(viewHolder, position);
-        }
+//        if(newGroup.getIsScheduled())
+//        {
+//            showScheduledTimeSymbols(viewHolder, position);
+//        }
 
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
