@@ -436,7 +436,7 @@ class MenuHandler {
          isDateChosen = true;
          if (!currentGroup.getIsScheduled()) {
              currentGroup.setIsScheduled(true);
-             currentGroup.setChosenDate(dateChosen);
+             setChosenDate(dateChosen);
          }
          setCalendarInvisible();
          setGifBackground();
@@ -445,6 +445,16 @@ class MenuHandler {
          dateText.setText(currentGroup.getChosenDate());
          meetingChosenDialog.show();
      }
+
+     private void setChosenDate(String chosenDate){
+         String[] dayAndTime = chosenDate.split(" ");
+         String day = dayAndTime[0];
+         if (day.equals("Today")){
+             day = DateSetter.getToday();
+         }
+         dateChosen = String.format("%s %s", day, dayAndTime[1]);
+         currentGroup.setChosenDate(dateChosen);
+    }
 
      private void setCalendarInvisible(){
          LinearLayout calendar = activity.findViewById(R.id.calendarView);

@@ -41,12 +41,24 @@ class MockDB {
             Group newGroup = new Group("Group" + i, findNextAvailableId(), userName, members, false);
             addGroupToList(newGroup);
         }
-//        for (int i=2; i<=4; i++)
-//        {
-//            List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
-//            Group newGroup = new Group("Group" + i, findNextAvailableId(), userName, members, true);
-//            addGroupToList(newGroup);
-//        }
+        for (int i=2; i<=4; i++)
+        {
+            List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
+            Group newGroup = new Group("Group" + i, findNextAvailableId(), userName, members, true);
+            newGroup.setChosenDate(getChosenDate(i));
+            addGroupToList(newGroup);
+        }
+    }
+
+    private static String getChosenDate(int iterationNum){
+        switch (iterationNum){
+            case 2:
+                return "Sat Morning";
+            case 3:
+                return "Sun Afternoon";
+            default:
+                return "Fri Evening";
+        }
     }
 
     static String  findNextAvailableId(){
