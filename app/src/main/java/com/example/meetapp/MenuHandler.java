@@ -43,7 +43,7 @@ class MenuHandler {
     private final int NO_SLOTS_CHOSEN = 0;
     private Activity activity;
     private boolean isDateChosen;
-    private String dateChosen;
+    private String dateChosenByAdmin;
     private Group currentGroup;
 
 
@@ -57,7 +57,7 @@ class MenuHandler {
         this.meetingChosenDialog = dialogs.get("meetingChosenDialog");
         this.activity = activity;
         this.isDateChosen = false;
-        this.dateChosen = "";
+        this.dateChosenByAdmin = "";
         this.currentGroup = currentGroup;
     }
 
@@ -425,7 +425,7 @@ class MenuHandler {
                      String chosenDate = optionSelected.getText().toString();
                      chosenDate = chosenDate.substring(0, chosenDate.indexOf("-"));
                      topSuggestionsDialog.dismiss();
-                     dateChosen = chosenDate;
+                     dateChosenByAdmin = chosenDate;
                      createMeetUp();
                  }
              }
@@ -436,7 +436,7 @@ class MenuHandler {
          isDateChosen = true;
          if (!currentGroup.getIsScheduled()) {
              currentGroup.setIsScheduled(true);
-             setChosenDate(dateChosen);
+             setChosenDate(dateChosenByAdmin);
          }
          setCalendarInvisible();
          setGifBackground();
@@ -446,14 +446,14 @@ class MenuHandler {
          meetingChosenDialog.show();
      }
 
-     private void setChosenDate(String chosenDate){
-         String[] dayAndTime = chosenDate.split(" ");
+     private void setChosenDate(String dateToSet){
+         String[] dayAndTime = dateToSet.split(" ");
          String day = dayAndTime[0];
          if (day.equals("Today")){
              day = DateSetter.getToday();
          }
-         dateChosen = String.format("%s %s", day, dayAndTime[1]);
-         currentGroup.setChosenDate(dateChosen);
+         dateChosenByAdmin = String.format("%s %s", day, dayAndTime[1]);
+         currentGroup.setChosenDate(dateChosenByAdmin);
     }
 
      private void setCalendarInvisible(){

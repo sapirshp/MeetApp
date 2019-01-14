@@ -99,7 +99,7 @@ public class Group {
         this.isFirstEntrance = isFirstEntrance;
     }
 
-    public boolean getIsFirstEntrance(){
+    public boolean isFirstEntrance(){
         return isFirstEntrance;
     }
 
@@ -107,13 +107,15 @@ public class Group {
         return this.groupSlotSelections;
     }
 
-    public TimeSlot getTimeSlot(TimeSlot timeSlot){
-        for (TimeSlot ts : groupSlotSelections.keySet()){
-            if (ts.getSlotIndex() == timeSlot.getSlotIndex()){
-                return ts;
+    public TimeSlot getTimeSlot(TimeSlot slotToGet){
+        TimeSlot slotToReturn = slotToGet;
+        for (TimeSlot groupTimeSlot : groupSlotSelections.keySet()){
+            if (groupTimeSlot.getSlotIndex() == slotToGet.getSlotIndex()){
+                slotToReturn = groupTimeSlot;
+                break;
             }
         }
-        return null;
+        return slotToReturn;
     }
 
     public void setChosenDate(String chosenDate){

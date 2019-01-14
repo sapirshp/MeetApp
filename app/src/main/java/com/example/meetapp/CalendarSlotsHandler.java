@@ -71,7 +71,7 @@ class CalendarSlotsHandler {
             int slotIndex = (3 * dateIndex) + hourIndex;
             final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour, slotIndex);
             slotSelections.put(timeSlot, 0);
-            if (currentGroup.getIsFirstEntrance()) {
+            if (currentGroup.isFirstEntrance()) {
                 currentGroup.getGroupSlotSelections().put(timeSlot, 0);
             }
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
@@ -104,21 +104,25 @@ class CalendarSlotsHandler {
             userClicks.add(timeSlot);
         }
         if (getSelectionNumber(timeSlot) > 0) {
-            if (membersAmount > 1) {
-                textWithSelectionNumber = getSelectionNumber(timeSlot) +
-                        "/" + membersAmount;
-                timeSlot.getButton().setText(textWithSelectionNumber);
-            }
-            if (isMemberAmountRefresh) {
-                userChooseMark = context.getDrawable(R.drawable.empty);
-                if (containsInUserClicked(timeSlot)){
-                    userChooseMark = context.getDrawable(R.drawable.v_green);
-                }
-            }
-            float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
-            bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
-            timeSlot.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
+            setSlotClicked(timeSlot, isMemberAmountRefresh);
         }
+    }
+
+    private void setSlotClicked(TimeSlot timeSlot, boolean isMemberAmountRefresh){
+        if (membersAmount > 1) {
+            textWithSelectionNumber = getSelectionNumber(timeSlot) +
+                    "/" + membersAmount;
+            timeSlot.getButton().setText(textWithSelectionNumber);
+        }
+        if (isMemberAmountRefresh) {
+            userChooseMark = context.getDrawable(R.drawable.empty);
+            if (containsInUserClicked(timeSlot)){
+                userChooseMark = context.getDrawable(R.drawable.v_green);
+            }
+        }
+        float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
+        bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
+        timeSlot.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
     }
 
     void clickedOff(TimeSlot timeSlot) {
@@ -127,11 +131,15 @@ class CalendarSlotsHandler {
         groupTimeSlot.setClicked(false);
         userClicks.remove(timeSlot);
         setSelectionNumber(timeSlot, groupTimeSlot, false);
+        setClickedOfBackground(timeSlot);
+    }
+
+    private void setClickedOfBackground(TimeSlot timeSlot){
         userChooseMark = context.getDrawable(R.drawable.empty);
         if (getSelectionNumber(timeSlot)>0){
             float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
             bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
-                textWithSelectionNumber = getSelectionNumber(timeSlot) + "/" + membersAmount;
+            textWithSelectionNumber = getSelectionNumber(timeSlot) + "/" + membersAmount;
         }
         else {
             bgColor = Color.WHITE;
@@ -190,10 +198,10 @@ class CalendarSlotsHandler {
         membersAmount = newAmount;
     }
 
-    private int getSelectionNumber(TimeSlot timeSlot) {
-        for (TimeSlot slot : slotSelections.keySet()) {
-            if (slot.getSlotIndex() == timeSlot.getSlotIndex()){
-                return slotSelections.get(slot);
+    private int getSelectionNumber(TimeSlot slotToFind) {
+        for (TimeSlot wantedSlot : slotSelections.keySet()) {
+            if (wantedSlot.getSlotIndex() == slotToFind.getSlotIndex()){
+                return slotSelections.get(wantedSlot);
             }
         }
         return 0;
@@ -208,29 +216,36 @@ class CalendarSlotsHandler {
         return false;
     }
 
-    private void setSelectionNumber(TimeSlot timeSlot, TimeSlot groupTimeSlot, boolean add) {
+    private void setSelectionNumber(TimeSlot slotToSet, TimeSlot groupTimeSlot, boolean add) {
         boolean doneSetting = false;
-        for (TimeSlot slot : slotSelections.keySet()) {
-            if (slot.getSlotIndex() == timeSlot.getSlotIndex()) {
+        for (TimeSlot slotToChange : slotSelections.keySet()) {
+            if (slotToChange.getSlotIndex() == slotToSet.getSlotIndex()) {
                 if (add) {
-                    if (getSelectionNumber(timeSlot) < membersAmount) {
-                        slotSelections.put(slot, getSelectionNumber(timeSlot) + 1);
-                        currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)+1);
-                    }
-                    doneSetting = true;
+                    doneSetting = addToSlotSelections(slotToChange, groupTimeSlot);
                     break;
                 } else {
-                    if (getSelectionNumber(slot) > 0) {
-                        slotSelections.put(slot, getSelectionNumber(slot) - 1);
-                        currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)-1);
-                        break;
-                    }
+                    removeFromSlotSelections(slotToChange, groupTimeSlot);
                 }
             }
         }
         if (add && !doneSetting){
-            slotSelections.put(timeSlot, 1);
+            slotSelections.put(slotToSet, 1);
             currentGroup.getGroupSlotSelections().put(groupTimeSlot, 1);
+        }
+    }
+
+    private boolean addToSlotSelections(TimeSlot slotToAdd, TimeSlot groupTimeSlot){
+        if (getSelectionNumber(slotToAdd) < membersAmount) {
+            slotSelections.put(slotToAdd, getSelectionNumber(slotToAdd) + 1);
+            currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)+1);
+        }
+        return true;
+    }
+
+    private void removeFromSlotSelections(TimeSlot slotToChange, TimeSlot groupTimeSlot){
+        if (getSelectionNumber(slotToChange) > 0) {
+            slotSelections.put(slotToChange, getSelectionNumber(slotToChange) - 1);
+            currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)-1);
         }
     }
 
