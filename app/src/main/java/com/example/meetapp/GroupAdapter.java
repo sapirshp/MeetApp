@@ -45,7 +45,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
 
         if(newGroup.getIsScheduled())
         {
-            showScheduledTimeSymbols(viewHolder, position);
+            showScheduledTimeSymbols(viewHolder, newGroup.getChosenDate());
         }
 
         viewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -58,44 +58,41 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         });
     }
 
-    private void showScheduledTimeSymbols(@NonNull ViewHolder viewHolder, int position)
+    private void showScheduledTimeSymbols(@NonNull ViewHolder viewHolder, String chosenDate)
     {
-        TextDrawable dayLetterRepr = daySymbolFactory(position % 7);    // OREN - CHANGE HERE
+        String[] chosenDayAndTime = chosenDate.split(" ");
+        TextDrawable dayLetterRepr = daySymbolFactory(chosenDayAndTime[0]);    // OREN - CHANGE HERE
         viewHolder.dayScheduled.setImageDrawable(dayLetterRepr);
-        int timeInDaySymbol = timeInDayFactory(position % 3);           // OREN - CHANGE HERE
+        int timeInDaySymbol = timeInDayFactory(chosenDayAndTime[1]);           // OREN - CHANGE HERE
         viewHolder.timeInDay.setImageResource(timeInDaySymbol);
     }
 
-    public TextDrawable daySymbolFactory(int dayRepr)
+    public TextDrawable daySymbolFactory(String dayRepr)
     {
         switch (dayRepr){
-            case 1:
+            case "Sun":
                 return TextDrawable.builder().buildRound("Sun", Color.BLUE);
-            case 2:
+            case "Mon":
                 return TextDrawable.builder().buildRound("Mon", Color.RED);
-            case 3:
+            case "Tue":
                 return TextDrawable.builder().buildRound("Tue", Color.DKGRAY);
-            case 4:
+            case "Wed":
                 return TextDrawable.builder().buildRound("Wed", Color.BLUE);
-            case 5:
+            case "Thu":
                 return TextDrawable.builder().buildRound("Thu", Color.LTGRAY);
-            case 6:
+            case "Fri":
                 return TextDrawable.builder().buildRound("Fri", Color.GREEN);
-            case 7:
-                return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
             default:
                 return TextDrawable.builder().buildRound("Sat", Color.MAGENTA);
         }
     }
 
-    public int timeInDayFactory(int timeRepr) {
+    public int timeInDayFactory(String timeRepr) {
         switch (timeRepr) {
-            case 1:
+            case "Morning":
                 return R.drawable.morning_icon;
-            case 2:
+            case "Afternoon":
                 return R.drawable.afternoon_icon;
-            case 3:
-                return R.drawable.evening_icon;
             default:
                 return R.drawable.evening_icon;
         }

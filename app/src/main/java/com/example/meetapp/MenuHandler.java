@@ -43,10 +43,11 @@ class MenuHandler {
     private final int NO_SLOTS_CHOSEN = 0;
     private Activity activity;
     private boolean isDateChosen;
-    private String dateChosen;
+    private String dateChosenByAdmin;
+    private Group currentGroup;
 
 
-     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity){
+     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
         this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
         this.membersAmount = membersNames.size();
@@ -56,7 +57,8 @@ class MenuHandler {
         this.meetingChosenDialog = dialogs.get("meetingChosenDialog");
         this.activity = activity;
         this.isDateChosen = false;
-        this.dateChosen = "";
+        this.dateChosenByAdmin = "";
+        this.currentGroup = currentGroup;
     }
 
     void handleAddParticipant(final Toolbar toolbar, final CalendarSlotsHandler calendarSlotsHandler)
@@ -265,10 +267,10 @@ class MenuHandler {
          TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
          String topSelectionText = "";
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
-         if (!isDateChosen) {
+         if (!currentGroup.getIsScheduled()) {
              topSelectionText = displaySuggestions(topSelections);
          }else {
-             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, dateChosen);
+             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, currentGroup.getChosenDate());
              topSelectionInfo.setTextSize(30);
          }
         topSelectionInfo.setText(topSelectionText);
@@ -423,22 +425,36 @@ class MenuHandler {
                      String chosenDate = optionSelected.getText().toString();
                      chosenDate = chosenDate.substring(0, chosenDate.indexOf("-"));
                      topSuggestionsDialog.dismiss();
-                     dateChosen = chosenDate;
+                     dateChosenByAdmin = chosenDate;
                      createMeetUp();
                  }
              }
          });
      }
 
-     private void createMeetUp(){
+     public void createMeetUp(){
          isDateChosen = true;
+         if (!currentGroup.getIsScheduled()) {
+             currentGroup.setIsScheduled(true);
+             setChosenDate(dateChosenByAdmin);
+         }
          setCalendarInvisible();
          setGifBackground();
          meetingChosenDialog.setContentView(R.layout.date_setup_popup);
          TextView dateText = meetingChosenDialog.findViewById(R.id.dateChoise);
-         dateText.setText(dateChosen);
+         dateText.setText(currentGroup.getChosenDate());
          meetingChosenDialog.show();
      }
+
+     private void setChosenDate(String dateToSet){
+         String[] dayAndTime = dateToSet.split(" ");
+         String day = dayAndTime[0];
+         if (day.equals("Today")){
+             day = DateSetter.getToday();
+         }
+         dateChosenByAdmin = String.format("%s %s", day, dayAndTime[1]);
+         currentGroup.setChosenDate(dateChosenByAdmin);
+    }
 
      private void setCalendarInvisible(){
          LinearLayout calendar = activity.findViewById(R.id.calendarView);

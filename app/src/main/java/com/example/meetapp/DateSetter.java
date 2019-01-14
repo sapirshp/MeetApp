@@ -65,4 +65,9 @@ class DateSetter {
     static int getDaysInCalendar(){
         return DAYS_IN_CALENDAR;
     }
+
+    static String getToday(){
+        Calendar groupCalender = Calendar.getInstance();
+        return intsToDays.get(groupCalender.get(Calendar.DAY_OF_WEEK));
+    }
 }

@@ -10,11 +10,34 @@ class MockDB {
     private static int availableId = 0;
     private static ArrayList<Group> groups = new ArrayList<>();
 
-    static void createMockSelections(HashMap<TimeSlot, Integer> mockSlotSelections, int membersNum) {
-        for (TimeSlot ts : mockSlotSelections.keySet()){
+    static HashMap<TimeSlot, Integer> createMockSelections(HashMap<TimeSlot, Integer> mockSlotSelections, int membersNum, Group group) {
+        if (group.isFirstEntrance()) {
+            setRandomSelections(mockSlotSelections, membersNum, group);
+        }else {
+            setGroupSelections(mockSlotSelections, group);
+        }
+        return mockSlotSelections;
+    }
+
+    private static void setRandomSelections(HashMap<TimeSlot, Integer> mockSlotSelections, int membersNum, Group group){
+        for (TimeSlot ts : mockSlotSelections.keySet()) {
             Random rand = new Random();
-            int randomNum = rand.nextInt((membersNum-1 - 0) + 1) + 0;
+            int randomNum = rand.nextInt((membersNum - 1) + 1);
+            group.getGroupSlotSelections().put(ts,randomNum);
+            group.setIsFirstEntrance(false);
             mockSlotSelections.put(ts, randomNum);
+        }
+    }
+
+    private static void setGroupSelections(HashMap<TimeSlot, Integer> mockSlotSelections, Group group){
+        for (TimeSlot ts : mockSlotSelections.keySet()) {
+            TimeSlot groupTimeSlot = group.getTimeSlot(ts);
+            if (groupTimeSlot != null) {
+                if (groupTimeSlot.getClicked()){
+                    ts.setClicked(true);
+                }
+                mockSlotSelections.put(ts, group.getGroupSlotSelections().get(groupTimeSlot));
+            }
         }
     }
 
@@ -30,7 +53,19 @@ class MockDB {
         {
             List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
             Group newGroup = new Group("Group" + i, findNextAvailableId(), userName, members, true);
+            newGroup.setChosenDate(setGroupsWithScheduledDate(i));
             addGroupToList(newGroup);
+        }
+    }
+
+    private static String setGroupsWithScheduledDate(int iterationNum){
+        switch (iterationNum){
+            case 2:
+                return "Sat Morning";
+            case 3:
+                return "Sun Afternoon";
+            default:
+                return "Fri Evening";
         }
     }
 
