@@ -107,7 +107,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
         menuHandler = new MenuHandler(dialogs, groupMembersList, this, thisGroup);
         if (thisGroup.getIsScheduled()){
-            menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar);
+            nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar);
         }
         return true;
     }
