@@ -94,8 +94,8 @@ class CalendarSlotsHandler {
         displayTopSelections();
     }
 
-    void clickedOn(TimeSlot timeSlot, boolean isMemberAmountRefresh) {
-        if (!isMemberAmountRefresh) {
+    void clickedOn(TimeSlot timeSlot, boolean isMemberUpdateNeeded) {
+        if (!isMemberUpdateNeeded) {
             timeSlot.setClicked(true);
             TimeSlot groupTimeSlot = currentGroup.getTimeSlot(timeSlot);
             groupTimeSlot.setClicked(true);
@@ -104,17 +104,17 @@ class CalendarSlotsHandler {
             userClicks.add(timeSlot);
         }
         if (getSelectionNumber(timeSlot) > 0) {
-            setSlotClicked(timeSlot, isMemberAmountRefresh);
+            setSlotClicked(timeSlot, isMemberUpdateNeeded);
         }
     }
 
-    private void setSlotClicked(TimeSlot timeSlot, boolean isMemberAmountRefresh){
+    private void setSlotClicked(TimeSlot timeSlot, boolean isMemberUpdateNeeded){
         if (membersAmount > 1) {
             textWithSelectionNumber = getSelectionNumber(timeSlot) +
                     "/" + membersAmount;
             timeSlot.getButton().setText(textWithSelectionNumber);
         }
-        if (isMemberAmountRefresh) {
+        if (isMemberUpdateNeeded) {
             userChooseMark = context.getDrawable(R.drawable.empty);
             if (containsInUserClicked(timeSlot)){
                 userChooseMark = context.getDrawable(R.drawable.v_green);
@@ -131,10 +131,10 @@ class CalendarSlotsHandler {
         groupTimeSlot.setClicked(false);
         userClicks.remove(timeSlot);
         setSelectionNumber(timeSlot, groupTimeSlot, false);
-        setClickedOfBackground(timeSlot);
+        setClickedOffBackground(timeSlot);
     }
 
-    private void setClickedOfBackground(TimeSlot timeSlot){
+    private void setClickedOffBackground(TimeSlot timeSlot){
         userChooseMark = context.getDrawable(R.drawable.empty);
         if (getSelectionNumber(timeSlot)>0){
             float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;

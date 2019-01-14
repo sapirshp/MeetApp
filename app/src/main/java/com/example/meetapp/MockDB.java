@@ -53,12 +53,12 @@ class MockDB {
         {
             List<String> members = Arrays.asList("Oren", "Chen", "Sapir");
             Group newGroup = new Group("Group" + i, findNextAvailableId(), userName, members, true);
-            newGroup.setChosenDate(getChosenDate(i));
+            newGroup.setChosenDate(setGroupsWithScheduledDate(i));
             addGroupToList(newGroup);
         }
     }
 
-    private static String getChosenDate(int iterationNum){
+    private static String setGroupsWithScheduledDate(int iterationNum){
         switch (iterationNum){
             case 2:
                 return "Sat Morning";
