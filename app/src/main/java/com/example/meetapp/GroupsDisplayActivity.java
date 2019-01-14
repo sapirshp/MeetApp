@@ -38,8 +38,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRecyclerViewAndAdapter();
         setToolbar();
-        setDialogs();
         groupsIntentHandler = new IntentHandler();
+        setDialogs();
         setCreateNewGroupListener();
     }
 
@@ -121,6 +121,9 @@ public class GroupsDisplayActivity extends AppCompatActivity {
                  groupsIntentHandler.handleAddMembersResult(data, adapter);
              }else if (resultCode == CHANGE_NAME_AND_MEMBERS){
                  groupsIntentHandler.handleChangeNameAndMembersResult(data, adapter);
+             }else {
+                 AddMembersHandler.setDialog(addMembersDialog);
+                 adapter.notifyDataSetChanged();
              }
         }
     }

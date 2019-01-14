@@ -5,6 +5,7 @@ import android.support.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Group {
@@ -14,6 +15,9 @@ public class Group {
     private List<String> members;
     //    private @ServerTimestamp Date timestamp;
     private boolean isScheduled;
+    private boolean isFirstEntrance;
+    private HashMap<TimeSlot, Integer> groupSlotSelections;
+    private String chosenDate;
 
     public Group(String name, String groupId, String admin, List<String> members, boolean isScheduled) {
         this.name = name;
@@ -22,6 +26,9 @@ public class Group {
         this.admin = admin;
         this.members = members;
         this.isScheduled = isScheduled;
+        this.isFirstEntrance = true;
+        this.groupSlotSelections = new HashMap<>();
+        this.chosenDate = "";
     }
 
     public Group(String name, String groupId, String admin, boolean isScheduled) {
@@ -31,6 +38,9 @@ public class Group {
         this.admin = admin;
         this.members = new ArrayList<>(Arrays.asList(admin));
         this.isScheduled = isScheduled;
+        this.isFirstEntrance = true;
+        this.groupSlotSelections = new HashMap<>();
+        this.chosenDate = "";
     }
 
     public Group() {
@@ -83,5 +93,34 @@ public class Group {
             allMembers += member + ", ";
         }
         return allMembers.substring(0, allMembers.length() - 2);
+    }
+
+    public void setIsFirstEntrance(boolean isFirstEntrance){
+        this.isFirstEntrance = isFirstEntrance;
+    }
+
+    public boolean getIsFirstEntrance(){
+        return isFirstEntrance;
+    }
+
+    public HashMap<TimeSlot, Integer> getGroupSlotSelections(){
+        return this.groupSlotSelections;
+    }
+
+    public TimeSlot getTimeSlot(TimeSlot timeSlot){
+        for (TimeSlot ts : groupSlotSelections.keySet()){
+            if (ts.getSlotIndex() == timeSlot.getSlotIndex()){
+                return ts;
+            }
+        }
+        return null;
+    }
+
+    public void setChosenDate(String chosenDate){
+        this.chosenDate = chosenDate;
+    }
+
+    public String getChosenDate(){
+        return this.chosenDate;
     }
 }

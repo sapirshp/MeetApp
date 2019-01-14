@@ -58,7 +58,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     }
 
     private void createSlotHandler(View layout){
-        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout);
+        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout, thisGroup);
         calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
     }
@@ -96,7 +96,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         else if (membersAdded) {
             insideGroupIntentHandler.groupMembersAdded(goToGroupsDisplay, this, toolbar, groupId);
         } else {
-            insideGroupIntentHandler.defaultFinish(this);
+            insideGroupIntentHandler.defaultFinish(this, goToGroupsDisplay);
         }
     }
 
@@ -105,7 +105,10 @@ public class InsideGroupActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
         List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
-        menuHandler = new MenuHandler(dialogs, groupMembersList, this);
+        menuHandler = new MenuHandler(dialogs, groupMembersList, this, thisGroup);
+        if (thisGroup.getIsScheduled()){
+            menuHandler.createMeetUp();
+        }
         return true;
     }
 

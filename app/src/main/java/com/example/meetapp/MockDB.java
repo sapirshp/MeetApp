@@ -10,12 +10,27 @@ class MockDB {
     private static int availableId = 0;
     private static ArrayList<Group> groups = new ArrayList<>();
 
-    static void createMockSelections(HashMap<TimeSlot, Integer> mockSlotSelections, int membersNum) {
-        for (TimeSlot ts : mockSlotSelections.keySet()){
-            Random rand = new Random();
-            int randomNum = rand.nextInt((membersNum-1 - 0) + 1) + 0;
-            mockSlotSelections.put(ts, randomNum);
+    static HashMap<TimeSlot, Integer> createMockSelections(HashMap<TimeSlot, Integer> mockSlotSelections, int membersNum, Group group) {
+        if (group.getIsFirstEntrance()) {
+            for (TimeSlot ts : mockSlotSelections.keySet()) {
+                Random rand = new Random();
+                int randomNum = rand.nextInt((membersNum - 1 - 0) + 1) + 0;
+                group.getGroupSlotSelections().put(ts,randomNum);
+                group.setIsFirstEntrance(false);
+                mockSlotSelections.put(ts, randomNum);
+            }
+        }else {
+            for (TimeSlot ts : mockSlotSelections.keySet()) {
+                TimeSlot groupTimeSlot = group.getTimeSlot(ts);
+                if (groupTimeSlot != null) {
+                    if (groupTimeSlot.getClicked()){
+                        ts.setClicked(true);
+                    }
+                    mockSlotSelections.put(ts, group.getGroupSlotSelections().get(groupTimeSlot));
+                }
+            }
         }
+        return mockSlotSelections;
     }
 
     static void buildMockGroups(String userName){

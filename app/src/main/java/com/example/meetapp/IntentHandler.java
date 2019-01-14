@@ -14,6 +14,7 @@ class IntentHandler {
     private final int EDIT_NAME_RESULT_CODE = 2;
     private final int ADD_MEMBERS_RESULT_CODE = 3;
     private final int CHANGE_NAME_AND_MEMBERS = 4;
+    private final int DEFAULT = 5;
 
     void groupNameAndMemberChanged(Intent insideGroupIntent, Activity insideGroupActivity, Toolbar toolbar, String groupId){
         insideGroupIntent.putExtra("newGroupName", toolbar.getTitle().toString());
@@ -37,7 +38,8 @@ class IntentHandler {
         insideGroupActivity.finish();
     }
 
-    void defaultFinish(Activity insideGroupActivity){
+    void defaultFinish(Activity insideGroupActivity, Intent insideGroupIntent){
+        insideGroupActivity.setResult(DEFAULT, insideGroupIntent);
         insideGroupActivity.finish();
     }
 

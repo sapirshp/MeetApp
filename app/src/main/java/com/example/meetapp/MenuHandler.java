@@ -44,9 +44,10 @@ class MenuHandler {
     private Activity activity;
     private boolean isDateChosen;
     private String dateChosen;
+    private Group currentGroup;
 
 
-     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity){
+     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
         this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
         this.membersAmount = membersNames.size();
@@ -57,6 +58,7 @@ class MenuHandler {
         this.activity = activity;
         this.isDateChosen = false;
         this.dateChosen = "";
+        this.currentGroup = currentGroup;
     }
 
     void handleAddParticipant(final Toolbar toolbar, final CalendarSlotsHandler calendarSlotsHandler)
@@ -265,10 +267,10 @@ class MenuHandler {
          TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
          String topSelectionText = "";
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
-         if (!isDateChosen) {
+         if (!currentGroup.getIsScheduled()) {
              topSelectionText = displaySuggestions(topSelections);
          }else {
-             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, dateChosen);
+             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, currentGroup.getChosenDate());
              topSelectionInfo.setTextSize(30);
          }
         topSelectionInfo.setText(topSelectionText);
@@ -430,13 +432,17 @@ class MenuHandler {
          });
      }
 
-     private void createMeetUp(){
+     public void createMeetUp(){
          isDateChosen = true;
+         if (!currentGroup.getIsScheduled()) {
+             currentGroup.setIsScheduled(true);
+             currentGroup.setChosenDate(dateChosen);
+         }
          setCalendarInvisible();
          setGifBackground();
          meetingChosenDialog.setContentView(R.layout.date_setup_popup);
          TextView dateText = meetingChosenDialog.findViewById(R.id.dateChoise);
-         dateText.setText(dateChosen);
+         dateText.setText(currentGroup.getChosenDate());
          meetingChosenDialog.show();
      }
 
