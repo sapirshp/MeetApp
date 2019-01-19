@@ -1,23 +1,39 @@
 package com.example.meetapp;
 
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.support.constraint.Constraints.TAG;
+
 public class Group {
     private String name;
     private String admin;
     private String groupId;
     private List<String> members;
+    public List<String> namesList;
     //    private @ServerTimestamp Date timestamp;
     private boolean isScheduled;
     private boolean isFirstEntrance;
     private HashMap<TimeSlot, Integer> groupSlotSelections;
     private String chosenDate;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Group(String name, String groupId, String admin, List<String> members, boolean isScheduled) {
         this.name = name;
@@ -29,22 +45,12 @@ public class Group {
         this.isFirstEntrance = true;
         this.groupSlotSelections = new HashMap<>();
         this.chosenDate = "";
-    }
-
-    public Group(String name, String groupId, String admin, boolean isScheduled) {
-        this.name = name;
-//        this.timestamp = timestamp;
-        this.groupId = groupId;
-        this.admin = admin;
-        this.members = new ArrayList<>(Arrays.asList(admin));
-        this.isScheduled = isScheduled;
-        this.isFirstEntrance = true;
-        this.groupSlotSelections = new HashMap<>();
-        this.chosenDate = "";
+        this.namesList = new ArrayList<>();
     }
 
     public Group() {
-
+        this.groupSlotSelections = new HashMap<>();
+        this.namesList = new ArrayList<>();
     }
 
     public String getName() {
@@ -87,25 +93,49 @@ public class Group {
         this.members =  members;
     }
 
-    public String getMembersString() {
-        String allMembers = "";
-        for (String member : members) {
-            allMembers += member + ", ";
-        }
-        return allMembers.substring(0, allMembers.length() - 2);
+    public boolean getIsFirstEntrance() {
+        return isFirstEntrance;
     }
 
-    public void setIsFirstEntrance(boolean isFirstEntrance){
-        this.isFirstEntrance = isFirstEntrance;
+    public void setIsFirstEntrance(boolean isFirstEntrance) {
+        this.isFirstEntrance =  isFirstEntrance;
+    }
+
+    public HashMap<TimeSlot, Integer> getGroupSlotSelections(){
+        return groupSlotSelections;
+    }
+
+    public void setGroupSlotSelections(HashMap<TimeSlot, Integer> groupSlotSelections) {
+        this.groupSlotSelections =  groupSlotSelections;
+    }
+
+    public String getChosenDate() {
+        return chosenDate;
+    }
+
+    public void setChosenDate(String chosenDate){
+        this.chosenDate = chosenDate;
+    }
+
+    public String getMembersString() {
+        String allMembers = "";
+        for (String member : namesList) {
+            allMembers += member + ", ";
+        }
+        if (!allMembers.isEmpty()) {
+            allMembers = allMembers.substring(0, allMembers.length() - 2);
+        }
+        return allMembers;
+    }
+
+    public int getMembersAmount() {
+        return members.size();
     }
 
     public boolean isFirstEntrance(){
         return isFirstEntrance;
     }
 
-    public HashMap<TimeSlot, Integer> getGroupSlotSelections(){
-        return this.groupSlotSelections;
-    }
 
     public TimeSlot getTimeSlot(TimeSlot slotToGet){
         TimeSlot slotToReturn = slotToGet;
@@ -118,11 +148,5 @@ public class Group {
         return slotToReturn;
     }
 
-    public void setChosenDate(String chosenDate){
-        this.chosenDate = chosenDate;
-    }
 
-    public String getChosenDate(){
-        return this.chosenDate;
-    }
 }

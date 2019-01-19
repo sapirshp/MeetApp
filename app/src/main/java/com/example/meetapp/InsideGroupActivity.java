@@ -4,12 +4,26 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,7 +51,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     private boolean nameChanged;
     private boolean membersAdded;
     IntentHandler insideGroupIntentHandler;
-
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public InsideGroupActivity(){
         DateSetter.createIntToDayMap();
@@ -46,18 +60,49 @@ public class InsideGroupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        groupId = getIntent().getExtras().getString("groupId");
+        readGroupData(groupId);
+    }
+
+    protected void readGroupData(String groupId) {
+        DocumentReference docRef = db.collection("groups").document(groupId);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                thisGroup = documentSnapshot.toObject(Group.class);
+                readMembersNames(thisGroup);
+            }
+        });
+    }
+
+    public void readMembersNames(final Group group) {
+        CollectionReference usersRef = db.collection("users");
+        Query groupUsers = usersRef.whereArrayContains("memberOf", groupId);
+        groupUsers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        group.namesList.add(document.getString("name"));
+                    }
+                    groupDetailsHandler();
+                }
+            }
+        });
+    }
+
+    protected void groupDetailsHandler() {
         setContentView(R.layout.activity_group);
         View layout = findViewById(R.id.calendarView);
         DateSetter.setDatesToDisplay(layout);
-        groupId = getIntent().getExtras().getString("groupId");
-        thisGroup = MockDB.getGroupById(groupId);
+//        thisGroup = MockDB.getGroupById(groupId);
         setToolbar();
         createSlotHandler(layout);
         setIntentHandler();
         setDialogsMap();
     }
 
-    private void createSlotHandler(View layout){
+        private void createSlotHandler(View layout){
         calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout, thisGroup);
         calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
@@ -121,9 +166,9 @@ public class InsideGroupActivity extends AppCompatActivity {
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
-        groupMembers =thisGroup.getMembersString();
+        groupMembers = thisGroup.getMembersString();
         toolbar.setSubtitle(groupMembers);
-        membersAmount = groupMembers.split(",").length;
+        membersAmount = thisGroup.getMembersAmount();
         setOnClickToolbarListener();
     }
 

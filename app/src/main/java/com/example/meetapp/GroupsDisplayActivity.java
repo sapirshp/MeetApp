@@ -82,7 +82,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     }
 
     private void loadGroups() {
-        MockDB.buildMockGroups(userName);
+//        MockDB.buildMockGroups(userName);
+        MockDB.buildDBGroups(userName);
     }
 
     @Override

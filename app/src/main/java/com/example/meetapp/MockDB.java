@@ -58,6 +58,15 @@ class MockDB {
         }
     }
 
+    static void buildDBGroups(String userName) {
+        List<String> members = Arrays.asList("dzg4pwC1vyKtVZnk0EeA", "3YfurrJA26oiOJtjxAIT", "qweDLCqTQRuebAo5Hfcg");
+        Group everybodyGroup = new Group("Everybody", "Fp77OEx371uosItAkr0Z", "dzg4pwC1vyKtVZnk0EeA", members, false);
+        addGroupToList(everybodyGroup);
+        List<String> orenMembers = Arrays.asList("dzg4pwC1vyKtVZnk0EeA");
+        Group orenGroup = new Group("Just Oren", "OA27pCpc9H4ndYdxDxVB", "dzg4pwC1vyKtVZnk0EeA", orenMembers, false);
+        addGroupToList(orenGroup);
+    }
+
     private static String setGroupsWithScheduledDate(int iterationNum){
         switch (iterationNum){
             case 2:
@@ -100,4 +109,5 @@ class MockDB {
             }
         } return groupToReturn;
     }
+
 }
