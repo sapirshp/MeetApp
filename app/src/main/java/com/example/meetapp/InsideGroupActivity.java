@@ -16,10 +16,13 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -65,12 +68,26 @@ public class InsideGroupActivity extends AppCompatActivity {
     }
 
     protected void readGroupData(String groupId) {
-        DocumentReference docRef = db.collection("groups").document(groupId);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        DocumentReference groupRef = db.collection("groups").document(groupId);
+//        groupRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot snapshot) {
+//                thisGroup = snapshot.toObject(Group.class);
+//                readMembersNames(thisGroup);
+//            }
+//        });
+
+        groupRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                thisGroup = documentSnapshot.toObject(Group.class);
-                readMembersNames(thisGroup);
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+                if (snapshot != null && snapshot.exists()) {
+                    thisGroup = snapshot.toObject(Group.class);
+                    readMembersNames(thisGroup);
+                }
             }
         });
     }
@@ -78,17 +95,33 @@ public class InsideGroupActivity extends AppCompatActivity {
     public void readMembersNames(final Group group) {
         CollectionReference usersRef = db.collection("users");
         Query groupUsers = usersRef.whereArrayContains("memberOf", groupId);
-        groupUsers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        group.namesList.add(document.getString("name"));
+//        groupUsers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        group.namesList.add(document.getString("name"));
+//                    }
+//                    groupDetailsHandler();
+//                }
+//            }
+//        });
+
+        groupUsers.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        return;
+                    }
+                    for (QueryDocumentSnapshot doc : value) {
+                        if (doc.get("name") != null) {
+                            group.namesList.add(doc.getString("name"));
+                        }
                     }
                     groupDetailsHandler();
                 }
-            }
-        });
+            });
     }
 
     protected void groupDetailsHandler() {
