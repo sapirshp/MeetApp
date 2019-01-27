@@ -4,18 +4,13 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -50,7 +45,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
     private Intent goToGroupsDisplay;
-    boolean isTopChoicePressed = false;
     private boolean nameChanged;
     private boolean membersAdded;
     IntentHandler insideGroupIntentHandler;
@@ -69,14 +63,6 @@ public class InsideGroupActivity extends AppCompatActivity {
 
     protected void readGroupData(String groupId) {
         DocumentReference groupRef = db.collection("groups").document(groupId);
-//        groupRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot snapshot) {
-//                thisGroup = snapshot.toObject(Group.class);
-//                readMembersNames(thisGroup);
-//            }
-//        });
-
         groupRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -92,21 +78,9 @@ public class InsideGroupActivity extends AppCompatActivity {
         });
     }
 
-    public void readMembersNames(final Group group) {
+    protected void readMembersNames(final Group group) {
         CollectionReference usersRef = db.collection("users");
         Query groupUsers = usersRef.whereArrayContains("memberOf", groupId);
-//        groupUsers.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        group.namesList.add(document.getString("name"));
-//                    }
-//                    groupDetailsHandler();
-//                }
-//            }
-//        });
-
         groupUsers.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value,
@@ -135,7 +109,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         setDialogsMap();
     }
 
-        private void createSlotHandler(View layout){
+    private void createSlotHandler(View layout){
         calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout, thisGroup);
         calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
         calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
@@ -185,7 +159,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
         menuHandler = new MenuHandler(dialogs, groupMembersList, this, thisGroup);
         if (thisGroup.getIsScheduled()){
-            nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar);
+            nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar, groupId);
         }
         return true;
     }
@@ -209,7 +183,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar, groupId);
             }
         });
     }
@@ -222,7 +196,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                 membersAdded = true;
                 break;
             case R.id.groupDetailsBtn:
-                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar, groupId);
                 break;
             case R.id.resetTimeChoiceBtn:
                     menuHandler.handleResetTimeChoice(calendarSlotsHandler);

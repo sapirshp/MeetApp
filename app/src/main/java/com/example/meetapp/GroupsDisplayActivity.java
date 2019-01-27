@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import java.util.ArrayList;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
@@ -27,9 +27,11 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private String userName = "Oren";
+    private String userID = "dzg4pwC1vyKtVZnk0EeA";
     private String phoneNumber = "972528240512";
     IntentHandler groupsIntentHandler;
     GroupsDisplayFeaturesHandler groupsDisplayFeaturesHandler;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -47,7 +49,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        loadGroups();
+                loadGroups();
         adapter = new GroupAdapter(MockDB.getGroupsList(), this);
         recyclerView.setAdapter(adapter);
     }
@@ -58,7 +60,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         createNewGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groupsDisplayFeaturesHandler.handleAddNewMembers(userName);
+                groupsDisplayFeaturesHandler.handleAddNewMembers(userName, userID);
             }
         });
     }

@@ -11,11 +11,7 @@ class MockDB {
     private static ArrayList<Group> groups = new ArrayList<>();
 
     static HashMap<TimeSlot, Integer> createMockSelections(HashMap<TimeSlot, Integer> mockSlotSelections, int membersNum, Group group) {
-        if (group.isFirstEntrance()) {
-            setRandomSelections(mockSlotSelections, membersNum, group);
-        }else {
-            setGroupSelections(mockSlotSelections, group);
-        }
+        setRandomSelections(mockSlotSelections, membersNum, group);
         return mockSlotSelections;
     }
 
@@ -24,7 +20,6 @@ class MockDB {
             Random rand = new Random();
             int randomNum = rand.nextInt((membersNum - 1) + 1);
             group.getGroupSlotSelections().put(ts,randomNum);
-            group.setIsFirstEntrance(false);
             mockSlotSelections.put(ts, randomNum);
         }
     }
