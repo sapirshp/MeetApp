@@ -123,12 +123,15 @@ class GroupsDisplayFeaturesHandler {
     }
 
     private void addGroupCalendar(final List<String> groupMembers, final String groupId) {
-        final List<Integer> initialList = new ArrayList<Integer>(Collections.nCopies(TIME_SLOTS_AMOUNT, 0));
+        Map<String, Integer> initialMap = new HashMap<String, Integer>();
+        for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
+            initialMap.put(String.valueOf(i), 0);
+        }
         Map<String, Object> initialCalendar = new HashMap<String, Object>();
-        initialCalendar.put("all", initialList);
+        initialCalendar.put("all", initialMap);
         DocumentReference calendarRef = db.collection("calendars").document(groupId);
         for (String member: groupMembers) {
-            initialCalendar.put(member, initialList);
+            initialCalendar.put(member, initialMap);
         }
         calendarRef.set(initialCalendar);
     }
