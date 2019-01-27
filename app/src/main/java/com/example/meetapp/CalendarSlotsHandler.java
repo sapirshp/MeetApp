@@ -6,6 +6,13 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,6 +34,7 @@ class CalendarSlotsHandler {
     private String textWithSelectionNumber;
     private Drawable userChooseMark;
     private Group currentGroup;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     CalendarSlotsHandler(int membersNun, Context context, View view, Group currentGroup) {
@@ -71,9 +79,6 @@ class CalendarSlotsHandler {
             int slotIndex = (3 * dateIndex) + hourIndex;
             final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour, slotIndex);
             slotSelections.put(timeSlot, 0);
-            if (currentGroup.isFirstEntrance()) {
-                currentGroup.getGroupSlotSelections().put(timeSlot, 0);
-            }
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -81,7 +86,7 @@ class CalendarSlotsHandler {
                 }
             });
         }
-        displayInitSelections();
+        readCalendarFromDB();
     }
 
     private void buttonSelection(TimeSlot timeSlot) {
@@ -247,6 +252,24 @@ class CalendarSlotsHandler {
             slotSelections.put(slotToChange, getSelectionNumber(slotToChange) - 1);
             currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)-1);
         }
+    }
+
+    private void readCalendarFromDB() {
+//        DocumentReference calendarRef = db.collection("calendars").
+//                document(currentGroup.getGroupId()).field("all");
+//        calendarRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot snapshot,
+//                                @Nullable FirebaseFirestoreException e) {
+//                if (e != null) {
+//                    return;
+//                }
+//                if (snapshot != null && snapshot.exists()) {
+//                    thisGroup = snapshot.toObject(Group.class);
+//                }
+//            }
+//        });
+        displayInitSelections();
     }
 
     private void displayInitSelections() {

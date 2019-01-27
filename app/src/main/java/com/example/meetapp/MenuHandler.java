@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +48,7 @@ class MenuHandler {
     private boolean isDateChosen;
     private String dateChosenByAdmin;
     private Group currentGroup;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
      MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
@@ -76,7 +80,7 @@ class MenuHandler {
         addMemberDialog.show();
     }
 
-    boolean handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar)
+    boolean handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar, String groupId)
     {
         groupDetailsDialog.setContentView(R.layout.group_details_popap);
         TextView exitPopupBtn = groupDetailsDialog.findViewById(R.id.groupDetailsExitBtn);
@@ -84,7 +88,7 @@ class MenuHandler {
         displayGroupName(groupName);
         displayMembersInfo(calendarSlotsHandler.getContext());
         displayTopSelection(calendarSlotsHandler);
-        handleEditGroupName(toolbar);
+        handleEditGroupName(toolbar, groupId);
         String newName = toolbar.getTitle().toString();
         groupDetailsDialog.show();
         return (newName.equals(groupName));
@@ -186,7 +190,7 @@ class MenuHandler {
         });
     }
 
-    private void handleEditGroupName(final Toolbar toolbar){
+    private void handleEditGroupName(final Toolbar toolbar, final String groupId){
          final Button editGroupNameBtn = groupDetailsDialog.findViewById(R.id.editGroupName);
          editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -194,13 +198,13 @@ class MenuHandler {
                  editGroupNameDialog.setContentView(R.layout.edit_group_name_popup);
                  TextView exitBtn = editGroupNameDialog.findViewById(R.id.exitEditNameBtn);
                  handleExitPopup(editGroupNameDialog, exitBtn);
-                 handleEditInput(toolbar);
+                 handleEditInput(toolbar, groupId);
                  editGroupNameDialog.show();
              }
          });
     }
 
-    private void handleEditInput(final Toolbar toolbar){
+    private void handleEditInput(final Toolbar toolbar, final String groupId){
          final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
          EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
          userInput.addTextChangedListener(new TextWatcher() {
@@ -216,7 +220,7 @@ class MenuHandler {
                     changeNameBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            handleChangeNameRequest(toolbar);
+                            handleChangeNameRequest(toolbar, groupId);
                         }
                     });
                 }
@@ -226,10 +230,12 @@ class MenuHandler {
         });
     }
 
-    private void handleChangeNameRequest(Toolbar toolbar){
+    private void handleChangeNameRequest(Toolbar toolbar, String groupId){
         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
         String newGroupName = userInput.getText().toString();
-        toolbar.setTitle(newGroupName);
+        DocumentReference groupRef = db.collection("groups").document(groupId);
+        groupRef.update("name", newGroupName);
+//        toolbar.setTitle(newGroupName);
         editGroupNameDialog.dismiss();
         displayGroupName(newGroupName);
     }
@@ -437,6 +443,10 @@ class MenuHandler {
          if (!currentGroup.getIsScheduled()) {
              currentGroup.setIsScheduled(true);
              setChosenDate(dateChosenByAdmin);
+             DocumentReference groupRef =
+                     db.collection("groups").document(currentGroup.getGroupId());
+             groupRef.update("isScheduled", true);
+             groupRef.update("chosenDate", dateChosenByAdmin);
          }
          setCalendarInvisible();
          setGifBackground();

@@ -15,6 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
@@ -27,6 +31,30 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
         this.groups = groups;
         this.activity = activity;
     }
+
+//    CollectionReference groupsRef = db.collection("groups");
+//    Query groups = groupsRef.whereArrayContains("members", userID);
+//    FirestoreRecyclerOptions<Group> options = new FirestoreRecyclerOptions.Builder<Group>()
+//            .setQuery(groups, Group.class)
+//            .build();
+    
+//    FirestoreRecyclerAdapter adapter = new FirestoreRecyclerAdapter<Group, ChatHolder>(options) {
+//        @Override
+//        public void onBindViewHolder(ChatHolder holder, int position, Chat model) {
+//            // Bind the Chat object to the ChatHolder
+//            // ...
+//        }
+//
+//        @Override
+//        public ChatHolder onCreateViewHolder(ViewGroup group, int i) {
+//            // Create a new instance of the ViewHolder, in this case we are using a custom
+//            // layout called R.layout.message for each item
+//            View view = LayoutInflater.from(group.getContext())
+//                    .inflate(R.layout.message, group, false);
+//
+//            return new ChatHolder(view);
+//        }
+//    };
 
     @NonNull
     @Override
@@ -54,6 +82,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder>
                 Intent goToGroupScreen = new Intent(activity, InsideGroupActivity.class);
                 goToGroupScreen.putExtra("groupId", newGroup.getGroupId());
                 activity.startActivityForResult(goToGroupScreen, 1);
+//                activity.overridePendingTransition(R.anim.anim_left_to_right, R.anim.anim_right_to_left);
             }
         });
     }
