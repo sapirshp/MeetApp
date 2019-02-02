@@ -5,11 +5,6 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 class IntentHandler {
     private final int EDIT_NAME_RESULT_CODE = 2;
     private final int ADD_MEMBERS_RESULT_CODE = 3;
@@ -52,30 +47,12 @@ class IntentHandler {
     }
 
     void handleAddMembersResult(Intent data, RecyclerView.Adapter adapter){
-        String newMembers = data.getStringExtra("newMembers");
-        List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.replaceAll(",\\s",",").split(",")));
-        String groupId = data.getStringExtra("groupId");
-        Group groupToAddMembers = MockDB.getGroupById(groupId);
-        groupToAddMembers.setMembers(newMembersList);
-        adapter.notifyDataSetChanged();
+
     }
 
     void handleEditNameResult(Intent data, RecyclerView.Adapter adapter){
-        String newGroupName = data.getStringExtra("newGroupName");
-        String groupId = data.getStringExtra("groupId");
-        Group groupToChangeName = MockDB.getGroupById(groupId);
-        groupToChangeName.setName(newGroupName);
-        adapter.notifyDataSetChanged();
     }
 
     void handleChangeNameAndMembersResult(Intent data, RecyclerView.Adapter adapter){
-        String newGroupName = data.getStringExtra("newGroupName");
-        String groupId = data.getStringExtra("groupId");
-        String newMembers = data.getStringExtra("newMembers");
-        List<String> newMembersList = new LinkedList<>(Arrays.asList(newMembers.replaceAll(",\\s",",").split(",")));
-        Group groupToChange = MockDB.getGroupById(groupId);
-        groupToChange.setName(newGroupName);
-        groupToChange.setMembers(newMembersList);
-        adapter.notifyDataSetChanged();
     }
 }

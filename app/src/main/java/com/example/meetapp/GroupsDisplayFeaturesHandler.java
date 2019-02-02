@@ -12,13 +12,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +31,18 @@ class GroupsDisplayFeaturesHandler {
     private Dialog newGroupDialog;
     private Dialog addMembersDialog;
     private Activity activity;
-    private ArrayList<String> members = new ArrayList<>();
+    private ArrayList<String> membersNamesList = new ArrayList<>();
+    private ArrayList<String> membersIdsList = new ArrayList<>();
     private RecyclerView.Adapter adapter;
+    private Map<String, Object> group;
+    private List<QuerySnapshot> queriesList;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private int TIME_SLOTS_AMOUNT = 21;
+    private DocumentReference userRef;
+    private DocumentReference groupRef;
+    private DocumentReference calendarRef;
+    private CollectionReference allUsersRef;
+    private CollectionReference usersRef;
+    public static int TIME_SLOTS_AMOUNT = 21;
 
     GroupsDisplayFeaturesHandler(Activity activity, HashMap<String, Dialog> dialogs, RecyclerView.Adapter adapter){
         this.newGroupDialog = dialogs.get("newGroupDialog");
@@ -39,23 +51,24 @@ class GroupsDisplayFeaturesHandler {
         this.adapter = adapter;
     }
 
-    private void showNewGroupPopup(String membersNames, String userName) {
+    private void showNewGroupPopup(String adminID, String membersNames, ArrayList<String> membersIds) {
         newGroupDialog.setContentView(R.layout.new_group_popup);
         TextView membersList = newGroupDialog.findViewById(R.id.membersList);
         membersList.setText(membersNames);
         TextView exitBtn = newGroupDialog.findViewById(R.id.exitNewGroupBtn);
         handleExitPopup(newGroupDialog, exitBtn);
-        handleCreateNewGroup(members, userName);
+        handleCreateNewGroup(adminID, membersIds);
         newGroupDialog.show();
     }
 
-    private void handleCreateNewGroup(List<String> members, String userName) {
+    private void handleCreateNewGroup(String adminID, List<String> members) {
         final Button createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
-        userInput.addTextChangedListener(onInputChange(createGroup, members, userName));
+        userInput.addTextChangedListener(onInputChange(createGroup, adminID, members));
     }
 
-    private TextWatcher onInputChange(final Button createGroup, final List<String> members, final String userName) {
+    private TextWatcher onInputChange(final Button createGroup, final String adminID,
+                                      final List<String> members) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -66,7 +79,7 @@ class GroupsDisplayFeaturesHandler {
                     createGroup.setBackgroundResource(R.drawable.disabled_button_background);
                 }else {
                     createGroup.setBackgroundResource(R.drawable.green_round_background);
-                    createGroup.setOnClickListener(onCreateGroupBtn(members, userName));
+                    createGroup.setOnClickListener(onCreateGroupBtn(adminID, members));
                 }
             }
             
@@ -75,16 +88,16 @@ class GroupsDisplayFeaturesHandler {
         };
     }
 
-    private View.OnClickListener onCreateGroupBtn(final List<String> members, final String userName){
+    private View.OnClickListener onCreateGroupBtn(final String adminID, final List<String> members){
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleNewGroupRequest(userName, members);
+                handleNewGroupRequest(adminID, members);
             }
         };
     }
 
-    private void handleNewGroupRequest(final String userName, final List<String> members)
+    private void handleNewGroupRequest(final String adminID, final List<String> members)
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         final String newGroupName = userInput.getText().toString();
@@ -93,43 +106,39 @@ class GroupsDisplayFeaturesHandler {
             makeToastToCenterOfScreen(activity.getString(R.string.groupNameExists));
         }
         else {
-            String newGroupId = addNewGroupToDB(userName, newGroupName, members);
-            Group newGroup = new Group(newGroupName, newGroupId, userName, members, false);
-            MockDB.addGroupToListFirst(newGroup);
-            adapter.notifyDataSetChanged();
+            addNewGroupToDB(adminID, newGroupName, members);
             makeToastToCenterOfScreen(activity.getString(R.string.newGroupCreated));
             newGroupDialog.dismiss();
         }
     }
 
-    private String addNewGroupToDB(final String userName, final String groupName,
+    private void addNewGroupToDB(final String adminID, final String groupName,
                                    final List<String> groupMembers)
     {
-        Map<String, Object> group = new HashMap<String, Object>()
+        group = new HashMap<String, Object>()
         {{
             put("name", groupName);
-            put("admin", userName);
+            put("admin", adminID);
             put("members", groupMembers);
             put("isScheduled", false);
             put("chosenDate", "");
         }};
-        DocumentReference groupRef = db.collection("groups").document();
+        groupRef = db.collection("groups").document();
         String groupId = groupRef.getId();
         group.put("groupId", groupId);
         groupRef.set(group);
         addGroupCalendar(groupMembers, groupId);
         addGroupToUsers(groupMembers, groupId);
-        return groupId;
     }
 
     private void addGroupCalendar(final List<String> groupMembers, final String groupId) {
-        Map<String, Integer> initialMap = new HashMap<String, Integer>();
+        Map<String, Integer> initialMap = new HashMap<>();
         for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
-            initialMap.put(String.valueOf(i), 0);
+            initialMap.put(Integer.toString(i), 0);
         }
         Map<String, Object> initialCalendar = new HashMap<String, Object>();
         initialCalendar.put("all", initialMap);
-        DocumentReference calendarRef = db.collection("calendars").document(groupId);
+        calendarRef = db.collection("calendars").document(groupId);
         for (String member: groupMembers) {
             initialCalendar.put(member, initialMap);
         }
@@ -137,8 +146,7 @@ class GroupsDisplayFeaturesHandler {
     }
 
     private void addGroupToUsers(final List<String> groupMembers, final String groupId) {
-        CollectionReference allUsersRef = db.collection("users");
-        DocumentReference userRef;
+        allUsersRef = db.collection("users");
         for (String memberID: groupMembers) {
             userRef = allUsersRef.document(memberID);
             userRef.update("memberOf", FieldValue.arrayUnion(groupId));
@@ -174,26 +182,43 @@ class GroupsDisplayFeaturesHandler {
         });
     }
 
-    void handleAddNewMembers(final String userName, final String userID){
+    void handleAddNewMembers(final String adminID, final String adminName){
         addMembersDialog.setContentView(R.layout.add_member_popup);
         TextView exitBtn = addMembersDialog.findViewById(R.id.addMemberExitBtn);
-        handleExitPopup(addMembersDialog, exitBtn);
-        ContactsGetter.showContacts(activity, addMembersDialog);
+        usersRef = db.collection("users");
+        Query allUsers = usersRef.orderBy("name");
+        Query admin = usersRef.whereEqualTo("userId", adminID);
+        Task firstTask = allUsers.get();
+        Task secondTask = admin.get();
+        Task combinedTask = Tasks.whenAllSuccess(firstTask, secondTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+            @Override
+            public void onSuccess(List<Object> list) {
+                queriesList = (List<QuerySnapshot>)(Object)list;
+                UsersGetter.showUsers(activity, addMembersDialog, queriesList);
+                finishAddParticipant(adminID, adminName);
+            }
+        });
+    }
+
+    private void finishAddParticipant(final String adminID, final String adminName) {
         AddMembersHandler.chooseMembers(new Runnable() {
             @Override
             public void run() {
-                onChooseMembers(userName, userID);
+                onChooseMembers(adminID, adminName);
             }
         });
         addMembersDialog.show();
     }
 
-    private void onChooseMembers(String userName, String userID){
-        members.clear();
-        members.add(userID);
-        members.addAll(AddMembersHandler.getMembersToAdd());
-        String groupMembers = members.toString().substring(1,members.toString().length()-1);
-        String membersNames = String.format("Group Members: %s",groupMembers);
-        showNewGroupPopup(membersNames, userName);
+    private void onChooseMembers(final String adminID, final String adminName){
+        membersNamesList.clear();
+        membersNamesList.add(adminName);
+        membersNamesList.addAll(AddMembersHandler.getMembersNamesToAdd());
+        membersIdsList.clear();
+        membersIdsList.add(adminID);
+        membersIdsList.addAll(AddMembersHandler.getMembersIdsToAdd());
+        String groupMembers = membersNamesList.toString().substring(1, membersNamesList.toString().length()-1);
+        String membersNames = String.format("Group Members: %s", groupMembers);
+        showNewGroupPopup(adminID, membersNames, membersIdsList);
     }
 }

@@ -2,14 +2,12 @@ package com.example.meetapp;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
@@ -49,6 +47,8 @@ public class InsideGroupActivity extends AppCompatActivity {
     private boolean membersAdded;
     IntentHandler insideGroupIntentHandler;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DocumentReference groupRef;
+    private CollectionReference usersRef;
 
     public InsideGroupActivity(){
         DateSetter.createIntToDayMap();
@@ -62,7 +62,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     }
 
     protected void readGroupData(String groupId) {
-        DocumentReference groupRef = db.collection("groups").document(groupId);
+        groupRef = db.collection("groups").document(groupId);
         groupRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -79,7 +79,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     }
 
     protected void readMembersNames(final Group group) {
-        CollectionReference usersRef = db.collection("users");
+        usersRef = db.collection("users");
         Query groupUsers = usersRef.whereArrayContains("memberOf", groupId);
         groupUsers.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
@@ -88,9 +88,10 @@ public class InsideGroupActivity extends AppCompatActivity {
                     if (e != null) {
                         return;
                     }
+                    group.resetNamesList();
                     for (QueryDocumentSnapshot doc : value) {
                         if (doc.get("name") != null) {
-                            group.namesList.add(doc.getString("name"));
+                            group.addNameToNamesList(doc.getString("name"));
                         }
                     }
                     groupDetailsHandler();
@@ -102,7 +103,6 @@ public class InsideGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group);
         View layout = findViewById(R.id.calendarView);
         DateSetter.setDatesToDisplay(layout);
-//        thisGroup = MockDB.getGroupById(groupId);
         setToolbar();
         createSlotHandler(layout);
         setIntentHandler();
@@ -192,7 +192,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.AddParticipantBtn:
-                menuHandler.handleAddParticipant(toolbar, calendarSlotsHandler);
+                menuHandler.handleAddParticipant(groupId);
                 membersAdded = true;
                 break;
             case R.id.groupDetailsBtn:
@@ -211,19 +211,5 @@ public class InsideGroupActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
-    }
-
-
-    // ============== Permission for Contacts Handlers ======================
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                ContactsGetter.showContacts(this, addMemberDialog);
-            } else {
-                Toast.makeText(this, getString(R.string.ContactsPermissionError), Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }

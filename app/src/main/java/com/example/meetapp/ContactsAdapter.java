@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
 
-    private ArrayList<ContactItem> contactsList;
+    private List<User> contactsList;
 
     static class ContactsViewHolder extends RecyclerView.ViewHolder {
 
@@ -19,25 +19,26 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
 
         ContactsViewHolder(@NonNull View itemView) {
             super(itemView);
-            contactNameTextView = itemView.findViewById(R.id.contactName);
+            contactNameTextView = itemView.findViewById(R.id.userName);
         }
     }
 
-    ContactsAdapter(ArrayList<ContactItem> contactsList){
+    ContactsAdapter(List<User> contactsList){
         this.contactsList = contactsList;
     }
 
     @NonNull
     @Override
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contact_item, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_item, viewGroup, false);
         return new ContactsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ContactsViewHolder contactsViewHolder, int i) {
-        final ContactItem currentItem = contactsList.get(i);
-        contactsViewHolder.contactNameTextView.setText(currentItem.getContactName());
+        final User currentItem = contactsList.get(i);
+        contactsViewHolder.contactNameTextView.setText(currentItem.getName());
+        contactsViewHolder.contactNameTextView.setTag(currentItem.getUserId());
         contactsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

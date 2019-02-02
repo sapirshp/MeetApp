@@ -39,7 +39,7 @@ public class Group {
     }
 
     public void setName(String name) {
-        this.name =  name;
+        this.name = name;
     }
 
     public String getGroupId() {
@@ -47,7 +47,7 @@ public class Group {
     }
 
     public void setGroupId(String groupId) {
-        this.groupId =  groupId;
+        this.groupId = groupId;
     }
 
     public String getAdmin() {
@@ -55,7 +55,7 @@ public class Group {
     }
 
     public void setAdmin(String admin) {
-        this.admin =  admin;
+        this.admin = admin;
     }
 
     public boolean getIsScheduled() {
@@ -63,7 +63,7 @@ public class Group {
     }
 
     public void setIsScheduled(boolean isScheduled) {
-        this.isScheduled =  isScheduled;
+        this.isScheduled = isScheduled;
     }
 
     public List<String> getMembers() {
@@ -71,23 +71,31 @@ public class Group {
     }
 
     public void setMembers(List<String> members) {
-        this.members =  members;
+        this.members = members;
     }
 
-    public HashMap<TimeSlot, Integer> getGroupSlotSelections(){
+    public HashMap<TimeSlot, Integer> getGroupSlotSelections() {
         return groupSlotSelections;
     }
 
     public void setGroupSlotSelections(HashMap<TimeSlot, Integer> groupSlotSelections) {
-        this.groupSlotSelections =  groupSlotSelections;
+        this.groupSlotSelections = groupSlotSelections;
     }
 
     public String getChosenDate() {
         return chosenDate;
     }
 
-    public void setChosenDate(String chosenDate){
+    public void setChosenDate(String chosenDate) {
         this.chosenDate = chosenDate;
+    }
+
+    public void addNameToNamesList(String name) {
+        this.namesList.add(name);
+    }
+
+    public void resetNamesList() {
+        this.namesList.clear();
     }
 
     public String getMembersString() {
