@@ -23,12 +23,19 @@ import android.widget.Toast;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class MenuHandler {
     private final int LEAVE_GROUP_RESULT_CODE = 1;
@@ -41,6 +48,7 @@ class MenuHandler {
     private Dialog meetingChosenDialog;
     private int membersAmount;
     private List<String> groupMembers;
+    private List<String> membersIdsToAdd;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
     private String members = "";
     private final int NO_SLOTS_CHOSEN = 0;
@@ -49,7 +57,10 @@ class MenuHandler {
     private String dateChosenByAdmin;
     private Group currentGroup;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    private DocumentReference groupRef;
+    private DocumentReference userRef;
+    private DocumentReference calendarRef;
+    private CollectionReference usersRef;
 
      MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
@@ -65,16 +76,31 @@ class MenuHandler {
         this.currentGroup = currentGroup;
     }
 
-    void handleAddParticipant(final Toolbar toolbar, final CalendarSlotsHandler calendarSlotsHandler)
+    void handleAddParticipant(final String groupId)
     {
         addMemberDialog.setContentView(R.layout.add_member_popup);
         TextView exitPopupBtn = addMemberDialog.findViewById(R.id.addMemberExitBtn);
         handleExitPopup(addMemberDialog, exitPopupBtn);
-        ContactsGetter.showContacts(activity, addMemberDialog);
+        usersRef = db.collection("users");
+        Query allUsers = usersRef.orderBy("name");
+        Query groupUsers = usersRef.whereArrayContains("memberOf", groupId).orderBy("name");
+        Task firstTask = allUsers.get();
+        Task secondTask = groupUsers.get();
+        Task combinedTask = Tasks.whenAllSuccess(firstTask, secondTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+            @Override
+            public void onSuccess(List<Object> list) {
+                List<QuerySnapshot> queriesList = (List<QuerySnapshot>)(Object)list;
+                UsersGetter.showUsers(activity, addMemberDialog, queriesList);
+                finishAddParticipant(groupId);
+            }
+        });
+    }
+
+    private void finishAddParticipant(final String groupId) {
         AddMembersHandler.chooseMembers(new Runnable() {
             @Override
             public void run() {
-                onChooseMembers(toolbar, calendarSlotsHandler);
+                onChooseMembers(groupId);
             }
         });
         addMemberDialog.show();
@@ -220,7 +246,7 @@ class MenuHandler {
                     changeNameBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            handleChangeNameRequest(toolbar, groupId);
+                            handleChangeNameRequest(groupId);
                         }
                     });
                 }
@@ -230,24 +256,39 @@ class MenuHandler {
         });
     }
 
-    private void handleChangeNameRequest(Toolbar toolbar, String groupId){
+    private void handleChangeNameRequest(String groupId){
         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
         String newGroupName = userInput.getText().toString();
-        DocumentReference groupRef = db.collection("groups").document(groupId);
+        groupRef = db.collection("groups").document(groupId);
         groupRef.update("name", newGroupName);
-//        toolbar.setTitle(newGroupName);
         editGroupNameDialog.dismiss();
         displayGroupName(newGroupName);
     }
 
-    private void onChooseMembers(Toolbar toolbar, CalendarSlotsHandler calendarSlotsHandler){
-        groupMembers.addAll(AddMembersHandler.getMembersToAdd());
-        membersAmount += AddMembersHandler.getMembersToAdd().size();
-        calendarSlotsHandler.setMembersAmount(membersAmount);
-        members = groupMembers.toString().substring(1,groupMembers.toString().length()-1);
-        toolbar.setSubtitle(members);
-        for (TimeSlot timeSlot : calendarSlotsHandler.getSlotSelections().keySet())
-            calendarSlotsHandler.clickedOn(timeSlot, true);
+    private void onChooseMembers(final String groupId){
+//        groupMembers.addAll(AddMembersHandler.getMembersNamesToAdd());
+//        members = groupMembers.toString().substring(1,groupMembers.toString().length()-1);
+        groupRef = db.collection("groups").document(groupId);
+        membersIdsToAdd = AddMembersHandler.getMembersIdsToAdd();
+        for (String memberId : membersIdsToAdd) {
+            groupRef.update("members", FieldValue.arrayUnion(memberId));
+            addGroupToUser(memberId, groupId);
+            addUserCalendar(memberId, groupId);
+        }
+    }
+
+    private void addGroupToUser(final String memberId, final String groupId) {
+        userRef = db.collection("users").document(memberId);
+        userRef.update("memberOf", FieldValue.arrayUnion(groupId));
+    }
+
+    private void addUserCalendar(final String memberId, final String groupId) {
+        calendarRef = db.collection("calendars").document(groupId);
+        Map<String, Integer> initialMap = new HashMap<>();
+        for (int i = 0; i < GroupsDisplayFeaturesHandler.TIME_SLOTS_AMOUNT; i++) {
+            initialMap.put(Integer.toString(i), 0);
+        }
+        calendarRef.update(memberId, initialMap);
     }
 
     private void displayMembersInfo(Context context) {
@@ -443,8 +484,7 @@ class MenuHandler {
          if (!currentGroup.getIsScheduled()) {
              currentGroup.setIsScheduled(true);
              setChosenDate(dateChosenByAdmin);
-             DocumentReference groupRef =
-                     db.collection("groups").document(currentGroup.getGroupId());
+             groupRef = db.collection("groups").document(currentGroup.getGroupId());
              groupRef.update("isScheduled", true);
              groupRef.update("chosenDate", dateChosenByAdmin);
          }

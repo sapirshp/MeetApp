@@ -10,7 +10,8 @@ import java.util.ArrayList;
 
 class AddMembersHandler {
     private static Dialog addMembersDialog;
-    private static ArrayList<String> membersToAdd = new ArrayList<>();
+    private static ArrayList<String> membersNamesToAdd = new ArrayList<>();
+    private static ArrayList<String> membersIdsToAdd = new ArrayList<>();
 
     static void setDialog(Dialog dialog){
                addMembersDialog = dialog;
@@ -28,17 +29,17 @@ class AddMembersHandler {
 
     private static void clickOn(View view){
         RelativeLayout contactLayout = view.findViewById(R.id.contactLayout);
-        TextView contactName = view.findViewById(R.id.contactName);
+        TextView contactName = view.findViewById(R.id.userName);
         ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
         okButton.setBackgroundResource(R.drawable.green_round_background);
         contactLayout.setBackgroundColor(view.getResources().getColor(R.color.colorGreen));
         contactLayout.setTag("chosen");
-        addMember((String) contactName.getText());
+        addMember((String) contactName.getText(), (String) contactName.getTag());
     }
 
     private static void clickOff(View view){
         RelativeLayout contactLayout = view.findViewById(R.id.contactLayout);
-        TextView contactName = view.findViewById(R.id.contactName);
+        TextView contactName = view.findViewById(R.id.userName);
         ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
         removeMember((String) contactName.getText());
         if (isMemberToAddEmpty()){
@@ -60,23 +61,29 @@ class AddMembersHandler {
         });
     }
 
-    private static void addMember(String member) {
-        membersToAdd.add(member);
+    private static void addMember(String memberName, String memberId) {
+        membersNamesToAdd.add(memberName);
+        membersIdsToAdd.add(memberId);
     }
 
     private static boolean isMemberToAddEmpty(){
-        return membersToAdd.isEmpty();
+        return membersNamesToAdd.isEmpty();
     }
 
     private static void removeMember(String member){
-        membersToAdd.remove(member);
+        membersNamesToAdd.remove(member);
     }
 
-    static ArrayList<String> getMembersToAdd(){
-        return membersToAdd;
+    static ArrayList<String> getMembersNamesToAdd(){
+        return membersNamesToAdd;
+    }
+
+    static ArrayList<String> getMembersIdsToAdd(){
+        return membersIdsToAdd;
     }
 
     static void clearMembersToAdd(){
-        membersToAdd.clear();
+        membersNamesToAdd.clear();
+        membersIdsToAdd.clear();
     }
 }
