@@ -62,7 +62,7 @@ class MenuHandler {
     private DocumentReference calendarRef;
     private CollectionReference usersRef;
 
-     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
+    MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
         this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
         this.membersAmount = membersNames.size();
@@ -266,8 +266,6 @@ class MenuHandler {
     }
 
     private void onChooseMembers(final String groupId){
-//        groupMembers.addAll(AddMembersHandler.getMembersNamesToAdd());
-//        members = groupMembers.toString().substring(1,groupMembers.toString().length()-1);
         groupRef = db.collection("groups").document(groupId);
         membersIdsToAdd = AddMembersHandler.getMembersIdsToAdd();
         for (String memberId : membersIdsToAdd) {

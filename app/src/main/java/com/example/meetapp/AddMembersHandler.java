@@ -14,7 +14,7 @@ class AddMembersHandler {
     private static ArrayList<String> membersIdsToAdd = new ArrayList<>();
 
     static void setDialog(Dialog dialog){
-               addMembersDialog = dialog;
+        addMembersDialog = dialog;
     }
 
     static void onContactClick(View v){

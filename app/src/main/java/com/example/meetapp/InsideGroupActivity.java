@@ -45,7 +45,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     private Intent goToGroupsDisplay;
     private boolean nameChanged;
     private boolean membersAdded;
-    IntentHandler insideGroupIntentHandler;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference groupRef;
     private CollectionReference usersRef;
@@ -117,7 +116,6 @@ public class InsideGroupActivity extends AppCompatActivity {
 
     private void setIntentHandler(){
         goToGroupsDisplay = new Intent();
-        insideGroupIntentHandler = new IntentHandler();
         membersAdded = false;
         nameChanged = false;
     }
@@ -135,21 +133,6 @@ public class InsideGroupActivity extends AppCompatActivity {
         dialogs.put("editGroupNameDialog", editGroupNameDialog);
         dialogs.put("topSuggestionsDialog", topSuggestionsDialog);
         dialogs.put("meetingChosenDialog", meetingChosenDialog);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (nameChanged && membersAdded){
-            insideGroupIntentHandler.groupNameAndMemberChanged(goToGroupsDisplay, this, toolbar, groupId);
-        }
-        else if (nameChanged) {
-            insideGroupIntentHandler.groupNameChanged(goToGroupsDisplay, this, toolbar, groupId);
-        }
-        else if (membersAdded) {
-            insideGroupIntentHandler.groupMembersAdded(goToGroupsDisplay, this, toolbar, groupId);
-        } else {
-            insideGroupIntentHandler.defaultFinish(this, goToGroupsDisplay);
-        }
     }
 
     // ================= Toolbar and Menu ==================
