@@ -185,6 +185,7 @@ class GroupsDisplayFeaturesHandler {
     void handleAddNewMembers(final String adminID, final String adminName){
         addMembersDialog.setContentView(R.layout.add_member_popup);
         TextView exitBtn = addMembersDialog.findViewById(R.id.addMemberExitBtn);
+        handleExitPopup(addMembersDialog, exitBtn);
         usersRef = db.collection("users");
         Query allUsers = usersRef.orderBy("name");
         Query admin = usersRef.whereEqualTo("userId", adminID);

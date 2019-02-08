@@ -33,7 +33,6 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private String userName = "Oren";
     private String userID = "Q6vPMTUMQZe9IS9gQjWzmXSjPB22";
     private String phoneNumber = "972528240512";
-    IntentHandler groupsIntentHandler;
     GroupsDisplayFeaturesHandler groupsDisplayFeaturesHandler;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -43,30 +42,9 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setToolbar();
-        groupsIntentHandler = new IntentHandler();
         setDialogs();
         setCreateNewGroupListener();
         setRecyclerViewAndAdapter();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if(resultCode == LEAVE_GROUP_RESULT_CODE) {
-                groupsIntentHandler.handleLeaveGroupResult(data, adapter);
-                AddMembersHandler.setDialog(addMembersDialog);
-            }else if (resultCode == EDIT_NAME_RESULT_CODE){
-                groupsIntentHandler.handleEditNameResult(data, adapter);
-            }else if (resultCode == ADD_MEMBERS_RESULT_CODE){
-                groupsIntentHandler.handleAddMembersResult(data, adapter);
-            }else if (resultCode == CHANGE_NAME_AND_MEMBERS){
-                groupsIntentHandler.handleChangeNameAndMembersResult(data, adapter);
-            }else {
-                AddMembersHandler.setDialog(addMembersDialog);
-                adapter.notifyDataSetChanged();
-            }
-        }
     }
 
     private void setRecyclerViewAndAdapter(){

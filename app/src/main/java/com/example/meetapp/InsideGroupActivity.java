@@ -45,7 +45,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     private Intent goToGroupsDisplay;
     private boolean nameChanged;
     private boolean membersAdded;
-    IntentHandler insideGroupIntentHandler;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference groupRef;
     private CollectionReference usersRef;
@@ -117,7 +116,6 @@ public class InsideGroupActivity extends AppCompatActivity {
 
     private void setIntentHandler(){
         goToGroupsDisplay = new Intent();
-        insideGroupIntentHandler = new IntentHandler();
         membersAdded = false;
         nameChanged = false;
     }
@@ -139,17 +137,9 @@ public class InsideGroupActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (nameChanged && membersAdded){
-            insideGroupIntentHandler.groupNameAndMemberChanged(goToGroupsDisplay, this, toolbar, groupId);
-        }
-        else if (nameChanged) {
-            insideGroupIntentHandler.groupNameChanged(goToGroupsDisplay, this, toolbar, groupId);
-        }
-        else if (membersAdded) {
-            insideGroupIntentHandler.groupMembersAdded(goToGroupsDisplay, this, toolbar, groupId);
-        } else {
-            insideGroupIntentHandler.defaultFinish(this, goToGroupsDisplay);
-        }
+        this.setResult(1, goToGroupsDisplay);
+        this.finish();
+        this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     // ================= Toolbar and Menu ==================
