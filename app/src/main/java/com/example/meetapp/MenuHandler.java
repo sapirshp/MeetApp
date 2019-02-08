@@ -190,6 +190,7 @@ class MenuHandler {
                          goToGroupsDisplay.putExtra("groupId", groupId);
                          activity.setResult(LEAVE_GROUP_RESULT_CODE, goToGroupsDisplay);
                          activity.finish();
+                         activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                      }
                  });
      }

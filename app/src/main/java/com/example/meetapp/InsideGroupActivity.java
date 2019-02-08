@@ -135,6 +135,13 @@ public class InsideGroupActivity extends AppCompatActivity {
         dialogs.put("meetingChosenDialog", meetingChosenDialog);
     }
 
+    @Override
+    public void onBackPressed() {
+        this.setResult(1, goToGroupsDisplay);
+        this.finish();
+        this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
     // ================= Toolbar and Menu ==================
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

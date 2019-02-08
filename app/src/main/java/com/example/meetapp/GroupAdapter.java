@@ -100,6 +100,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
                 Intent goToGroupScreen = new Intent(activity, InsideGroupActivity.class);
                 goToGroupScreen.putExtra("groupId", group.getGroupId());
                 activity.startActivityForResult(goToGroupScreen, 1);
+                activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
     }
