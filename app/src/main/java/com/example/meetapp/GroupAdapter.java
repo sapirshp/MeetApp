@@ -28,6 +28,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
 {
     private Activity activity;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String userId = "";
 
     public GroupAdapter(@NonNull FirestoreRecyclerOptions<Group> options, Activity activity) {
         super(options);
@@ -99,6 +100,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
             public void onClick(View v) {
                 Intent goToGroupScreen = new Intent(activity, InsideGroupActivity.class);
                 goToGroupScreen.putExtra("groupId", group.getGroupId());
+                goToGroupScreen.putExtra("userId", userId);
                 activity.startActivityForResult(goToGroupScreen, 1);
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
@@ -145,4 +147,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
         }
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }
