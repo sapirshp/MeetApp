@@ -184,7 +184,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                 nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar, groupId);
                 break;
             case R.id.resetTimeChoiceBtn:
-                    menuHandler.handleResetTimeChoice(calendarSlotsHandler);
+                    menuHandler.handleResetTimeChoice(calendarSlotsHandler, groupId, userId);
                 break;
             case R.id.exitGroupBtn:
                 menuHandler.handleExitGroup(this, groupId, userId);

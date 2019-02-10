@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -22,13 +23,18 @@ import android.widget.Toast;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -61,6 +67,9 @@ class MenuHandler {
     private DocumentReference userRef;
     private DocumentReference calendarRef;
     private CollectionReference usersRef;
+    private HashMap<String,Long> userCalendar;
+    private HashMap<String,Long> allUsersCalendar;
+    private DocumentReference calendarRefForUpdate;
 
     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
@@ -120,8 +129,34 @@ class MenuHandler {
         return (newName.equals(groupName));
     }
 
+    private void RemoveArrivals(final String groupId, HashMap<String,Long> userCalendar,
+                                HashMap<String,Long>allUsersCalendar) {
+        calendarRefForUpdate = db.collection("calendars").document(groupId);
+        for (String slotIndex : userCalendar.keySet()) {
+            if (userCalendar.get(slotIndex) == 1) {
+                calendarRefForUpdate.update("all." + slotIndex,
+                        allUsersCalendar.get(slotIndex) - 1);
+            }
+        }
+    }
 
-    void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler) {
+    private void findAndRemoveArrivals(final String groupId, final String userId) {
+        calendarRef = db.collection("calendars").document(groupId);
+        calendarRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    userCalendar = (HashMap<String,Long>) document.get(userId);
+                    allUsersCalendar = (HashMap<String,Long>) document.get("all");
+                    RemoveArrivals(groupId, userCalendar, allUsersCalendar);
+                }
+            }
+        });
+    }
+
+    void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler, final String groupId, final String userId) {
+        findAndRemoveArrivals(groupId, userId);
 //        slotsToReset.clear();
 //        if (calendarSlotsHandler.getUserClicks().isEmpty()){
 //            Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
@@ -182,23 +217,66 @@ class MenuHandler {
 
      }
 
-     private void updateDBOfLeaving(final String groupId, final String userId) {
+     private void activeGroupUpdate(final String groupId, final String userId, final String adminId,
+                                    final ArrayList<String> membersList) {
+         groupRef = db.collection("groups").document(groupId);
+         groupRef.update("members", FieldValue.arrayRemove(userId));
+         if (userId.equals(adminId)) {
+             if (membersList.get(0).equals(adminId)) {
+                 groupRef.update("admin", membersList.get(1));
+             } else {
+                 groupRef.update("admin", membersList.get(0));
+             }
+         }
+         findAndRemoveArrivals(groupId, userId);
+         Map<String,Object> userToRemove = new HashMap<>();
+         userToRemove.put(userId, FieldValue.delete());
+         calendarRef = db.collection("calendars").document(groupId);
+         calendarRef.update(userToRemove);
+     }
 
+     private void checkGroupActivityAndUpdate(final String groupId, final String userId,
+                                              DocumentSnapshot document) {
+         ArrayList<String> membersList = (ArrayList<String>) document.get("members");
+         if (membersList.size() == 1) {
+             db.collection("calendars").document(groupId).delete();
+             db.collection("groups").document(groupId).delete();
+         } else {
+             String adminId = (String) document.get("admin");
+             activeGroupUpdate(groupId, userId, adminId, membersList);
+         }
+     }
+
+     private void updateDBOfLeaving(final String groupId, final String userId) {
+         userRef = db.collection("users").document(userId);
+         userRef.update("memberOf", FieldValue.arrayRemove(groupId));
+         groupRef = db.collection("groups").document(groupId);
+         groupRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+             @Override
+             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                 if (task.isSuccessful()) {
+                     DocumentSnapshot document = task.getResult();
+                     if (document.exists()) {
+                         checkGroupActivityAndUpdate(groupId, userId, document);
+                     }
+                 }
+             }
+         });
      }
 
      private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog,
                                            final String groupId, final String userId) {
          alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.leaveAnswer),
-                 new DialogInterface.OnClickListener() {
-                     public void onClick(DialogInterface dialog, int which) {
-                         dialog.dismiss();
-                         updateDBOfLeaving(groupId, userId);
-                         Intent goToGroupsDisplay = new Intent();
-                         activity.setResult(LEAVE_GROUP_RESULT_CODE, goToGroupsDisplay);
-                         activity.finish();
-                         activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                     }
-                 });
+             new DialogInterface.OnClickListener() {
+                 public void onClick(DialogInterface dialog, int which) {
+                     dialog.dismiss();
+                     updateDBOfLeaving(groupId, userId);
+                     Intent goToGroupsDisplay = new Intent();
+                     activity.setResult(LEAVE_GROUP_RESULT_CODE, goToGroupsDisplay);
+                     activity.finish();
+                     activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                 }
+             });
      }
 
      private void handleNegativeExitAnswer(final Context context,AlertDialog alertDialog) {

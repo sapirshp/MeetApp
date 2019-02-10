@@ -222,7 +222,7 @@ class CalendarSlotsHandler {
                 userChooseMark = context.getDrawable(R.drawable.empty);
                 bgColor = Color.WHITE;
             }
-            if (userCalendar.get(convertedIndex) == 1) {
+            if (userCalendar != null && userCalendar.get(convertedIndex) == 1) {
                 userChooseMark = context.getDrawable(R.drawable.v_green);
                 ts.setClicked(true);
             }
