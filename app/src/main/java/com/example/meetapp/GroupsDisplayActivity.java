@@ -53,6 +53,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         FirestoreRecyclerOptions<Group> options = new FirestoreRecyclerOptions.Builder<Group>().
                 setQuery(groups, Group.class).build();
         adapter = new GroupAdapter(options, this);
+        adapter.setUserId(userID);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);

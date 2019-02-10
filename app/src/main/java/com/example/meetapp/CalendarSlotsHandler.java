@@ -25,26 +25,34 @@ import java.util.Map;
 class CalendarSlotsHandler {
     private static HashMap<Integer, String> buttonsIdForListeners = new HashMap<>();
     private HashMap<TimeSlot, Integer> slotSelections = new HashMap<>();
-    private ArrayList<TimeSlot> userClicks = new ArrayList<>();
+    private int slotIndex;
     private int membersAmount;
     private int topSelectionToDisplay;
     private Context context;
     private View view;
     private int bgColor;
-    private String textWithSelectionNumber;
+    private int today;
+    private String arrivalsText;
     private Drawable userChooseMark;
-    private Group currentGroup;
+    private Group group;
+    private String userId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DocumentReference calendarRef;
+    private HashMap<String,Long> userCalendar;
+    private HashMap<String,Long> allUsersCalendar;
+    private DocumentReference calendarRefForUpdate;
 
-
-    CalendarSlotsHandler(int membersNun, Context context, View view, Group currentGroup) {
-        this.membersAmount = membersNun;
+    CalendarSlotsHandler(Group group, String userId, Context context, View view) {
+        this.group = group;
+        this.userId = userId;
+        this.membersAmount = group.getMembersAmount();
         this.topSelectionToDisplay = 3;
         this.context = context;
         this.view = view;
-        this.currentGroup = currentGroup;
+        calendarRefForUpdate = db.collection("calendars").document(group.getGroupId());
+        setButtonsIdForListeners(DateSetter.getDaysInCalendar(), context);
+        setListeners(DateSetter.getDatesToDisplay());
     }
-
 
     void setButtonsIdForListeners(int daysNum, Context context) {
         for (int i = 0; i < daysNum; i++) {
@@ -91,7 +99,7 @@ class CalendarSlotsHandler {
 
     private void buttonSelection(TimeSlot timeSlot) {
         if (!timeSlot.getClicked()) {
-            clickedOn(timeSlot, false);
+            clickedOn(timeSlot);
         } else {
             clickedOff(timeSlot);
         }
@@ -99,59 +107,31 @@ class CalendarSlotsHandler {
         displayTopSelections();
     }
 
-    void clickedOn(TimeSlot timeSlot, boolean isMemberUpdateNeeded) {
-        if (!isMemberUpdateNeeded) {
-            timeSlot.setClicked(true);
-            TimeSlot groupTimeSlot = currentGroup.getTimeSlot(timeSlot);
-            groupTimeSlot.setClicked(true);
-            setSelectionNumber(timeSlot, groupTimeSlot, true);
-            userChooseMark = context.getDrawable(R.drawable.v_green);
-            userClicks.add(timeSlot);
+    private int convertToDBIndex(int index) {
+        today = 8 - DateSetter.getTodayInt();
+        int result = index - (today * 3);
+        if (result < 0) {
+            result = 21 + result;
         }
-        if (getSelectionNumber(timeSlot) > 0) {
-            setSlotClicked(timeSlot, isMemberUpdateNeeded);
-        }
+        return result;
     }
 
-    private void setSlotClicked(TimeSlot timeSlot, boolean isMemberUpdateNeeded){
-        if (membersAmount > 1) {
-            textWithSelectionNumber = getSelectionNumber(timeSlot) +
-                    "/" + membersAmount;
-            timeSlot.getButton().setText(textWithSelectionNumber);
-        }
-        if (isMemberUpdateNeeded) {
-            userChooseMark = context.getDrawable(R.drawable.empty);
-            if (containsInUserClicked(timeSlot)){
-                userChooseMark = context.getDrawable(R.drawable.v_green);
-            }
-        }
-        float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
-        bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
-        timeSlot.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
+    void clickedOn(TimeSlot timeSlot) {
+        timeSlot.setClicked(true);
+        slotIndex = convertToDBIndex(timeSlot.getSlotIndex());
+        int arrivalsAmount = slotSelections.get(timeSlot) + 1;
+        slotSelections.put(timeSlot, arrivalsAmount);
+        calendarRefForUpdate.update("all." + slotIndex, arrivalsAmount,
+                userId + "." + slotIndex, 1);
     }
 
     void clickedOff(TimeSlot timeSlot) {
         timeSlot.setClicked(false);
-        TimeSlot groupTimeSlot = currentGroup.getTimeSlot(timeSlot);
-        groupTimeSlot.setClicked(false);
-        userClicks.remove(timeSlot);
-        setSelectionNumber(timeSlot, groupTimeSlot, false);
-        setClickedOffBackground(timeSlot);
-    }
-
-    private void setClickedOffBackground(TimeSlot timeSlot){
-        userChooseMark = context.getDrawable(R.drawable.empty);
-        if (getSelectionNumber(timeSlot)>0){
-            float percentage = ((float) getSelectionNumber(timeSlot) / (float) membersAmount) * 100;
-            bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
-            textWithSelectionNumber = getSelectionNumber(timeSlot) + "/" + membersAmount;
-        }
-        else {
-            bgColor = Color.WHITE;
-            textWithSelectionNumber = "";
-        }
-        timeSlot.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
-        timeSlot.getButton().setText(textWithSelectionNumber);
+        slotIndex = convertToDBIndex(timeSlot.getSlotIndex());
+        int arrivalsAmount = slotSelections.get(timeSlot) - 1;
+        slotSelections.put(timeSlot, arrivalsAmount);
+        calendarRefForUpdate.update("all." + slotIndex, arrivalsAmount,
+                userId + "." + slotIndex, 0);
     }
 
     private HashMap<TimeSlot, Integer> sortByValue(HashMap<TimeSlot, Integer> hm) {
@@ -187,20 +167,13 @@ class CalendarSlotsHandler {
         for (int i = 0; i < iterationNumber; i++) {
             String currentSlot = "";
             TimeSlot topSlot = (TimeSlot) slotSelections.keySet().toArray()[i];
-            currentSlot = String.format("%s%s %s - %d/%d", currentSlot, topSlot.getDate(), topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
+            currentSlot = String.format("%s%s %s - %d/%d", currentSlot, topSlot.getDate(),
+                    topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
             if (getSelectionNumber(topSlot) > 0) {
                 topSuggestions.add(currentSlot);
             }
         }
         return topSuggestions;
-    }
-
-    HashMap<TimeSlot, Integer> getSlotSelections() {
-        return slotSelections;
-    }
-
-    void setMembersAmount(int newAmount) {
-        membersAmount = newAmount;
     }
 
     private int getSelectionNumber(TimeSlot slotToFind) {
@@ -212,92 +185,53 @@ class CalendarSlotsHandler {
         return 0;
     }
 
-    private boolean containsInUserClicked(TimeSlot timeSlot){
-        for (TimeSlot ts : userClicks){
-            if (ts.getDate() == timeSlot.getDate() && ts.getHour() == timeSlot.getHour()){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void setSelectionNumber(TimeSlot slotToSet, TimeSlot groupTimeSlot, boolean add) {
-        boolean doneSetting = false;
-        for (TimeSlot slotToChange : slotSelections.keySet()) {
-            if (slotToChange.getSlotIndex() == slotToSet.getSlotIndex()) {
-                if (add) {
-                    doneSetting = addToSlotSelections(slotToChange, groupTimeSlot);
-                    break;
-                } else {
-                    removeFromSlotSelections(slotToChange, groupTimeSlot);
+    private void readCalendarFromDB() {
+        calendarRef = db.collection("calendars").document(group.getGroupId());
+        calendarRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+                if (snapshot != null && snapshot.exists()) {
+                    userCalendar = (HashMap<String,Long>) snapshot.get(userId);
+                    allUsersCalendar = (HashMap<String,Long>) snapshot.get("all");
+                    displayInitSelections(userCalendar, allUsersCalendar);
                 }
             }
-        }
-        if (add && !doneSetting){
-            slotSelections.put(slotToSet, 1);
-            currentGroup.getGroupSlotSelections().put(groupTimeSlot, 1);
-        }
+        });
     }
 
-    private boolean addToSlotSelections(TimeSlot slotToAdd, TimeSlot groupTimeSlot){
-        if (getSelectionNumber(slotToAdd) < membersAmount) {
-            slotSelections.put(slotToAdd, getSelectionNumber(slotToAdd) + 1);
-            currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)+1);
-        }
-        return true;
-    }
-
-    private void removeFromSlotSelections(TimeSlot slotToChange, TimeSlot groupTimeSlot){
-        if (getSelectionNumber(slotToChange) > 0) {
-            slotSelections.put(slotToChange, getSelectionNumber(slotToChange) - 1);
-            currentGroup.getGroupSlotSelections().put(groupTimeSlot, currentGroup.getGroupSlotSelections().get(groupTimeSlot)-1);
-        }
-    }
-
-    private void readCalendarFromDB() {
-//        DocumentReference calendarRef = db.collection("calendars").
-//                document(currentGroup.getGroupId()).field("all");
-//        calendarRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot snapshot,
-//                                @Nullable FirebaseFirestoreException e) {
-//                if (e != null) {
-//                    return;
-//                }
-//                if (snapshot != null && snapshot.exists()) {
-//                    thisGroup = snapshot.toObject(Group.class);
-//                }
-//            }
-//        });
-        displayInitSelections();
-    }
-
-    private void displayInitSelections() {
-        slotSelections = MockDB.createMockSelections(slotSelections, membersAmount, currentGroup);
+    private void displayInitSelections(HashMap<String,Long> userCalendar, HashMap<String,Long> allUsersCalendar) {
+        today = DateSetter.getTodayInt() - 1;
         for (TimeSlot ts : slotSelections.keySet()) {
-            if (getSelectionNumber(ts) > 0) {
-                textWithSelectionNumber = getSelectionNumber(ts) + "/" + membersAmount;
-                ts.getButton().setText(textWithSelectionNumber);
+            int index = ts.getSlotIndex();
+            String convertedIndex = String.valueOf(((today * 3) + index) % 21);
+            long arrivalsAmount = allUsersCalendar.get(convertedIndex);
+            if (arrivalsAmount > 0) {
+                arrivalsText = arrivalsAmount + "/" + membersAmount;
+                ts.getButton().setText(arrivalsText);
+                slotSelections.put(ts, (int)arrivalsAmount);
                 userChooseMark = context.getDrawable(R.drawable.empty);
-                float percentage = ((float) getSelectionNumber(ts) / (float) membersAmount) * 100;
+                float percentage = ((float) arrivalsAmount / (float) membersAmount) * 100;
                 bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
             } else {
+                ts.getButton().setText("");
+                slotSelections.put(ts, 0);
                 userChooseMark = context.getDrawable(R.drawable.empty);
                 bgColor = Color.WHITE;
             }
-            if (ts.getClicked()){
+            if (userCalendar.get(convertedIndex) == 1) {
                 userChooseMark = context.getDrawable(R.drawable.v_green);
-                userClicks.add(ts);
+                ts.setClicked(true);
             }
+
             ts.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
         }
     }
 
     Context getContext(){
         return context;
-    }
-
-    ArrayList<TimeSlot> getUserClicks() {
-        return userClicks;
     }
 }

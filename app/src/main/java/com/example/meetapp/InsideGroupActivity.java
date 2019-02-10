@@ -33,20 +33,23 @@ public class InsideGroupActivity extends AppCompatActivity {
     Dialog editGroupNameDialog;
     Dialog meetingChosenDialog;
     HashMap<String, Dialog> dialogs = new HashMap<>();
+    private List<String> groupMembersList;
     private Group thisGroup;
     private MenuHandler menuHandler;
     private int membersAmount;
     private String groupMembers;
     private String groupName;
     private String groupId;
+    private String userId;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
     private Intent goToGroupsDisplay;
     private boolean nameChanged;
-    private boolean membersAdded;
+    Query groupUsers;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference groupRef;
+    private DocumentReference calendarRef;
     private CollectionReference usersRef;
 
     public InsideGroupActivity(){
@@ -57,6 +60,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         groupId = getIntent().getExtras().getString("groupId");
+        userId = getIntent().getExtras().getString("userId");
         readGroupData(groupId);
     }
 
@@ -79,7 +83,7 @@ public class InsideGroupActivity extends AppCompatActivity {
 
     protected void readMembersNames(final Group group) {
         usersRef = db.collection("users");
-        Query groupUsers = usersRef.whereArrayContains("memberOf", groupId);
+        groupUsers = usersRef.whereArrayContains("memberOf", groupId);
         groupUsers.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value,
@@ -104,20 +108,12 @@ public class InsideGroupActivity extends AppCompatActivity {
         DateSetter.setDatesToDisplay(layout);
         setToolbar();
         createSlotHandler(layout);
-        setIntentHandler();
+        goToGroupsDisplay = new Intent();
         setDialogsMap();
     }
 
     private void createSlotHandler(View layout){
-        calendarSlotsHandler = new CalendarSlotsHandler(membersAmount, this, layout, thisGroup);
-        calendarSlotsHandler.setButtonsIdForListeners(DateSetter.getDaysInCalendar(), this);
-        calendarSlotsHandler.setListeners(DateSetter.getDatesToDisplay());
-    }
-
-    private void setIntentHandler(){
-        goToGroupsDisplay = new Intent();
-        membersAdded = false;
-        nameChanged = false;
+        calendarSlotsHandler = new CalendarSlotsHandler(thisGroup, userId, this, layout);
     }
 
     public void setDialogsMap(){
@@ -146,7 +142,7 @@ public class InsideGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        List<String> groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
+        groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
         menuHandler = new MenuHandler(dialogs, groupMembersList, this, thisGroup);
         if (thisGroup.getIsScheduled()){
             nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar, groupId);
@@ -183,7 +179,6 @@ public class InsideGroupActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.AddParticipantBtn:
                 menuHandler.handleAddParticipant(groupId);
-                membersAdded = true;
                 break;
             case R.id.groupDetailsBtn:
                 nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar, groupId);
@@ -192,7 +187,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                     menuHandler.handleResetTimeChoice(calendarSlotsHandler);
                 break;
             case R.id.exitGroupBtn:
-                menuHandler.handleExitGroup(this, groupId);
+                menuHandler.handleExitGroup(this, groupId, userId);
                 break;
             case R.id.createMeetingBtn:
                 menuHandler.handleCreateMeeting(calendarSlotsHandler);

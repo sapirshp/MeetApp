@@ -13,6 +13,8 @@ class DateSetter {
     private static int DAYS_IN_CALENDAR = 7;
     private static HashMap<Integer, String> intsToDays = new HashMap<>();
     private static Map<String, String> datesToDisplay = new LinkedHashMap<>();
+    static Calendar groupCalender = Calendar.getInstance();
+    static Calendar calender = Calendar.getInstance();
 
     static void createIntToDayMap() {
         intsToDays.put(1, "Sun");
@@ -25,7 +27,6 @@ class DateSetter {
     }
 
     static Map<String, String> createDatesMap() {
-        Calendar groupCalender = Calendar.getInstance();
         int date = groupCalender.get(Calendar.DAY_OF_MONTH);
         String day;
         datesToDisplay.put(Integer.toString(date), "Today");
@@ -67,7 +68,10 @@ class DateSetter {
     }
 
     static String getToday(){
-        Calendar groupCalender = Calendar.getInstance();
-        return intsToDays.get(groupCalender.get(Calendar.DAY_OF_WEEK));
+        return intsToDays.get(getTodayInt());
+    }
+
+    static int getTodayInt(){
+        return calender.get(Calendar.DAY_OF_WEEK);
     }
 }

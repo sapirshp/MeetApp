@@ -122,16 +122,17 @@ class MenuHandler {
 
 
     void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler) {
-        slotsToReset.clear();
-        if (calendarSlotsHandler.getUserClicks().isEmpty()){
-            Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
-        }else {
-            slotsToReset.addAll(calendarSlotsHandler.getUserClicks());
-            for (TimeSlot slotToReset : slotsToReset) {
-                calendarSlotsHandler.clickedOff(slotToReset);
-            }
-            setUndoBar(calendarSlotsHandler);
-        }
+//        slotsToReset.clear();
+//        if (calendarSlotsHandler.getUserClicks().isEmpty()){
+//            Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
+//        }else {
+//            slotsToReset.addAll(calendarSlotsHandler.getUserClicks());
+//            for (TimeSlot slotToReset : slotsToReset) {
+//                calendarSlotsHandler.clickedOff(slotToReset);
+//            }
+//            setUndoBar(calendarSlotsHandler);
+//        }
+        //TODO change it to update firebase
     }
 
     private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler){
@@ -151,19 +152,19 @@ class MenuHandler {
              public void onClick(View view, Parcelable token) {
                  for (TimeSlot slotToReset : slotsToReset) {
                      if (!slotToReset.getClicked()) {
-                         calendarSlotsHandler.clickedOn(slotToReset, false);
+                         calendarSlotsHandler.clickedOn(slotToReset);
                          }
                  }
              }
          };
     }
 
-    void handleExitGroup(final Context context, String groupId)
+    void handleExitGroup(final Context context, String groupId, String userId)
     {
         AlertDialog exitGroupDialog = new AlertDialog.Builder(context).create();
         exitGroupDialog.setTitle(context.getString(R.string.leaveGroupTitle));
         exitGroupDialog.setMessage(context.getString(R.string.leaveGroupQuestion));
-        handlePositiveExitAnswer(context, exitGroupDialog, groupId);
+        handlePositiveExitAnswer(context, exitGroupDialog, groupId, userId);
         handleNegativeExitAnswer(context, exitGroupDialog);
         exitGroupDialog.show();
         handleButtonsLayoutAndColor(context, exitGroupDialog);
@@ -181,13 +182,18 @@ class MenuHandler {
 
      }
 
-     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog, final String groupId) {
+     private void updateDBOfLeaving(final String groupId, final String userId) {
+
+     }
+
+     private void handlePositiveExitAnswer(final Context context, AlertDialog alertDialog,
+                                           final String groupId, final String userId) {
          alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.leaveAnswer),
                  new DialogInterface.OnClickListener() {
                      public void onClick(DialogInterface dialog, int which) {
                          dialog.dismiss();
+                         updateDBOfLeaving(groupId, userId);
                          Intent goToGroupsDisplay = new Intent();
-                         goToGroupsDisplay.putExtra("groupId", groupId);
                          activity.setResult(LEAVE_GROUP_RESULT_CODE, goToGroupsDisplay);
                          activity.finish();
                          activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);

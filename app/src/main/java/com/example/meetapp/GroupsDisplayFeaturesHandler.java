@@ -43,6 +43,12 @@ class GroupsDisplayFeaturesHandler {
     private CollectionReference allUsersRef;
     private CollectionReference usersRef;
     public static int TIME_SLOTS_AMOUNT = 21;
+    private Map<String, Integer> initialMap;
+    private Map<String, Object> initialCalendar;
+    private Query allUsers;
+    private Query admin;
+    private String groupMembers;
+    private String membersNames;
 
     GroupsDisplayFeaturesHandler(Activity activity, HashMap<String, Dialog> dialogs, RecyclerView.Adapter adapter){
         this.newGroupDialog = dialogs.get("newGroupDialog");
@@ -101,15 +107,11 @@ class GroupsDisplayFeaturesHandler {
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         final String newGroupName = userInput.getText().toString();
-        if(groupNameAlreadyExists(newGroupName))
-        {
-            makeToastToCenterOfScreen(activity.getString(R.string.groupNameExists));
-        }
-        else {
-            addNewGroupToDB(adminID, newGroupName, members);
-            makeToastToCenterOfScreen(activity.getString(R.string.newGroupCreated));
-            newGroupDialog.dismiss();
-        }
+        //TODO decide if check for double names is required, the DB supports two groups with the same name
+        // makeToastToCenterOfScreen(activity.getString(R.string.groupNameExists));
+        addNewGroupToDB(adminID, newGroupName, members);
+        makeToastToCenterOfScreen(activity.getString(R.string.newGroupCreated));
+        newGroupDialog.dismiss();
     }
 
     private void addNewGroupToDB(final String adminID, final String groupName,
@@ -132,11 +134,11 @@ class GroupsDisplayFeaturesHandler {
     }
 
     private void addGroupCalendar(final List<String> groupMembers, final String groupId) {
-        Map<String, Integer> initialMap = new HashMap<>();
+        initialMap = new HashMap<>();
         for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
             initialMap.put(Integer.toString(i), 0);
         }
-        Map<String, Object> initialCalendar = new HashMap<String, Object>();
+        initialCalendar = new HashMap<String, Object>();
         initialCalendar.put("all", initialMap);
         calendarRef = db.collection("calendars").document(groupId);
         for (String member: groupMembers) {
@@ -160,15 +162,6 @@ class GroupsDisplayFeaturesHandler {
         toast.show();
     }
 
-    private boolean groupNameAlreadyExists(String newGroupName)
-    {
-        for(Group group: MockDB.getGroupsList())
-        {
-            if(group.getName().equals(newGroupName)) { return true; }
-        }
-        return false;
-    }
-
     private void handleExitPopup(final Dialog dialog, TextView exitBtn)
     {
         exitBtn.setOnClickListener(new View.OnClickListener() {
@@ -187,8 +180,8 @@ class GroupsDisplayFeaturesHandler {
         TextView exitBtn = addMembersDialog.findViewById(R.id.addMemberExitBtn);
         handleExitPopup(addMembersDialog, exitBtn);
         usersRef = db.collection("users");
-        Query allUsers = usersRef.orderBy("name");
-        Query admin = usersRef.whereEqualTo("userId", adminID);
+        allUsers = usersRef.orderBy("name");
+        admin = usersRef.whereEqualTo("userId", adminID);
         Task firstTask = allUsers.get();
         Task secondTask = admin.get();
         Task combinedTask = Tasks.whenAllSuccess(firstTask, secondTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
@@ -218,8 +211,8 @@ class GroupsDisplayFeaturesHandler {
         membersIdsList.clear();
         membersIdsList.add(adminID);
         membersIdsList.addAll(AddMembersHandler.getMembersIdsToAdd());
-        String groupMembers = membersNamesList.toString().substring(1, membersNamesList.toString().length()-1);
-        String membersNames = String.format("Group Members: %s", groupMembers);
+        groupMembers = membersNamesList.toString().substring(1, membersNamesList.toString().length()-1);
+        membersNames = String.format("Group Members: %s", groupMembers);
         showNewGroupPopup(adminID, membersNames, membersIdsList);
     }
 }
