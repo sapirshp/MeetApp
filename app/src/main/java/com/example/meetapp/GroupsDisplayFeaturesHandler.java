@@ -195,6 +195,7 @@ class GroupsDisplayFeaturesHandler {
     }
 
     private void finishAddParticipant(final String adminID, final String adminName) {
+        AddMembersHandler.setDialog(addMembersDialog);
         AddMembersHandler.chooseMembers(new Runnable() {
             @Override
             public void run() {
