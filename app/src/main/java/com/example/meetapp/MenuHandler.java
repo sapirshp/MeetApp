@@ -300,8 +300,8 @@ class MenuHandler {
     }
 
     private void handleEditGroupName(final String groupId){
-         final Button editGroupNameBtn = groupDetailsDialog.findViewById(R.id.editGroupName);
-         editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
+        final Button editGroupNameBtn = groupDetailsDialog.findViewById(R.id.editGroupName);
+        editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  editGroupNameDialog.setContentView(R.layout.edit_group_name_popup);
@@ -310,7 +310,7 @@ class MenuHandler {
                  handleEditInput(groupId);
                  editGroupNameDialog.show();
              }
-         });
+        });
     }
 
     private void handleEditInput(final String groupId){
