@@ -314,8 +314,8 @@ class MenuHandler {
     }
 
     private void handleEditInput(final String groupId){
-         final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
-         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
+        final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
+        EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
         setTxtInChangeGroupPopup(userInput);
         userInput.addTextChangedListener(new TextWatcher() {
             @Override
