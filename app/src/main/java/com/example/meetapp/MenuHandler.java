@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -120,7 +121,7 @@ class MenuHandler {
         displayGroupName(groupName);
         displayMembersInfo(calendarSlotsHandler.getContext());
         displayTopSelection(calendarSlotsHandler);
-        handleEditGroupName(toolbar, groupId);
+        handleEditGroupName(groupId);
         String newName = toolbar.getTitle().toString();
         groupDetailsDialog.show();
         return (newName.equals(groupName));
@@ -298,27 +299,27 @@ class MenuHandler {
         });
     }
 
-    private void handleEditGroupName(final Toolbar toolbar, final String groupId){
-         final Button editGroupNameBtn = groupDetailsDialog.findViewById(R.id.editGroupName);
-         editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
+    private void handleEditGroupName(final String groupId){
+        final Button editGroupNameBtn = groupDetailsDialog.findViewById(R.id.editGroupName);
+        editGroupNameBtn.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  editGroupNameDialog.setContentView(R.layout.edit_group_name_popup);
                  TextView exitBtn = editGroupNameDialog.findViewById(R.id.exitEditNameBtn);
                  handleExitPopup(editGroupNameDialog, exitBtn);
-                 handleEditInput(toolbar, groupId);
+                 handleEditInput(groupId);
                  editGroupNameDialog.show();
              }
-         });
+        });
     }
 
-    private void handleEditInput(final Toolbar toolbar, final String groupId){
-         final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
-         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
-         userInput.addTextChangedListener(new TextWatcher() {
+    private void handleEditInput(final String groupId){
+        final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
+        EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
+        setTxtInChangeGroupPopup(userInput);
+        userInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0){
@@ -336,6 +337,14 @@ class MenuHandler {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void setTxtInChangeGroupPopup(EditText userInput) {
+        TextView groupNameInfo = groupDetailsDialog.findViewById(R.id.groupName);
+        userInput.setText(groupNameInfo.getText(), TextView.BufferType.EDITABLE);
+        userInput.setSelectAllOnFocus(true);
+        editGroupNameDialog.getWindow().
+                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     private void handleChangeNameRequest(String groupId){
