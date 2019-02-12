@@ -41,6 +41,8 @@ class CalendarSlotsHandler {
     private HashMap<String,Long> userCalendar;
     private HashMap<String,Long> allUsersCalendar;
     private DocumentReference calendarRefForUpdate;
+    private int slotsAmount = 21;
+    private int slotsPerDay = 3;
 
     CalendarSlotsHandler(Group group, String userId, Context context, View view) {
         this.group = group;
@@ -84,7 +86,7 @@ class CalendarSlotsHandler {
             String date = datesToDisplay.get(datesToDisplay.keySet().toArray()[dateIndex]);
             String hour = buttonsIdForListeners.get(id);
             int hourIndex = getHourIndex(hour);
-            int slotIndex = (3 * dateIndex) + hourIndex;
+            int slotIndex = (slotsPerDay * dateIndex) + hourIndex;
             final TimeSlot timeSlot = new TimeSlot(timeSlotButton, date, hour, slotIndex);
             slotSelections.put(timeSlot, 0);
             timeSlotButton.setOnClickListener(new View.OnClickListener() {
@@ -109,9 +111,9 @@ class CalendarSlotsHandler {
 
     private int convertToDBIndex(int index) {
         today = 8 - DateSetter.getTodayInt();
-        int result = index - (today * 3);
+        int result = index - (today * slotsPerDay);
         if (result < 0) {
-            result = 21 + result;
+            result = slotsAmount + result;
         }
         return result;
     }
@@ -207,7 +209,7 @@ class CalendarSlotsHandler {
         today = DateSetter.getTodayInt() - 1;
         for (TimeSlot ts : slotSelections.keySet()) {
             int index = ts.getSlotIndex();
-            String convertedIndex = String.valueOf(((today * 3) + index) % 21);
+            String convertedIndex = String.valueOf(((today * slotsPerDay) + index) % slotsAmount);
             long arrivalsAmount = allUsersCalendar.get(convertedIndex);
             if (arrivalsAmount > 0) {
                 arrivalsText = arrivalsAmount + "/" + membersAmount;
