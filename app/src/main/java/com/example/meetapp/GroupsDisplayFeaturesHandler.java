@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -70,6 +71,8 @@ class GroupsDisplayFeaturesHandler {
     private void handleCreateNewGroup(String adminID, List<String> members) {
         final Button createGroup = newGroupDialog.findViewById(R.id.CreateGroupBtn);
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
+        newGroupDialog.getWindow().
+                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         userInput.addTextChangedListener(onInputChange(createGroup, adminID, members));
     }
 
