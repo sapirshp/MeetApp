@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/meet"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="10dp"
+            app:srcCompat="@drawable/meetapp_icon" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="#a4ffffff"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:text="Register"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlack"
+                android:textSize="40sp" />
+
+            <EditText
+                android:id="@+id/EnterNameInput"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:autofillHints="@string/groupNameHint"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Enter Your Name"
+                android:inputType="text"
+                android:textColor="@color/blueDark"
+                android:textColorHint="@color/colorGreen" />
+
+            <EditText
+                android:id="@+id/enterEmailInput"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="10dp"
+                android:autofillHints="@string/groupNameHint"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Enter Your Email Address"
+                android:inputType="text"
+                android:textColor="@color/blueDark"
+                android:textColorHint="@color/colorGreen" />
+
+            <EditText
+                android:id="@+id/EnterPasswordInput"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:autofillHints="@string/groupNameHint"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Enter Your Password"
+                android:inputType="text"
+                android:textColor="@color/blueDark"
+                android:textColorHint="@color/colorGreen" />
+
+            <EditText
+                android:id="@+id/reEnterPasswordInput"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="10dp"
+                android:autofillHints="@string/groupNameHint"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Re-Enter Your Password"
+                android:inputType="text"
+                android:textColor="@color/blueDark"
+                android:textColorHint="@color/colorGreen" />
+
+            <TextView
+                android:id="@+id/WrongPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="Password Does Not Match"
+                android:textAlignment="center"
+                android:textColor="@color/colorRed"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/registerBtn"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/disabled_button_background"
+                android:fontFamily="@font/poppins_light"
+                android:text="Register"
+                android:textColor="@color/blueDark"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
