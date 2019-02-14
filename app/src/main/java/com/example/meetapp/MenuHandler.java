@@ -320,7 +320,6 @@ class MenuHandler {
                  });
      }
 
-
      private void handleExitPopup(final Dialog dialog, TextView exitBtn) {
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -462,7 +461,6 @@ class MenuHandler {
         groupNameInfo.setText(groupName);
     }
 
-
     void handleCreateMeeting(final CalendarSlotsHandler calendarSlotsHandler)
     {
         ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
@@ -489,7 +487,6 @@ class MenuHandler {
         topSuggestionsDialog.show();
     }
 
-
     private Button[] createAllOptionsLst()
     {
         final Button option1, option2, option3, createMeeting;
@@ -499,7 +496,6 @@ class MenuHandler {
         createMeeting = topSuggestionsDialog.findViewById(R.id.CreateMeetupBtn);
         return new Button[]{option1, option2, option3, createMeeting};
     }
-
 
     private ArrayList<Button> activateOnlyRelevantButtons(Button[] allOptionsLst, int numOfOptionsToDisplay)
     {
@@ -540,7 +536,6 @@ class MenuHandler {
         }
     }
 
-
     private void handleAllOptionPresses(final ArrayList<Button> currentOptionLst, Button[] allOptionsLst)
     {
         for(int i = 0; i < 3; i++)
@@ -565,14 +560,12 @@ class MenuHandler {
          }
      }
 
-
      private void turnOffCurrentBtn(int newButtonPressed, ArrayList<Button> btnList)
      {
          btnList.get(newButtonPressed).setBackgroundResource(R.drawable.custom_border);
          btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.disabled_button_background);
          currentMeetingChoice = NO_OPTION_CHOSEN;
      }
-
 
      private void setSingleChoiceAndDisableOthers(int buttonToTurnOn, ArrayList<Button> btnList)
      {
@@ -584,7 +577,6 @@ class MenuHandler {
          setMeetingBtn.setBackgroundResource(R.drawable.green_round_background);
          currentMeetingChoice = buttonToTurnOn;
      }
-
 
      private void handleCreateMeetingBtnPress(final ArrayList<Button> buttons) {
          Button createMeeting = buttons.get(buttons.size()-1);
@@ -632,8 +624,6 @@ class MenuHandler {
              }
          });
      }
-
-
 
      private void setChosenDate(String dateToSet){
          String[] dayAndTime = dateToSet.split(" ");
