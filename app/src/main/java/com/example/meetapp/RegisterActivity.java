@@ -55,8 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
         EditText userNameInput = findViewById(R.id.RegisterNameInput);
         userNameInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
@@ -67,8 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                 handleRegisterBtnAndPasswordFeedback();
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -77,8 +75,7 @@ public class RegisterActivity extends AppCompatActivity {
         EditText userEmailInput = findViewById(R.id.RegisterEmailInput);
         userEmailInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
@@ -89,8 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
                 handleRegisterBtnAndPasswordFeedback();
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -99,8 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
         EditText password1EditText = findViewById(R.id.RegisterPassword1Input);
         password1EditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
@@ -111,8 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
                 handleRegisterBtnAndPasswordFeedback();
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -121,8 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
         EditText password2EditText = findViewById(R.id.RegisterPassword2Input);
         password2EditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 0) {
@@ -133,8 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
                 handleRegisterBtnAndPasswordFeedback();
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -151,14 +143,14 @@ public class RegisterActivity extends AppCompatActivity {
         else{
             if(!userPassword1.toString().equals(userPassword2.toString())){
                 feedbackToUser.setText(this.getString(R.string.PasswordsDoNotMatch));
-            }
-            else{
+            } else{
                 feedbackToUser.setText("");
             }
             registerBtn.setBackgroundResource(R.drawable.disabled_button_background);
             onClickDoNothing();
         }
     }
+
 
     private void onClickGoToGroupsScreen() {
         registerBtn.setOnClickListener(new View.OnClickListener() {

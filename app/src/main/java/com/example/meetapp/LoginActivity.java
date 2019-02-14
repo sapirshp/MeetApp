@@ -46,9 +46,14 @@ public class LoginActivity extends AppCompatActivity {
         feedbackToUser = findViewById(R.id.InvalidEmailOrPassword);
         feedbackToUser.setText("");
 
-        EditText userEmailInput = findViewById(R.id.enterEmailInput);
         userPasswordInput = findViewById(R.id.enterPasswordInput);
+        handleEmailInput(loginBtn);
+        handlePasswordInput(loginBtn);
+    }
 
+
+    private void handleEmailInput(final Button loginBtn) {
+        EditText userEmailInput = findViewById(R.id.enterEmailInput);
         userEmailInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -58,25 +63,30 @@ public class LoginActivity extends AppCompatActivity {
                     userEmail = "";
                     loginBtn.setBackgroundResource(R.drawable.disabled_button_background);
                 }
-                  else {
-
-                    userEmail = s.toString();
-                    if(!userPassword.equals("")){
-                        loginBtn.setBackgroundResource(R.drawable.green_round_background);
-                    }
-                    loginBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handleLoginClick();
-                        }
-                    });
+                else {
+                    handleChangeInEmailInput(s, loginBtn);
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void handleChangeInEmailInput(CharSequence s, Button loginBtn) {
+        userEmail = s.toString();
+        if(!userPassword.equals("")){
+            loginBtn.setBackgroundResource(R.drawable.green_round_background);
+        }
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleLoginClick();
+            }
+        });
+    }
 
 
+    private void handlePasswordInput(final Button loginBtn) {
         userPasswordInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -86,21 +96,25 @@ public class LoginActivity extends AppCompatActivity {
                     loginBtn.setBackgroundResource(R.drawable.disabled_button_background);
                     userPassword = "";
                 }else {
-                    feedbackToUser.setText("");
-                    userPassword = s.toString();
-                    if(!userEmail.equals("")){
-                        loginBtn.setBackgroundResource(R.drawable.green_round_background);
-                    }
-                    loginBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handleLoginClick();
-                        }
-                    });
+                    handleChangeInPasswordInput(s, loginBtn);
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void handleChangeInPasswordInput(CharSequence s, Button loginBtn) {
+        feedbackToUser.setText("");
+        userPassword = s.toString();
+        if(!userEmail.equals("")){
+            loginBtn.setBackgroundResource(R.drawable.green_round_background);
+        }
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleLoginClick();
+            }
         });
     }
 
@@ -113,7 +127,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     void checkIfUserExists(){
-
         String[] idAndName = doEmailAndPasswordExistInDB(userEmail.toString(), userPassword.toString());
         String id = idAndName[0];
         String name = idAndName[1];
@@ -122,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
             userPasswordInput.setText("");
             userPasswordInput.setSelectAllOnFocus(true);
             popKeyboardUp();
-
         }
         else{
             goToGroupDisplayScreen(id, name);
@@ -153,8 +165,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void popKeyboardUp() {
-        InputMethodManager inputMethodManager =  (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInputFromWindow(userPasswordInput.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+        InputMethodManager inputMethodManager =
+                (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(userPasswordInput.getApplicationWindowToken(),
+                InputMethodManager.SHOW_FORCED, 0);
         userPasswordInput.requestFocus();
     }
 
