@@ -145,7 +145,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
         menuHandler = new MenuHandler(dialogs, groupMembersList, this, thisGroup);
         if (thisGroup.getIsScheduled()){
-            nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar, groupId);
+            nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar);
         }
         return true;
     }
@@ -169,7 +169,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar, groupId);
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
             }
         });
     }
@@ -181,7 +181,7 @@ public class InsideGroupActivity extends AppCompatActivity {
                 menuHandler.handleAddParticipant(groupId);
                 break;
             case R.id.groupDetailsBtn:
-                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar, groupId);
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
                     menuHandler.handleResetTimeChoice(calendarSlotsHandler, groupId, userId);
