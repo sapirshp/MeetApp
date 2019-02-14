@@ -109,13 +109,12 @@ class CalendarSlotsHandler {
         displayTopSelections();
     }
 
+    public int convertToSlotsIndex(int index) {
+        return (slotsAmount + index - ((today) * slotsPerDay)) % slotsAmount;
+    }
+
     private int convertToDBIndex(int index) {
-        today = 8 - DateSetter.getTodayInt();
-        int result = index - (today * slotsPerDay);
-        if (result < 0) {
-            result = slotsAmount + result;
-        }
-        return result;
+        return ((today * slotsPerDay) + index) % slotsAmount;
     }
 
     void clickedOn(TimeSlot timeSlot) {
@@ -187,6 +186,15 @@ class CalendarSlotsHandler {
         return 0;
     }
 
+    public TimeSlot getSlotById(int slotId) {
+        for (TimeSlot ts : slotSelections.keySet()) {
+            if (ts.getSlotIndex() == slotId) {
+                return ts;
+            }
+        }
+        return null;
+    }
+
     private void readCalendarFromDB() {
         calendarRef = db.collection("calendars").document(group.getGroupId());
         calendarRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -209,7 +217,7 @@ class CalendarSlotsHandler {
         today = DateSetter.getTodayInt() - 1;
         for (TimeSlot ts : slotSelections.keySet()) {
             int index = ts.getSlotIndex();
-            String convertedIndex = String.valueOf(((today * slotsPerDay) + index) % slotsAmount);
+            String convertedIndex = String.valueOf(convertToDBIndex(index));
             long arrivalsAmount = allUsersCalendar.get(convertedIndex);
             if (arrivalsAmount > 0) {
                 arrivalsText = arrivalsAmount + "/" + membersAmount;

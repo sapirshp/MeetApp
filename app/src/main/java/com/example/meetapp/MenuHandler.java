@@ -35,11 +35,15 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.meetapp.GroupsDisplayFeaturesHandler.TIME_SLOTS_AMOUNT;
 
 class MenuHandler {
     private final int LEAVE_GROUP_RESULT_CODE = 1;
@@ -154,22 +158,45 @@ class MenuHandler {
     }
 
     void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler, final String groupId, final String userId) {
-        findAndRemoveArrivals(groupId, userId);
-//        slotsToReset.clear();
-//        if (calendarSlotsHandler.getUserClicks().isEmpty()){
-//            Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
-//        }else {
-//            slotsToReset.addAll(calendarSlotsHandler.getUserClicks());
-//            for (TimeSlot slotToReset : slotsToReset) {
-//                calendarSlotsHandler.clickedOff(slotToReset);
-//            }
-//            setUndoBar(calendarSlotsHandler);
-//        }
-        //TODO change it to update firebase
+        calendarRef = db.collection("calendars").document(groupId);
+        calendarRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    userCalendar = (HashMap<String,Long>) document.get(userId);
+                    int arrivalsAmount = Collections.frequency(userCalendar.values(), Long.valueOf(1));
+                    if (arrivalsAmount == 0) {
+                        Toast.makeText(activity,activity.getString(R.string.resetEmptySelection), Toast.LENGTH_LONG).show();
+                    } else {
+                        resetTimeChoice(calendarSlotsHandler, userCalendar, groupId, userId);
+                    }
+                }
+            }
+        });
     }
 
-    private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler){
-        SuperActivityToast.OnButtonClickListener onButtonClickListener = undoOnClickListener(calendarSlotsHandler);
+    private void resetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler, HashMap<String,Long> userCalendar,
+                                 final String groupId, final String userId){
+        Map<String, Integer> initialMap = new HashMap<>();
+        for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
+            initialMap.put(Integer.toString(i), 0);
+        }
+        Map<String, Object> initialCalendar = new HashMap<String, Object>();
+        initialCalendar.put(userId, initialMap);
+        calendarRef = db.collection("calendars").document(groupId);
+        calendarRef.set(initialCalendar, SetOptions.merge());
+        for (String slotIndex : userCalendar.keySet()) {
+            if (userCalendar.get(slotIndex) == 1) {
+                int slotConvertedIndex = calendarSlotsHandler.convertToSlotsIndex(Integer.valueOf(slotIndex));
+                calendarSlotsHandler.clickedOff(calendarSlotsHandler.getSlotById(slotConvertedIndex));
+            }
+        }
+        setUndoBar(calendarSlotsHandler, userCalendar);
+    }
+
+    private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler, HashMap<String,Long> userCalendar) {
+        SuperActivityToast.OnButtonClickListener onButtonClickListener = undoOnClickListener(calendarSlotsHandler, userCalendar);
         SuperActivityToast.create(activity, new Style(), Style.TYPE_BUTTON)
                 .setButtonText("UNDO")
                 .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
@@ -179,14 +206,16 @@ class MenuHandler {
                 .setAnimations(Style.ANIMATIONS_POP).show();
     }
 
-    private SuperActivityToast.OnButtonClickListener undoOnClickListener(final CalendarSlotsHandler calendarSlotsHandler){
+    private SuperActivityToast.OnButtonClickListener undoOnClickListener(final CalendarSlotsHandler calendarSlotsHandler,
+                                                                         final HashMap<String,Long> userCalendar){
          return new SuperActivityToast.OnButtonClickListener() {
              @Override
              public void onClick(View view, Parcelable token) {
-                 for (TimeSlot slotToReset : slotsToReset) {
-                     if (!slotToReset.getClicked()) {
-                         calendarSlotsHandler.clickedOn(slotToReset);
-                         }
+                 for (String slotIndex : userCalendar.keySet()) {
+                     if (userCalendar.get(slotIndex) == 1) {
+                         int slotConvertedIndex = calendarSlotsHandler.convertToSlotsIndex(Integer.valueOf(slotIndex));
+                         calendarSlotsHandler.clickedOn(calendarSlotsHandler.getSlotById(slotConvertedIndex));
+                     }
                  }
              }
          };
@@ -374,7 +403,7 @@ class MenuHandler {
     private void addUserCalendar(final String memberId, final String groupId) {
         calendarRef = db.collection("calendars").document(groupId);
         Map<String, Integer> initialMap = new HashMap<>();
-        for (int i = 0; i < GroupsDisplayFeaturesHandler.TIME_SLOTS_AMOUNT; i++) {
+        for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
             initialMap.put(Integer.toString(i), 0);
         }
         calendarRef.update(memberId, initialMap);
