@@ -54,11 +54,9 @@ class MenuHandler {
     private Dialog groupDetailsDialog;
     private Dialog editGroupNameDialog;
     private Dialog meetingChosenDialog;
-    private int membersAmount;
     private List<String> groupMembers;
     private List<String> membersIdsToAdd;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
-    private String members = "";
     private final int NO_SLOTS_CHOSEN = 0;
     private Activity activity;
     private boolean isDateChosen;
@@ -72,11 +70,11 @@ class MenuHandler {
     private HashMap<String,Long> userCalendar;
     private HashMap<String,Long> allUsersCalendar;
     private DocumentReference calendarRefForUpdate;
+    private static int dialogCount = 0;
 
     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
         this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
-        this.membersAmount = membersNames.size();
         this.groupMembers = membersNames;
         this.topSuggestionsDialog = dialogs.get("topSuggestionsDialog");
         this.editGroupNameDialog = dialogs.get("editGroupNameDialog");
@@ -117,7 +115,7 @@ class MenuHandler {
         addMemberDialog.show();
     }
 
-    boolean handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar, String groupId)
+    boolean handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar)
     {
         groupDetailsDialog.setContentView(R.layout.group_details_popap);
         TextView exitPopupBtn = groupDetailsDialog.findViewById(R.id.groupDetailsExitBtn);
@@ -125,9 +123,16 @@ class MenuHandler {
         displayGroupName(groupName);
         displayMembersInfo(calendarSlotsHandler.getContext());
         displayTopSelection(calendarSlotsHandler);
-        handleEditGroupName(groupId);
+        handleEditGroupName(currentGroup.getGroupId());
         String newName = toolbar.getTitle().toString();
-        groupDetailsDialog.show();
+        if (dialogCount == 0) {
+            groupDetailsDialog.show();
+        }
+        if(currentGroup.getIsScheduled()){
+            setCalendarInvisible();
+            setGifBackground();
+            dialogOnBackPressed(groupDetailsDialog);
+        }
         return (newName.equals(groupName));
     }
 
@@ -315,11 +320,13 @@ class MenuHandler {
                  });
      }
 
-
      private void handleExitPopup(final Dialog dialog, TextView exitBtn) {
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (currentGroup.getIsScheduled() && dialog == groupDetailsDialog){
+                    activity.finish();
+                }
                 dialog.dismiss();
                 if (dialog == addMemberDialog) {
                     AddMembersHandler.clearMembersToAdd();
@@ -454,7 +461,6 @@ class MenuHandler {
         groupNameInfo.setText(groupName);
     }
 
-
     void handleCreateMeeting(final CalendarSlotsHandler calendarSlotsHandler)
     {
         ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
@@ -466,8 +472,6 @@ class MenuHandler {
         if (!isDateChosen) {
             displayTopSuggestionsDialog(numOfOptionsToDisplay, calendarSlotsHandler);
             topSuggestionsDialog.show();
-        }else {
-            createMeetUp();
         }
     }
 
@@ -483,7 +487,6 @@ class MenuHandler {
         topSuggestionsDialog.show();
     }
 
-
     private Button[] createAllOptionsLst()
     {
         final Button option1, option2, option3, createMeeting;
@@ -493,7 +496,6 @@ class MenuHandler {
         createMeeting = topSuggestionsDialog.findViewById(R.id.CreateMeetupBtn);
         return new Button[]{option1, option2, option3, createMeeting};
     }
-
 
     private ArrayList<Button> activateOnlyRelevantButtons(Button[] allOptionsLst, int numOfOptionsToDisplay)
     {
@@ -534,7 +536,6 @@ class MenuHandler {
         }
     }
 
-
     private void handleAllOptionPresses(final ArrayList<Button> currentOptionLst, Button[] allOptionsLst)
     {
         for(int i = 0; i < 3; i++)
@@ -559,14 +560,12 @@ class MenuHandler {
          }
      }
 
-
      private void turnOffCurrentBtn(int newButtonPressed, ArrayList<Button> btnList)
      {
          btnList.get(newButtonPressed).setBackgroundResource(R.drawable.custom_border);
          btnList.get(btnList.size()-1).setBackgroundResource(R.drawable.disabled_button_background);
          currentMeetingChoice = NO_OPTION_CHOSEN;
      }
-
 
      private void setSingleChoiceAndDisableOthers(int buttonToTurnOn, ArrayList<Button> btnList)
      {
@@ -578,7 +577,6 @@ class MenuHandler {
          setMeetingBtn.setBackgroundResource(R.drawable.green_round_background);
          currentMeetingChoice = buttonToTurnOn;
      }
-
 
      private void handleCreateMeetingBtnPress(final ArrayList<Button> buttons) {
          Button createMeeting = buttons.get(buttons.size()-1);
@@ -597,7 +595,7 @@ class MenuHandler {
          });
      }
 
-     public void createMeetUp(){
+     private void createMeetUp(){
          isDateChosen = true;
          if (!currentGroup.getIsScheduled()) {
              currentGroup.setIsScheduled(true);
@@ -606,12 +604,25 @@ class MenuHandler {
              groupRef.update("isScheduled", true);
              groupRef.update("chosenDate", dateChosenByAdmin);
          }
-         setCalendarInvisible();
-         setGifBackground();
          meetingChosenDialog.setContentView(R.layout.date_setup_popup);
          TextView dateText = meetingChosenDialog.findViewById(R.id.dateChoise);
          dateText.setText(currentGroup.getChosenDate());
+         setCalendarInvisible();
+         setGifBackground();
+         dialogCount++;
          meetingChosenDialog.show();
+         dialogOnBackPressed(meetingChosenDialog);
+     }
+
+     private void dialogOnBackPressed(Dialog dialogToCancel){
+         dialogToCancel.setOnCancelListener(new DialogInterface.OnCancelListener() {
+             @Override
+             public void onCancel(DialogInterface dialog) {
+                 dialogCount--;
+                 activity.finish();
+                 dialog.dismiss();
+             }
+         });
      }
 
      private void setChosenDate(String dateToSet){
