@@ -2,6 +2,7 @@ package com.example.meetapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +13,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class LoginActivity extends AppCompatActivity {
     private final String DOES_NOT_EXIST = "";
     private static long back_pressed;
@@ -19,24 +30,29 @@ public class LoginActivity extends AppCompatActivity {
     private CharSequence userEmail = "";
     private TextView feedbackToUser;
     private EditText userPasswordInput;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DocumentReference usersRef;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkIfUserIsAlreadyRegistered();
-        setContentView(R.layout.activity_login);
-        handleUserInputOfEmailAndPassword();
-        handleNewSignIn();
+        mAuth = FirebaseAuth.getInstance();
     }
 
-    private void checkIfUserIsAlreadyRegistered(){
-        // TODO:    OREN, IMPLEMENT HERE.
-        // TODO:    CHECK IF THE USER IS ALREADY REGISTETRD, AND PUT NAME AND ID IN RELEVANT VARIABLES
-        if("user is already registered".equals(DOES_NOT_EXIST)){
-            String id = "stammmmm";
-            String name = "stammm2";
-            goToGroupDisplayScreen(id, name);
+    @Override
+    public void onStart() {
+        super.onStart();
+        //TODO remove it if you don't want to log in every time you reset the app
+        FirebaseAuth.getInstance().signOut();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            goToGroupDisplayScreen(currentUser.getUid());
+        } else {
+            setContentView(R.layout.activity_login);
+            handleUserInputOfEmailAndPassword();
+            handleNewSignIn();
         }
     }
 
@@ -45,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginBtn = findViewById(R.id.loginBtn);
         feedbackToUser = findViewById(R.id.InvalidEmailOrPassword);
         feedbackToUser.setText("");
-
         userPasswordInput = findViewById(R.id.enterPasswordInput);
         handleEmailInput(loginBtn);
         handlePasswordInput(loginBtn);
@@ -121,47 +136,45 @@ public class LoginActivity extends AppCompatActivity {
 
     void handleLoginClick(){
         if(!userEmail.equals("") && !userPassword.equals("")){
-            checkIfUserExists();
+            logIn(userEmail.toString(), userPassword.toString());
         }
     }
 
-
-    void checkIfUserExists(){
-        String[] idAndName = doEmailAndPasswordExistInDB(userEmail.toString(), userPassword.toString());
-        String id = idAndName[0];
-        String name = idAndName[1];
-        if(id.equals(DOES_NOT_EXIST)){
-            feedbackToUser.setText(this.getString(R.string.InvalidEmailOrPassword));
-            userPasswordInput.setText("");
-            userPasswordInput.setSelectAllOnFocus(true);
-            popKeyboardUp();
-        }
-        else{
-            goToGroupDisplayScreen(id, name);
-        }
+    public void goToGroupDisplayScreen(String currentUserId) {
+        final Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
+        goToGroupsScreen.putExtra("userId", currentUserId);
+        usersRef = db.collection("users").document(currentUserId);
+        usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    goToGroupsScreen.putExtra("userName", (String) document.get("name"));
+                    startActivityForResult(goToGroupsScreen, 1);
+                }
+            }
+        });
     }
 
-    public void goToGroupDisplayScreen(String id, String name) {
-        Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
-        goToGroupsScreen.putExtra("USER_ID", id);
-        goToGroupsScreen.putExtra("USER_NAME", name);
-        startActivityForResult(goToGroupsScreen, 1);
+    private void logIn(String userEmail, String userPassword){
+        final AppCompatActivity activityRef = this;
+        mAuth.signInWithEmailAndPassword(userEmail, userPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            goToGroupDisplayScreen(user.getUid());
+                        } else {
+                            feedbackToUser.setText(activityRef.getString(R.string.InvalidEmailOrPassword));
+                            userPasswordInput.setText("");
+                            userPasswordInput.setSelectAllOnFocus(true);
+                            popKeyboardUp();
+                        }
+                    }
+                });
     }
 
-
-    private String[] doEmailAndPasswordExistInDB( String userEmail, String userPassword){
-        // TODO:     OREN, CHECK HERE IF THE EMAIL AND PASSWORD EXIST.
-        // TODO:     IF THEY DO - RETURN THE ID (as an int).
-        // TODO:     if not - return constant DOES_NOT_EXIST.
-
-//        if(  EXISTS){
-//            return id;
-//        } else{
-//            return DOES_NOT_EXIST;
-//        }
-        return new String[]{"Q6vPMTUMQZe9IS9gQjWzmXSjPB22", "oren"};
-//        return new String[]{DOES_NOT_EXIST, "noName"};
-    }
 
 
     private void popKeyboardUp() {
