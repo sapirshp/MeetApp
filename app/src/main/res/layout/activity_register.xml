@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_name"
             app:srcCompat="@drawable/meetapp_icon" />
 
         <LinearLayout
@@ -36,78 +37,74 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
-                android:text="Register"
+                android:text="@string/Register"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:textSize="40sp" />
 
             <EditText
-                android:id="@+id/EnterNameInput"
+                android:id="@+id/RegisterNameInput"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:autofillHints="@string/groupNameHint"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Enter Your Name"
+                android:hint="@string/EnterYourName"
                 android:inputType="text"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
             <EditText
-                android:id="@+id/enterEmailInput"
+                android:id="@+id/RegisterEmailInput"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
-                android:autofillHints="@string/groupNameHint"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Enter Your Email Address"
-                android:inputType="text"
+                android:hint="@string/EnterYourEmailAddress"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
             <EditText
-                android:id="@+id/EnterPasswordInput"
+                android:id="@+id/RegisterPassword1Input"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:autofillHints="@string/groupNameHint"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Enter Your Password"
+                android:hint="@string/EnterYourPassword"
                 android:inputType="text"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
             <EditText
-                android:id="@+id/reEnterPasswordInput"
+                android:id="@+id/RegisterPassword2Input"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
-                android:autofillHints="@string/groupNameHint"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Re-Enter Your Password"
+                android:hint="@string/ReEnterYourPassword"
                 android:inputType="text"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
             <TextView
-                android:id="@+id/WrongPassword"
+                android:id="@+id/userFeedbackPasswordsDontMatch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/poppins_light"
-                android:text="Password Does Not Match"
+                android:text="@string/PasswordsDoNotMatch"
                 android:textAlignment="center"
                 android:textColor="@color/colorRed"
                 android:textSize="16sp" />
@@ -121,7 +118,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/disabled_button_background"
                 android:fontFamily="@font/poppins_light"
-                android:text="Register"
+                android:text="@string/Register"
                 android:textColor="@color/blueDark"
                 android:textSize="16sp" />
 

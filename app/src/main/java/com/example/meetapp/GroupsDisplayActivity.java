@@ -30,8 +30,9 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private final int EXIT_DELAY = 2000;
     private RecyclerView recyclerView;
     private GroupAdapter adapter;
-    private String userName = "Oren";
-    private String userID = "Q6vPMTUMQZe9IS9gQjWzmXSjPB22";
+
+    private String userName;
+    private String userID;
     private String phoneNumber = "972528240512";
     GroupsDisplayFeaturesHandler groupsDisplayFeaturesHandler;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -40,11 +41,17 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fetchUserIdAndUserName();
         setContentView(R.layout.activity_main);
         setToolbar();
         setDialogs();
         setCreateNewGroupListener();
         setRecyclerViewAndAdapter();
+    }
+
+    private void fetchUserIdAndUserName(){
+        userID = getIntent().getExtras().getString("USER_ID");
+        userName = getIntent().getExtras().getString("USER_NAME");
     }
 
     private void setRecyclerViewAndAdapter(){

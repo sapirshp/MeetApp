@@ -25,7 +25,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".GroupsDisplayActivity" />
-        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".RegisterActivity" />
     </application>
 
 </manifest>

@@ -19,6 +19,7 @@
 
         <ImageView
             android:id="@+id/imageView"
+            android:contentDescription="@string/app_name"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_marginTop="10dp"
@@ -36,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
-                android:text="Login"
+                android:text="@string/Login"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
                 android:textSize="40sp" />
@@ -49,10 +50,9 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:autofillHints="@string/groupNameHint"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Enter Your Email Address"
-                android:inputType="text"
+                android:hint="@string/EnterYourEmailAddress"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
@@ -64,20 +64,19 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
-                android:autofillHints="@string/groupNameHint"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Enter Your Password"
-                android:inputType="text"
+                android:hint="@string/EnterYourPassword"
+                android:inputType="textVisiblePassword"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
             <TextView
-                android:id="@+id/WrongEmailOrPassword"
+                android:id="@+id/InvalidEmailOrPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/poppins_light"
-                android:text="Wrong Email Or Password"
+                android:text="@string/InvalidEmailOrPassword"
                 android:textAlignment="center"
                 android:textColor="@color/colorRed"
                 android:textSize="16sp" />
@@ -91,20 +90,21 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/disabled_button_background"
                 android:fontFamily="@font/poppins_light"
-                android:text="Login"
+                android:text="@string/Login"
                 android:textColor="@color/blueDark"
                 android:textSize="16sp" />
 
-            <TextView
+            <Button
                 android:id="@+id/registerNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_light"
-                android:text="Sign Up"
+                android:text="@string/SignUp"
                 android:textAlignment="center"
                 android:textColor="@color/colorGreen"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:background="@color/fui_transparent"
                 tools:layout_editor_absoluteX="42dp"
                 tools:layout_editor_absoluteY="429dp" />
         </LinearLayout>
