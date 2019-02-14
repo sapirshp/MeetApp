@@ -19,10 +19,6 @@ import com.google.firebase.firestore.Query;
 import java.util.HashMap;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
-    private final int LEAVE_GROUP_RESULT_CODE = 1;
-    private final int EDIT_NAME_RESULT_CODE = 2;
-    private final int ADD_MEMBERS_RESULT_CODE = 3;
-    private final int CHANGE_NAME_AND_MEMBERS = 4;
     private Dialog newGroupDialog;
     private Dialog addMembersDialog;
     private HashMap<String, Dialog> dialogs= new HashMap<>();
@@ -30,13 +26,10 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     private final int EXIT_DELAY = 2000;
     private RecyclerView recyclerView;
     private GroupAdapter adapter;
-
     private String userName;
     private String userID;
-    private String phoneNumber = "972528240512";
     GroupsDisplayFeaturesHandler groupsDisplayFeaturesHandler;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +43,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     }
 
     private void fetchUserIdAndUserName(){
-        userID = getIntent().getExtras().getString("USER_ID");
-        userName = getIntent().getExtras().getString("USER_NAME");
+        userID = getIntent().getExtras().getString("userId");
+        userName = getIntent().getExtras().getString("userName");
     }
 
     private void setRecyclerViewAndAdapter(){
