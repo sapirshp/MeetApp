@@ -94,7 +94,7 @@
                 android:textColor="@color/blueDark"
                 android:textSize="16sp" />
 
-            <TextView
+            <Button
                 android:id="@+id/registerNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -104,6 +104,7 @@
                 android:textColor="@color/colorGreen"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:background="@color/fui_transparent"
                 tools:layout_editor_absoluteX="42dp"
                 tools:layout_editor_absoluteY="429dp" />
         </LinearLayout>

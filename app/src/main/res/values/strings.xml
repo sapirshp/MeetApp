@@ -40,4 +40,9 @@
     <string name="EnterYourEmailAddress">Enter Your Email Address</string>
     <string name="EnterYourPassword">Enter Your Password</string>
     <string name="SignUp">Sign Up</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="PasswordsDoNotMatch">Passwords Do Not Match</string>
+    <string name="Register">Register</string>
+    <string name="EnterYourName">Enter Your Name</string>
+    <string name="ReEnterYourPassword">Re-Enter Your Password</string>
 </resources>
