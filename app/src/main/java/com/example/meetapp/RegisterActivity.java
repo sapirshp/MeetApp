@@ -20,7 +20,6 @@ public class RegisterActivity extends AppCompatActivity {
     private String EMPTY = "";
     private final String emailRegex = "^(.+)@(.+).(.+)$";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,18 +27,15 @@ public class RegisterActivity extends AppCompatActivity {
         handleUserInput();
     }
 
-
     private void handleUserInput() {
         registerBtn = findViewById(R.id.registerBtn);
         feedbackToUser = findViewById(R.id.userFeedbackPasswordsDontMatch);
         feedbackToUser.setText("");
-
         handleUserNameInput();
         handleUserEmailInput();
         handleUserPassword1();
         handleUserPassword2();
     }
-
 
     // NOTE:
     // It may seem that there is code duplication in the next 4 functions.
@@ -50,7 +46,6 @@ public class RegisterActivity extends AppCompatActivity {
     // the user (which is not final...).
     // Therefore we had to re-write this short code segment 4 times, for each field separately. In
     // each function we addressed a different global variable.
-
 
     private void handleUserNameInput() {
         EditText userNameInput = findViewById(R.id.RegisterNameInput);
@@ -70,7 +65,6 @@ public class RegisterActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
     }
-
 
     private void handleUserEmailInput() {
         final EditText userEmailInput = findViewById(R.id.RegisterEmailInput);
@@ -99,7 +93,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-
     private void handleUserPassword1() {
         EditText password1EditText = findViewById(R.id.RegisterPassword1Input);
         password1EditText.addTextChangedListener(new TextWatcher() {
@@ -118,7 +111,6 @@ public class RegisterActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
     }
-
 
     private void handleUserPassword2() {
         EditText password2EditText = findViewById(R.id.RegisterPassword2Input);
@@ -139,43 +131,35 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-
     private void handleRegisterBtnAndPasswordFeedback(){
         if( (!userName.toString().equals(EMPTY))      &&
             (!userEmail.toString().equals(EMPTY))     &&
+            (userEmail.toString().matches(emailRegex)) &&
             (!userPassword1.toString().equals(EMPTY)) &&
-            userPassword1.toString().equals(userPassword2.toString()) ){
+            (!userPassword2.toString().equals(EMPTY))){
                 registerBtn.setBackgroundResource(R.drawable.green_round_background);
                 feedbackToUser.setText(EMPTY);
                 onClickGoToGroupsScreen();
         }
         else{
-            if(!userPassword1.toString().equals(userPassword2.toString())){
-                feedbackToUser.setText(this.getString(R.string.PasswordsDoNotMatch));
-            } else{
-                feedbackToUser.setText("");
-            }
             registerBtn.setBackgroundResource(R.drawable.disabled_button_background);
-            onClickDoNothing();
         }
     }
-
 
     private void onClickGoToGroupsScreen() {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userId = writeToDB();
-                handleRegisterClick(userId, userName.toString());
+                if(!userPassword1.toString().equals(userPassword2.toString())) {
+                    EditText password2EditText = findViewById(R.id.RegisterPassword2Input);
+                    password2EditText.setText("");
+                    userPassword2 = "";
+                    feedbackToUser.setText(v.getContext().getString(R.string.PasswordsDoNotMatch));
+                }else {
+                    String userId = writeToDB();
+                    handleRegisterClick(userId, userName.toString());
+                }
             }
-        });
-    }
-
-
-    private void onClickDoNothing() {
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {}
         });
     }
 
@@ -190,7 +174,6 @@ public class RegisterActivity extends AppCompatActivity {
         userName = "oren"; //TODO: REMOVE THIS
         return id;
     }
-
 
     private void handleRegisterClick(String id, String name){
         Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
