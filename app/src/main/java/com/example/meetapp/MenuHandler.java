@@ -125,8 +125,10 @@ class MenuHandler {
         displayTopSelection(calendarSlotsHandler);
         handleEditGroupName(currentGroup.getGroupId());
         String newName = toolbar.getTitle().toString();
+        groupDetailsDialog.setCanceledOnTouchOutside(false);
         if (dialogCount == 0) {
             groupDetailsDialog.show();
+            dialogCount++;
         }
         if(currentGroup.getIsScheduled()){
             setCalendarInvisible();
@@ -325,6 +327,7 @@ class MenuHandler {
             @Override
             public void onClick(View v) {
                 if (currentGroup.getIsScheduled() && dialog == groupDetailsDialog){
+                    dialogCount--;
                     activity.finish();
                 }
                 dialog.dismiss();
@@ -610,6 +613,7 @@ class MenuHandler {
          setCalendarInvisible();
          setGifBackground();
          dialogCount++;
+         meetingChosenDialog.setCanceledOnTouchOutside(false);
          meetingChosenDialog.show();
          dialogOnBackPressed(meetingChosenDialog);
      }
