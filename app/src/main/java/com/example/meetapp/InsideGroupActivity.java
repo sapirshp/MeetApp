@@ -41,7 +41,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     private String groupName;
     private String groupId;
     private String userId;
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Toolbar toolbar;
     private CalendarSlotsHandler calendarSlotsHandler;
     private Intent goToGroupsDisplay;
@@ -49,7 +48,6 @@ public class InsideGroupActivity extends AppCompatActivity {
     Query groupUsers;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DocumentReference groupRef;
-    private DocumentReference calendarRef;
     private CollectionReference usersRef;
 
     public InsideGroupActivity(){
@@ -62,6 +60,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         groupId = getIntent().getExtras().getString("groupId");
         userId = getIntent().getExtras().getString("userId");
         readGroupData(groupId);
+        setContentView(R.layout.activity_group);
     }
 
     protected void readGroupData(String groupId) {
@@ -76,9 +75,18 @@ public class InsideGroupActivity extends AppCompatActivity {
                 if (snapshot != null && snapshot.exists()) {
                     thisGroup = snapshot.toObject(Group.class);
                     readMembersNames(thisGroup);
+                    groupActivityHandler();
                 }
             }
         });
+    }
+
+    protected void groupActivityHandler() {
+        View layout = findViewById(R.id.calendarView);
+        DateSetter.setDatesToDisplay(layout);
+        createSlotHandler(layout);
+        goToGroupsDisplay = new Intent();
+        setDialogsMap();
     }
 
     protected void readMembersNames(final Group group) {
@@ -97,19 +105,9 @@ public class InsideGroupActivity extends AppCompatActivity {
                             group.addNameToNamesList(doc.getString("name"));
                         }
                     }
-                    groupDetailsHandler();
+                    setToolbar();
                 }
             });
-    }
-
-    protected void groupDetailsHandler() {
-        setContentView(R.layout.activity_group);
-        View layout = findViewById(R.id.calendarView);
-        DateSetter.setDatesToDisplay(layout);
-        setToolbar();
-        createSlotHandler(layout);
-        goToGroupsDisplay = new Intent();
-        setDialogsMap();
     }
 
     private void createSlotHandler(View layout){

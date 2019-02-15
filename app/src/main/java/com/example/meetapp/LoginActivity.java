@@ -24,16 +24,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
-    private final String DOES_NOT_EXIST = "";
     private static long back_pressed;
     private CharSequence userPassword = "";
     private CharSequence userEmail = "";
     private TextView feedbackToUser;
     private EditText userPasswordInput;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private DocumentReference usersRef;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         //TODO remove it if you don't want to log in every time you reset the app
-        FirebaseAuth.getInstance().signOut();
+//        FirebaseAuth.getInstance().signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             goToGroupDisplayScreen(currentUser.getUid());
@@ -56,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
     void handleUserInputOfEmailAndPassword(){
         final Button loginBtn = findViewById(R.id.loginBtn);
         feedbackToUser = findViewById(R.id.InvalidEmailOrPassword);
@@ -65,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
         handleEmailInput(loginBtn);
         handlePasswordInput(loginBtn);
     }
-
 
     private void handleEmailInput(final Button loginBtn) {
         EditText userEmailInput = findViewById(R.id.enterEmailInput);
@@ -100,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
     private void handlePasswordInput(final Button loginBtn) {
         userPasswordInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -133,7 +126,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
     void handleLoginClick(){
         if(!userEmail.equals("") && !userPassword.equals("")){
             logIn(userEmail.toString(), userPassword.toString());
@@ -143,17 +135,18 @@ public class LoginActivity extends AppCompatActivity {
     public void goToGroupDisplayScreen(String currentUserId) {
         final Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
         goToGroupsScreen.putExtra("userId", currentUserId);
-        usersRef = db.collection("users").document(currentUserId);
-        usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    goToGroupsScreen.putExtra("userName", (String) document.get("name"));
-                    startActivityForResult(goToGroupsScreen, 1);
-                }
-            }
-        });
+        startActivityForResult(goToGroupsScreen, 1);
+
+//        usersRef = db.collection("users").document(currentUserId);
+//        usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    goToGroupsScreen.putExtra("userName", (String) document.get("name"));
+//                }
+//            }
+//        });
     }
 
     private void logIn(String userEmail, String userPassword){
@@ -175,8 +168,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-
-
     private void popKeyboardUp() {
         InputMethodManager inputMethodManager =
                 (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
@@ -184,7 +175,6 @@ public class LoginActivity extends AppCompatActivity {
                 InputMethodManager.SHOW_FORCED, 0);
         userPasswordInput.requestFocus();
     }
-
 
     private void handleNewSignIn(){
         final Button signUpBtn = findViewById(R.id.registerNow);
@@ -196,7 +186,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 
     @Override
     public void onBackPressed()
