@@ -29,7 +29,9 @@ public class LoginActivity extends AppCompatActivity {
     private CharSequence userEmail = "";
     private TextView feedbackToUser;
     private EditText userPasswordInput;
+    private EditText userEmailInput;
     private FirebaseAuth mAuth;
+    private final String emailRegex = "^(.+)@(.+).(.+)$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         //TODO remove it if you don't want to log in every time you reset the app
-//        FirebaseAuth.getInstance().signOut();
+        FirebaseAuth.getInstance().signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             goToGroupDisplayScreen(currentUser.getUid());
@@ -57,12 +59,12 @@ public class LoginActivity extends AppCompatActivity {
         feedbackToUser = findViewById(R.id.InvalidEmailOrPassword);
         feedbackToUser.setText("");
         userPasswordInput = findViewById(R.id.enterPasswordInput);
+        userEmailInput = findViewById(R.id.enterEmailInput);
         handleEmailInput(loginBtn);
         handlePasswordInput(loginBtn);
     }
 
     private void handleEmailInput(final Button loginBtn) {
-        EditText userEmailInput = findViewById(R.id.enterEmailInput);
         userEmailInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -78,6 +80,14 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+        userEmailInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && !checkEmailValidation()){
+                    userEmailInput.setError("Invalid Email Address");
+                }
+            }
         });
     }
 
@@ -127,9 +137,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     void handleLoginClick(){
-        if(!userEmail.equals("") && !userPassword.equals("")){
+        if(checkEmailValidation() && !userPassword.toString().isEmpty()){
             logIn(userEmail.toString(), userPassword.toString());
         }
+    }
+
+    boolean checkEmailValidation(){
+        return  (!userEmail.toString().isEmpty() && userEmail.toString().matches(emailRegex));
     }
 
     public void goToGroupDisplayScreen(String currentUserId) {

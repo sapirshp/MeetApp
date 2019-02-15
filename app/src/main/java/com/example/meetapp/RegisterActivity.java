@@ -18,6 +18,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView feedbackToUser;
     private Button registerBtn;
     private String EMPTY = "";
+    private final String emailRegex = "^(.+)@(.+).(.+)$";
 
 
     @Override
@@ -72,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void handleUserEmailInput() {
-        EditText userEmailInput = findViewById(R.id.RegisterEmailInput);
+        final EditText userEmailInput = findViewById(R.id.RegisterEmailInput);
         userEmailInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -87,6 +88,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+        userEmailInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && !userEmail.toString().matches(emailRegex)){
+                    userEmailInput.setError("Invalid Email Address");
+                }
+            }
         });
     }
 
