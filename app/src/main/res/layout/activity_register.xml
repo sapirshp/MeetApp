@@ -80,7 +80,7 @@
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/poppins_light"
                 android:hint="@string/EnterYourPassword"
-                android:inputType="text"
+                android:inputType="textPassword"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 
@@ -94,7 +94,7 @@
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/poppins_light"
                 android:hint="@string/ReEnterYourPassword"
-                android:inputType="text"
+                android:inputType="textPassword"
                 android:textColor="@color/blueDark"
                 android:textColorHint="@color/colorGreen" />
 

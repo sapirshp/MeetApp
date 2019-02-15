@@ -66,9 +66,9 @@
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/poppins_light"
                 android:hint="@string/EnterYourPassword"
-                android:inputType="textVisiblePassword"
+                android:inputType="textPassword"
                 android:textColor="@color/blueDark"
-                android:textColorHint="@color/colorGreen" />
+                android:textColorHint="@color/colorGreen"/>
 
             <TextView
                 android:id="@+id/InvalidEmailOrPassword"
