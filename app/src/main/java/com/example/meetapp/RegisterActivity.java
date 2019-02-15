@@ -18,7 +18,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView feedbackToUser;
     private Button registerBtn;
     private String EMPTY = "";
-    private final String emailRegex = "^(.+)@(.+).(.+)$";
+    private final String emailRegex = "^(.+)@(.+)\\.(.+)$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

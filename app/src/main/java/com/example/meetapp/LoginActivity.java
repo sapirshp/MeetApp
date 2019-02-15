@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userPasswordInput;
     private EditText userEmailInput;
     private FirebaseAuth mAuth;
-    private final String emailRegex = "^(.+)@(.+).(.+)$";
+    private final String emailRegex = "^(.+)@(.+)\\.(.+)$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
