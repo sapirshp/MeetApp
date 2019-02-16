@@ -45,4 +45,9 @@
     <string name="Register">Register</string>
     <string name="EnterYourName">Enter Your Name</string>
     <string name="ReEnterYourPassword">Re-Enter Your Password</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="logoutQuestion">Are You Sure You Want To Logout?</string>
+    <string name="logoutDialogTitle">Logout?</string>
+    <string name="logoutAnswer">Logout</string>
 </resources>

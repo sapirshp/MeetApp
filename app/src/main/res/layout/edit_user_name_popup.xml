@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:background="@color/greyColor"
+        >
+        <TextView
+            android:id="@+id/exitEditNameBtn"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:background="@drawable/circle_background"
+            android:gravity="center"
+            android:text="@string/XBtn"
+            android:textColor="@color/blueDark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppins_light"
+            android:text="Type New Name"
+            android:textColor="@color/blueDark"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editUserNameInput"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:autofillHints="@string/groupNameHint"
+            android:fontFamily="@font/poppins_light"
+            android:hint="Username Here"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@color/blueDark"
+            android:textColorHint="@color/colorGreen" />
+
+        <Button
+            android:id="@+id/changeNameBtn"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/disabled_button_background"
+            android:fontFamily="@font/poppins_light"
+            android:text="Change"
+            android:textAllCaps="false"
+            android:textColor="@color/blueDark"
+            android:textSize="16sp" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
