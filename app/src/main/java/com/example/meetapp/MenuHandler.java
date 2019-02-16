@@ -130,12 +130,25 @@ class MenuHandler {
             groupDetailsDialog.show();
             dialogCount++;
         }
+        setGroupDetailsBehavior();
+        return (newName.equals(groupName));
+    }
+
+    private void setGroupDetailsBehavior(){
         if(currentGroup.getIsScheduled()){
             setCalendarInvisible();
             setGifBackground();
             dialogOnBackPressed(groupDetailsDialog);
         }
-        return (newName.equals(groupName));
+        else{
+            groupDetailsDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    dialogCount--;
+                    dialog.dismiss();
+                }
+            });
+        }
     }
 
     private void RemoveArrivals(final String groupId, HashMap<String,Long> userCalendar,
@@ -326,8 +339,10 @@ class MenuHandler {
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentGroup.getIsScheduled() && dialog == groupDetailsDialog){
+                if (dialog == groupDetailsDialog){
                     dialogCount--;
+                }
+                if (currentGroup.getIsScheduled() && dialog == groupDetailsDialog){
                     activity.finish();
                 }
                 dialog.dismiss();
