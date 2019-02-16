@@ -35,8 +35,6 @@ class AddMembersHandler {
         contactLayout.setBackgroundColor(view.getResources().getColor(R.color.colorGreen));
         contactLayout.setTag("chosen");
         addMember((String) contactName.getText(), (String) contactName.getTag());
-        System.out.println(membersNamesToAdd);
-        System.out.println(membersIdsToAdd);
     }
 
     private static void clickOff(View view){
@@ -44,8 +42,6 @@ class AddMembersHandler {
         TextView contactName = view.findViewById(R.id.userName);
         ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
         removeMember((String) contactName.getText(), (String) contactName.getTag());
-        System.out.println(membersNamesToAdd);
-        System.out.println(membersIdsToAdd);
         if (isMemberToAddEmpty()){
             okButton.setBackgroundResource(R.drawable.disabled_button_background);
         }
