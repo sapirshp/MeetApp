@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +129,7 @@ class GroupsDisplayFeaturesHandler {
             put("members", groupMembers);
             put("isScheduled", false);
             put("chosenDate", "");
+            put("created", new Timestamp(new Date()));
         }};
         groupRef = db.collection("groups").document();
         String groupId = groupRef.getId();
