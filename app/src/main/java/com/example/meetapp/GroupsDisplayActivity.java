@@ -54,7 +54,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
 
     private void setRecyclerViewAndAdapter(){
         CollectionReference groupsRef = db.collection("groups");
-        Query groups = groupsRef.whereArrayContains("members", userID).orderBy("name");
+        Query groups = groupsRef.whereArrayContains("members", userID).
+                orderBy("created", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Group> options = new FirestoreRecyclerOptions.Builder<Group>().
                 setQuery(groups, Group.class).build();
         adapter = new GroupAdapter(options, this);
