@@ -39,8 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        //TODO remove it if you don't want to log in every time you reset the app
-        FirebaseAuth.getInstance().signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             goToGroupDisplayScreen(currentUser.getUid());
