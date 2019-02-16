@@ -2,6 +2,7 @@ package com.example.meetapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
     private CharSequence userName = "";
@@ -19,10 +32,15 @@ public class RegisterActivity extends AppCompatActivity {
     private Button registerBtn;
     private String EMPTY = "";
     private final String emailRegex = "^(.+)@(.+)\\.(.+)$";
+    private FirebaseAuth mAuth;
+    String userId;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DocumentReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_register);
         handleUserInput();
     }
@@ -156,30 +174,48 @@ public class RegisterActivity extends AppCompatActivity {
                     userPassword2 = "";
                     feedbackToUser.setText(v.getContext().getString(R.string.PasswordsDoNotMatch));
                 }else {
-                    String userId = writeToDB();
-                    handleRegisterClick(userId, userName.toString());
+                    writeToDB();
                 }
             }
         });
     }
 
-    String writeToDB(){
-        String name = userName.toString();
-        String email = userEmail.toString();
-        String password = userPassword1.toString();
-
-        // TODO: OREN, WRITE HERE TO DB AND RETURN THE ID
-
-        String id = "Q6vPMTUMQZe9IS9gQjWzmXSjPB22";
-        userName = "oren"; //TODO: REMOVE THIS
-        return id;
+    private void writeToDB(){
+        final String name = userName.toString();
+        final String email = userEmail.toString();
+        final String password = userPassword1.toString();
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            userId = user.getUid();
+                            addUserToDB(userId, name);
+                            goToGroupDisplayScreen(userId);
+                        } else {
+                            Toast.makeText(RegisterActivity.this, task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
-    private void handleRegisterClick(String id, String name){
-        Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
-        goToGroupsScreen.putExtra("USER_ID", id);
-        goToGroupsScreen.putExtra("USER_NAME", name);
+    public void addUserToDB(final String userId, final String userName) {
+        HashMap<String, Object> user = new HashMap<String, Object>()
+        {{
+            put("name", userName);
+            put("userId", userId);
+            put("phoneNumber", "");
+            put("memberOf", new ArrayList<String>());
+        }};
+        usersRef = db.collection("users").document(userId);
+        usersRef.set(user);
+    }
+
+    public void goToGroupDisplayScreen(String currentUserId) {
+        final Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
+        goToGroupsScreen.putExtra("userId", currentUserId);
         startActivityForResult(goToGroupsScreen, 1);
     }
-
 }

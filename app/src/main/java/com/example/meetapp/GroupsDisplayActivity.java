@@ -40,7 +40,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fetchUserIdAndUserName();
+        fetchUserId();
         setContentView(R.layout.activity_main);
         setToolbar();
         setDialogs();
@@ -48,9 +48,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         readUserNameFromDB();
     }
 
-    private void fetchUserIdAndUserName(){
+    private void fetchUserId(){
         userID = getIntent().getExtras().getString("userId");
-        userName = getIntent().getExtras().getString("userName");
     }
 
     private void setRecyclerViewAndAdapter(){

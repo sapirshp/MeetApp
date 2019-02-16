@@ -18,10 +18,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
     private static long back_pressed;
@@ -50,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             setContentView(R.layout.activity_login);
             handleUserInputOfEmailAndPassword();
-            handleNewSignIn();
+            handleNewSignUp();
         }
     }
 
@@ -150,17 +146,6 @@ public class LoginActivity extends AppCompatActivity {
         final Intent goToGroupsScreen = new Intent(getApplicationContext(), GroupsDisplayActivity.class);
         goToGroupsScreen.putExtra("userId", currentUserId);
         startActivityForResult(goToGroupsScreen, 1);
-
-//        usersRef = db.collection("users").document(currentUserId);
-//        usersRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    goToGroupsScreen.putExtra("userName", (String) document.get("name"));
-//                }
-//            }
-//        });
     }
 
     private void logIn(String userEmail, String userPassword){
@@ -190,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
         userPasswordInput.requestFocus();
     }
 
-    private void handleNewSignIn(){
+    private void handleNewSignUp(){
         final Button signUpBtn = findViewById(R.id.registerNow);
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
