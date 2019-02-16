@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userEmailInput;
     private FirebaseAuth mAuth;
     private final String emailRegex = "^(.+)@(.+)\\.(.+)$";
+    InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void logIn(String userEmail, String userPassword){
         final AppCompatActivity activityRef = this;
+        hideKeyboard();
         mAuth.signInWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -167,9 +169,16 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     private void popKeyboardUp() {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInputFromWindow(userPasswordInput.getApplicationWindowToken(),
                 InputMethodManager.SHOW_FORCED, 0);
         userPasswordInput.requestFocus();
