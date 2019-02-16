@@ -177,7 +177,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userProfileDialog.dismiss();
+                editNameDialog.dismiss();
             }
         });
     }
