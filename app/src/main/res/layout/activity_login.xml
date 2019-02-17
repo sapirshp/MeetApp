@@ -10,7 +10,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/meet"
+        android:background="@drawable/calendar_login"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,10 +19,10 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:contentDescription="@string/app_name"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_name"
             app:srcCompat="@drawable/meetapp_icon" />
 
         <LinearLayout
@@ -68,7 +68,7 @@
                 android:hint="@string/EnterYourPassword"
                 android:inputType="textPassword"
                 android:textColor="@color/blueDark"
-                android:textColorHint="@color/colorGreen"/>
+                android:textColorHint="@color/colorGreen" />
 
             <TextView
                 android:id="@+id/InvalidEmailOrPassword"
@@ -109,13 +109,13 @@
                 android:id="@+id/registerNow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/fui_transparent"
                 android:fontFamily="@font/poppins_light"
                 android:text="@string/SignUp"
                 android:textAlignment="center"
                 android:textColor="@color/colorGreen"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:background="@color/fui_transparent"
                 tools:layout_editor_absoluteX="42dp"
                 tools:layout_editor_absoluteY="429dp" />
         </LinearLayout>

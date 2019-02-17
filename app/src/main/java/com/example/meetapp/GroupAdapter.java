@@ -47,7 +47,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
             super(itemView);
             textViewGroupName = itemView.findViewById(R.id.textViewGroupName);
             textViewParticipants = itemView.findViewById(R.id.textViewParticipantsName);
-            linearLayout = itemView.findViewById(R.id.linearLayout);
+            linearLayout = itemView.findViewById(R.id.groupCard);
             dayScheduled = itemView.findViewById(R.id.dayRepresentation);
             timeInDay = itemView.findViewById(R.id.timeInDay);
         }
