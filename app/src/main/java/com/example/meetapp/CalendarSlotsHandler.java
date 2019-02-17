@@ -3,6 +3,7 @@ package com.example.meetapp;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 
@@ -225,7 +226,9 @@ class CalendarSlotsHandler {
                 slotSelections.put(ts, (int)arrivalsAmount);
                 userChooseMark = context.getDrawable(R.drawable.empty);
                 float percentage = ((float) arrivalsAmount / (float) membersAmount) * 100;
-                bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
+                int lightColor = ContextCompat.getColor(getContext(), R.color.lightGreen);
+                int darkColor = ContextCompat.getColor(getContext(), R.color.darkGreen);
+                bgColor = SlotBackgroundSetter.getColorPercentage(lightColor, darkColor, (int) percentage);
             } else {
                 ts.getButton().setText("");
                 slotSelections.put(ts, 0);
