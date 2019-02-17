@@ -25,7 +25,6 @@ class CalendarSlotsHandler {
     private HashMap<TimeSlot, Integer> slotSelections = new HashMap<>();
     private HashMap<String,Long> userCalendar;
     private HashMap<String,Long> allUsersCalendar;
-    private final String CALENDER_COLLECTION_PATH = "calendars";
     private final String MORNING = "Morning";
     private final String AFTERNOON = "Afternoon";
     private final String EVENING = "Evening";
@@ -57,7 +56,7 @@ class CalendarSlotsHandler {
         this.topSelectionToDisplay = 3;
         this.context = context;
         this.view = view;
-        calendarRefForUpdate = db.collection(CALENDER_COLLECTION_PATH).document(group.getGroupId());
+        calendarRefForUpdate = db.collection("calendars").document(group.getGroupId());
         setButtonsIdForListeners(DateSetter.getDaysInCalendar(), context);
         setListeners(DateSetter.getDatesToDisplay());
     }
@@ -214,7 +213,7 @@ class CalendarSlotsHandler {
     }
 
     private void readCalendarFromDB() {
-        calendarRef = db.collection(CALENDER_COLLECTION_PATH).document(group.getGroupId());
+        calendarRef = db.collection("calendars").document(group.getGroupId());
         calendarRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
