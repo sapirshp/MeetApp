@@ -71,6 +71,7 @@ class MenuHandler {
     private HashMap<String,Long> allUsersCalendar;
     private DocumentReference calendarRefForUpdate;
     private static int dialogCount = 0;
+    private static Toast noTimeSlotsSelectedToast = null;
 
     MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
         this.addMemberDialog = dialogs.get("addMemberDialog");
@@ -515,10 +516,8 @@ class MenuHandler {
         ArrayList<String> stringTopSuggestionsArr = calendarSlotsHandler.displayTopSelections();
         int numOfOptionsToDisplay = stringTopSuggestionsArr.size();
         if(numOfOptionsToDisplay == NO_SLOTS_CHOSEN) {
-            Toast.makeText(activity, R.string.noTimeSlotsSelected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!isDateChosen) {
+            noTimeSlotsSelectedToast.makeText(activity, R.string.noTimeSlotsSelected, Toast.LENGTH_SHORT).show();
+        } else if (!isDateChosen) {
             displayTopSuggestionsDialog(numOfOptionsToDisplay, calendarSlotsHandler);
             topSuggestionsDialog.show();
         }
