@@ -51,5 +51,4 @@
     <string name="logoutDialogTitle">Logout?</string>
     <string name="logoutAnswer">Logout</string>
     <string name="InvalidEmailAddress">Invalid Email Address</string>
-
 </resources>
