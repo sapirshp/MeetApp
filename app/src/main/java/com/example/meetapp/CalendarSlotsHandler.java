@@ -5,14 +5,12 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
-
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,24 +23,32 @@ import java.util.Map;
 class CalendarSlotsHandler {
     private static HashMap<Integer, String> buttonsIdForListeners = new HashMap<>();
     private HashMap<TimeSlot, Integer> slotSelections = new HashMap<>();
+    private HashMap<String,Long> userCalendar;
+    private HashMap<String,Long> allUsersCalendar;
+    private final String CALENDER_COLLECTION_PATH = "calendars";
+    private final String MORNING = "Morning";
+    private final String AFTERNOON = "Afternoon";
+    private final String EVENING = "Evening";
+    private final String MORNING_PREFIX = "m";
+    private final String AFTERNOON_PREFIX= "a";
+    private final String EVENING_PREFIX = "e";
+    private final String EMPTY = "";
+    private String arrivalsText;
+    private String userId;
     private int slotIndex;
     private int membersAmount;
     private int topSelectionToDisplay;
-    private Context context;
-    private View view;
+    private final int slotsAmount = 21;
+    private final int slotsPerDay = 3;
     private int bgColor;
     private int today;
-    private String arrivalsText;
+    private DocumentReference calendarRef;
+    private DocumentReference calendarRefForUpdate;
+    private Context context;
+    private View view;
     private Drawable userChooseMark;
     private Group group;
-    private String userId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private DocumentReference calendarRef;
-    private HashMap<String,Long> userCalendar;
-    private HashMap<String,Long> allUsersCalendar;
-    private DocumentReference calendarRefForUpdate;
-    private int slotsAmount = 21;
-    private int slotsPerDay = 3;
 
     CalendarSlotsHandler(Group group, String userId, Context context, View view) {
         this.group = group;
@@ -51,35 +57,40 @@ class CalendarSlotsHandler {
         this.topSelectionToDisplay = 3;
         this.context = context;
         this.view = view;
-        calendarRefForUpdate = db.collection("calendars").document(group.getGroupId());
+        calendarRefForUpdate = db.collection(CALENDER_COLLECTION_PATH).document(group.getGroupId());
         setButtonsIdForListeners(DateSetter.getDaysInCalendar(), context);
         setListeners(DateSetter.getDatesToDisplay());
     }
 
-    void setButtonsIdForListeners(int daysNum, Context context) {
+    private void setButtonsIdForListeners(int daysNum, Context context) {
+        final String idDefType = "id";
+        final String dayPrefix = "d";
         for (int i = 0; i < daysNum; i++) {
-            int morningBtnId = context.getResources().getIdentifier("d" + i + "m", "id", context.getPackageName());
-            buttonsIdForListeners.put(morningBtnId, "Morning");
-            int afternoonBtnId = context.getResources().getIdentifier("d" + i + "a", "id", context.getPackageName());
-            buttonsIdForListeners.put(afternoonBtnId, "Afternoon");
-            int eveningBtnId = context.getResources().getIdentifier("d" + i + "e", "id", context.getPackageName());
-            buttonsIdForListeners.put(eveningBtnId, "Evening");
+            int morningBtnId = context.getResources().getIdentifier
+                    (dayPrefix + i + MORNING_PREFIX, idDefType, context.getPackageName());
+            buttonsIdForListeners.put(morningBtnId, MORNING);
+            int afternoonBtnId = context.getResources().getIdentifier
+                    (dayPrefix + i + AFTERNOON_PREFIX, idDefType, context.getPackageName());
+            buttonsIdForListeners.put(afternoonBtnId, AFTERNOON);
+            int eveningBtnId = context.getResources().getIdentifier
+                    (dayPrefix + i + EVENING_PREFIX, idDefType, context.getPackageName());
+            buttonsIdForListeners.put(eveningBtnId, EVENING);
         }
     }
 
     private int getHourIndex(String dayPart)
     {
         switch(dayPart) {
-            case "Morning":
+            case MORNING:
                 return 0;
-            case "Afternoon":
+            case AFTERNOON:
                 return 1;
             default:
                 return 2;
         }
     }
 
-    void setListeners(Map<String, String> datesToDisplay) {
+    private void setListeners(Map<String, String> datesToDisplay) {
         for (int id : buttonsIdForListeners.keySet()) {
             final Button timeSlotButton = view.findViewById(id);
             int dateIndex = Integer.valueOf(timeSlotButton.getTag().toString());
@@ -109,8 +120,8 @@ class CalendarSlotsHandler {
         displayTopSelections();
     }
 
-    public int convertToSlotsIndex(int index) {
-        return (slotsAmount + index - ((today) * slotsPerDay)) % slotsAmount;
+    int convertToSlotsIndex(int index) {
+        return (slotsAmount + index - (today * slotsPerDay)) % slotsAmount;
     }
 
     private int convertToDBIndex(int index) {
@@ -126,18 +137,17 @@ class CalendarSlotsHandler {
                 userId + "." + slotIndex, 1);
     }
 
-    void clickedOff(TimeSlot timeSlot) {
-        timeSlot.setClicked(false);
-        slotIndex = convertToDBIndex(timeSlot.getSlotIndex());
-        int arrivalsAmount = slotSelections.get(timeSlot) - 1;
-        slotSelections.put(timeSlot, arrivalsAmount);
-        calendarRefForUpdate.update("all." + slotIndex, arrivalsAmount,
-                userId + "." + slotIndex, 0);
-    }
-
     private HashMap<TimeSlot, Integer> sortByValue(HashMap<TimeSlot, Integer> hm) {
         List<Map.Entry<TimeSlot, Integer>> list = new LinkedList<>(hm.entrySet());
+        timeSlotsComparator(list);
+        HashMap<TimeSlot, Integer> sortedList = new LinkedHashMap<>();
+        for (Map.Entry<TimeSlot, Integer> item : list) {
+            sortedList.put(item.getKey(), item.getValue());
+        }
+        return sortedList;
+    }
 
+    private void timeSlotsComparator(List<Map.Entry<TimeSlot, Integer>> list) {
         Collections.sort(list, new Comparator<Map.Entry<TimeSlot, Integer>>() {
             public int compare(Map.Entry<TimeSlot, Integer> o1,
                                Map.Entry<TimeSlot, Integer> o2) {
@@ -150,31 +160,39 @@ class CalendarSlotsHandler {
                 return Integer.compare(firstSlot, secondSlot);
             }
         });
-
-        HashMap<TimeSlot, Integer> sortedList = new LinkedHashMap<>();
-        for (Map.Entry<TimeSlot, Integer> item : list) {
-            sortedList.put(item.getKey(), item.getValue());
-        }
-        return sortedList;
     }
 
-    public ArrayList<String> displayTopSelections(){
+    void clickedOff(TimeSlot timeSlot) {
+        timeSlot.setClicked(false);
+        slotIndex = convertToDBIndex(timeSlot.getSlotIndex());
+        int arrivalsAmount = slotSelections.get(timeSlot) - 1;
+        slotSelections.put(timeSlot, arrivalsAmount);
+        calendarRefForUpdate.update("all." + slotIndex, arrivalsAmount,
+                userId + "." + slotIndex, 0);
+    }
+
+    ArrayList<String> displayTopSelections(){
         slotSelections = sortByValue(slotSelections);
         ArrayList<String> topSuggestions = new ArrayList<>();
         int iterationNumber = topSelectionToDisplay;
         if (iterationNumber > slotSelections.size()) {
             iterationNumber = slotSelections.size();
         }
+        chooseTopSelections(topSuggestions, iterationNumber);
+        return topSuggestions;
+    }
+
+    private void chooseTopSelections(ArrayList<String> topSuggestions, int iterationNumber) {
         for (int i = 0; i < iterationNumber; i++) {
-            String currentSlot = "";
+            String currentSlot = EMPTY;
             TimeSlot topSlot = (TimeSlot) slotSelections.keySet().toArray()[i];
-            currentSlot = String.format("%s%s %s - %d/%d", currentSlot, topSlot.getDate(),
-                    topSlot.getHour(), getSelectionNumber(topSlot), membersAmount);
+            currentSlot = String.format(context.getString(R.string.timeSlotStringFormat),
+                                        currentSlot, topSlot.getDate(), topSlot.getHour(),
+                                        getSelectionNumber(topSlot), membersAmount);
             if (getSelectionNumber(topSlot) > 0) {
                 topSuggestions.add(currentSlot);
             }
         }
-        return topSuggestions;
     }
 
     private int getSelectionNumber(TimeSlot slotToFind) {
@@ -186,7 +204,7 @@ class CalendarSlotsHandler {
         return 0;
     }
 
-    public TimeSlot getSlotById(int slotId) {
+    TimeSlot getSlotById(int slotId) {
         for (TimeSlot ts : slotSelections.keySet()) {
             if (ts.getSlotIndex() == slotId) {
                 return ts;
@@ -196,7 +214,7 @@ class CalendarSlotsHandler {
     }
 
     private void readCalendarFromDB() {
-        calendarRef = db.collection("calendars").document(group.getGroupId());
+        calendarRef = db.collection(CALENDER_COLLECTION_PATH).document(group.getGroupId());
         calendarRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -219,26 +237,37 @@ class CalendarSlotsHandler {
             int index = ts.getSlotIndex();
             String convertedIndex = String.valueOf(convertToDBIndex(index));
             long arrivalsAmount = allUsersCalendar.get(convertedIndex);
-            if (arrivalsAmount > 0) {
-                arrivalsText = arrivalsAmount + "/" + membersAmount;
-                ts.getButton().setText(arrivalsText);
-                slotSelections.put(ts, (int)arrivalsAmount);
-                userChooseMark = context.getDrawable(R.drawable.empty);
-                float percentage = ((float) arrivalsAmount / (float) membersAmount) * 100;
-                bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
-            } else {
-                ts.getButton().setText("");
-                slotSelections.put(ts, 0);
-                userChooseMark = context.getDrawable(R.drawable.empty);
-                bgColor = Color.WHITE;
-            }
+            decideButtonFormatAccordingToArrivals(ts, arrivalsAmount);
             if (userCalendar != null && userCalendar.get(convertedIndex) == 1) {
                 userChooseMark = context.getDrawable(R.drawable.v_green);
                 ts.setClicked(true);
             }
-
             ts.getButton().setBackground(SlotBackgroundSetter.setBackGroundColorAndBorder(bgColor, userChooseMark, context));
         }
+    }
+
+    private void decideButtonFormatAccordingToArrivals(TimeSlot ts, long arrivalsAmount) {
+        if (arrivalsAmount > 0) {
+            showButtonFormatChosenByOthers(ts, arrivalsAmount);
+        } else {
+            showButtonFormatUnchosenByOthers(ts);
+        }
+    }
+
+    private void showButtonFormatUnchosenByOthers(TimeSlot ts) {
+        ts.getButton().setText(EMPTY);
+        slotSelections.put(ts, 0);
+        userChooseMark = context.getDrawable(R.drawable.empty);
+        bgColor = Color.WHITE;
+    }
+
+    private void showButtonFormatChosenByOthers(TimeSlot ts, long arrivalsAmount) {
+        arrivalsText = arrivalsAmount + "/" + membersAmount;
+        ts.getButton().setText(arrivalsText);
+        slotSelections.put(ts, (int)arrivalsAmount);
+        userChooseMark = context.getDrawable(R.drawable.empty);
+        float percentage = ((float) arrivalsAmount / (float) membersAmount) * 100;
+        bgColor = SlotBackgroundSetter.getColorPercentage(0xe0ffd2, 0x67a34c, (int) percentage);
     }
 
     Context getContext(){
