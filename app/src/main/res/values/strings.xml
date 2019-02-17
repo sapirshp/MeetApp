@@ -46,7 +46,7 @@
     <string name="EnterYourName">Enter your name</string>
     <string name="ReEnterYourPassword">Re-enter your password</string>
     <string name="logout">Logout</string>
-    <string name="profile">Profile</string>
+    <string name="profile">My Profile</string>
     <string name="logoutQuestion">Are you sure you want to logout?</string>
     <string name="logoutDialogTitle">Logout?</string>
     <string name="logoutAnswer">Logout</string>
