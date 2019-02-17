@@ -5,13 +5,15 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 class AddMembersHandler {
     private static Dialog addMembersDialog;
     private static ArrayList<String> membersNamesToAdd = new ArrayList<>();
     private static ArrayList<String> membersIdsToAdd = new ArrayList<>();
+    private static  final String CHOSEN = "chosen";
+    private static  final String NOT_CHOSEN = "notChosen";
+
 
     static void setDialog(Dialog dialog){
         addMembersDialog = dialog;
@@ -19,10 +21,9 @@ class AddMembersHandler {
 
     static void onContactClick(View v){
         RelativeLayout contactLayout = v.findViewById(R.id.contactLayout);
-        if (contactLayout.getTag() != "chosen") {
+        if (contactLayout.getTag() != CHOSEN) {
             clickOn(v);
-        }
-        else{
+        } else{
             clickOff(v);
         }
     }
@@ -33,7 +34,7 @@ class AddMembersHandler {
         ImageButton okButton = addMembersDialog.findViewById(R.id.chooseMembers);
         okButton.setBackgroundResource(R.drawable.green_round_background);
         contactLayout.setBackgroundColor(view.getResources().getColor(R.color.colorGreen));
-        contactLayout.setTag("chosen");
+        contactLayout.setTag(CHOSEN);
         addMember((String) contactName.getText(), (String) contactName.getTag());
     }
 
@@ -46,7 +47,7 @@ class AddMembersHandler {
             okButton.setBackgroundResource(R.drawable.disabled_button_background);
         }
         contactLayout.setBackgroundColor(view.getResources().getColor(R.color.colorWhite));
-        contactLayout.setTag("notChosen");
+        contactLayout.setTag(NOT_CHOSEN);
     }
 
     static void chooseMembers(final Runnable onChooseMembers){
