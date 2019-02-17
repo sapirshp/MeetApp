@@ -1,6 +1,5 @@
 package com.example.meetapp;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +11,12 @@ public class Group {
     private String groupId;
     private List<String> members;
     public List<String> namesList;
-    //    private @ServerTimestamp Date timestamp;
     private boolean isScheduled;
     private HashMap<TimeSlot, Integer> groupSlotSelections;
     private String chosenDate;
 
     public Group(String name, String groupId, String admin, List<String> members, boolean isScheduled) {
         this.name = name;
-//        this.timestamp = timestamp;
         this.groupId = groupId;
         this.admin = admin;
         this.members = members;
@@ -123,6 +120,4 @@ public class Group {
         }
         return slotToReturn;
     }
-
-
 }
