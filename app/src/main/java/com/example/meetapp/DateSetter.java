@@ -2,14 +2,12 @@ package com.example.meetapp;
 
 import android.view.View;
 import android.widget.TextView;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 class DateSetter {
-
     private static int DAYS_IN_CALENDAR = 7;
     private static HashMap<Integer, String> intsToDays = new HashMap<>();
     private static Map<String, String> datesToDisplay = new LinkedHashMap<>();
@@ -26,12 +24,19 @@ class DateSetter {
         intsToDays.put(7, "Sat");
     }
 
-    static Map<String, String> createDatesMap() {
+    private static Map<String, String> createDatesMap() {
         datesToDisplay.clear();
         groupCalender = Calendar.getInstance();
         int date = groupCalender.get(Calendar.DAY_OF_MONTH);
         String day;
         datesToDisplay.put(Integer.toString(date), "Today");
+        setCorrectDates();
+        return datesToDisplay;
+    }
+
+    private static void setCorrectDates() {
+        int date;
+        String day;
         for (int i = 1; i < DAYS_IN_CALENDAR; i++) {
             groupCalender.roll(Calendar.DATE, 1);
             date = groupCalender.get(Calendar.DAY_OF_MONTH);
@@ -45,18 +50,21 @@ class DateSetter {
             day = intsToDays.get(groupCalender.get(Calendar.DAY_OF_WEEK));
             datesToDisplay.put(Integer.toString(date), day);
         }
-        return datesToDisplay;
     }
 
     static void setDatesToDisplay(View view){
         datesToDisplay = DateSetter.createDatesMap();
         for (int i = 0; i < DAYS_IN_CALENDAR; i++){
-            int dayNumTextViewId = view.getResources().getIdentifier("d" + i + "n" , "id", view.getContext().getPackageName());
+            int dayNumTextViewId = view.getResources().getIdentifier
+                    ("d" + i + "n" , "id", view.getContext().getPackageName());
             TextView dayNumTextView = view.findViewById(dayNumTextViewId);
             dayNumTextView.setText((String)datesToDisplay.keySet().toArray()[i]);
-            int dayTextViewId = view.getResources().getIdentifier("d" + i + "d" , "id", view.getContext().getPackageName());
+            int dayTextViewId = view.getResources().getIdentifier
+                    ("d" + i + "d" , "id", view.getContext().getPackageName());
             TextView dayTextView = view.findViewById(dayTextViewId);
-            int dayString = view.getResources().getIdentifier(datesToDisplay.get((datesToDisplay.keySet().toArray()[i])), "string", view.getContext().getPackageName());
+            int dayString = view.getResources().getIdentifier(datesToDisplay.get
+                    ((datesToDisplay.keySet().toArray()[i])), "string",
+                    view.getContext().getPackageName());
             dayTextView.setText(view.getContext().getString(dayString));
         }
     }
