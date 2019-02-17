@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -68,19 +67,22 @@ public class LoginActivity extends AppCompatActivity {
                 if (s.length() == 0){
                     userEmail = "";
                     loginBtn.setBackgroundResource(R.drawable.disabled_button_background);
-                }
-                else {
+                } else {
                     handleChangeInEmailInput(s, loginBtn);
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        verifyValidEmailInput();
+    }
+
+    private void verifyValidEmailInput() {
         userEmailInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus && !checkEmailValidation()){
-                    userEmailInput.setError("Invalid Email Address");
+                    userEmailInput.setError(getString(R.string.InvalidEmailAddress));
                 }
             }
         });
@@ -108,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (s.length() == 0){
                     loginBtn.setBackgroundResource(R.drawable.disabled_button_background);
                     userPassword = "";
-                }else {
+                } else {
                     handleChangeInPasswordInput(s, loginBtn);
                 }
             }
@@ -158,13 +160,17 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             goToGroupDisplayScreen(user.getUid());
                         } else {
-                            feedbackToUser.setText(activityRef.getString(R.string.InvalidEmailOrPassword));
-                            userPasswordInput.setText("");
-                            userPasswordInput.setSelectAllOnFocus(true);
-                            popKeyboardUp();
+                            handleWrongEmailOrPassword(activityRef);
                         }
                     }
                 });
+    }
+
+    private void handleWrongEmailOrPassword(AppCompatActivity activityRef) {
+        feedbackToUser.setText(activityRef.getString(R.string.InvalidEmailOrPassword));
+        userPasswordInput.setText("");
+        userPasswordInput.setSelectAllOnFocus(true);
+        popKeyboardUp();
     }
 
     private void hideKeyboard() {
