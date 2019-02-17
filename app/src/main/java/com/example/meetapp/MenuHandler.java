@@ -460,10 +460,41 @@ class MenuHandler {
          if (!currentGroup.getIsScheduled()) {
              topSelectionText = displaySuggestions(topSelections);
          }else {
-             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, currentGroup.getChosenDate());
+             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, fullDayDisplay(currentGroup.getChosenDate()));
              topSelectionInfo.setTextSize(30);
          }
         topSelectionInfo.setText(topSelectionText);
+    }
+
+    private String fullDayDisplay(String date){
+        String[] dayAndTime = date.split(" ");
+        String day = dayAndTime[0];
+        String fullDay;
+        switch (day){
+            case "Sun":
+                fullDay = "Sunday";
+                break;
+            case "Mon":
+                fullDay = "Monday";
+                break;
+            case "Tue":
+                fullDay = "Tuesday";
+                break;
+            case "Wed":
+                fullDay = "Wednesday";
+                break;
+            case "Thu":
+                fullDay = "Thursday";
+                break;
+            case "Fri":
+                fullDay = "Friday";
+                break;
+            default:
+                fullDay = "Saturday";
+                break;
+        }
+        dateChosenByAdmin = String.format("%s %s", fullDay, dayAndTime[1]);
+        return dateChosenByAdmin;
     }
 
     private String displaySuggestions(ArrayList<String> topSelections){
@@ -624,7 +655,7 @@ class MenuHandler {
          }
          meetingChosenDialog.setContentView(R.layout.date_setup_popup);
          TextView dateText = meetingChosenDialog.findViewById(R.id.dateChoise);
-         dateText.setText(currentGroup.getChosenDate());
+         dateText.setText(fullDayDisplay(currentGroup.getChosenDate()));
          setCalendarInvisible();
          setGifBackground();
          dialogCount++;
