@@ -6,17 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder> {
-
     private List<User> contactsList;
 
     static class ContactsViewHolder extends RecyclerView.ViewHolder {
-
         TextView contactNameTextView;
-
         ContactsViewHolder(@NonNull View itemView) {
             super(itemView);
             contactNameTextView = itemView.findViewById(R.id.userName);
@@ -30,7 +26,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @NonNull
     @Override
     public ContactsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_item, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_item,
+                viewGroup, false);
         return new ContactsViewHolder(view);
     }
 
