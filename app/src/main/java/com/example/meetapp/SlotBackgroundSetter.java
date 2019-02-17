@@ -13,7 +13,6 @@ import android.graphics.drawable.shapes.RectShape;
 
 class SlotBackgroundSetter {
 
-
         static int getColorPercentage(int colorStart, int colorEnd, int percent){
             return Color.rgb(
                     ColorPercentageCalculation(Color.red(colorStart), Color.red(colorEnd), percent),
@@ -23,7 +22,8 @@ class SlotBackgroundSetter {
         }
 
         private static int ColorPercentageCalculation(int colorStart, int colorEnd, int percent){
-            return ((Math.max(colorStart, colorEnd)*(100-percent)) + (Math.min(colorStart, colorEnd)*percent)) / 100;
+            return ((Math.max(colorStart, colorEnd)*(100-percent)) +
+                    (Math.min(colorStart, colorEnd)*percent)) / 100;
         }
 
 
@@ -81,17 +81,11 @@ class SlotBackgroundSetter {
             if (!(image instanceof BitmapDrawable)) {
                 return image;
             }
-
             Bitmap b = ((BitmapDrawable)image).getBitmap();
-
             int sizeX = Math.round(image.getIntrinsicWidth() * scaleFactor);
             int sizeY = Math.round(image.getIntrinsicHeight() * scaleFactor);
-
             Bitmap bitmapResized = Bitmap.createScaledBitmap(b, sizeX, sizeY, false);
-
             image = new BitmapDrawable(context.getResources(), bitmapResized);
-
             return image;
-
         }
 }
