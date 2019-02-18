@@ -457,7 +457,7 @@ class MenuHandler {
     }
 
     private void displayMembersInfo(Context context) {
-        createTextView("Members:", 20, context);
+        createTextView("Members:", 22, context);
         for (String member : groupMembers) {
             createTextView(member, 18, context);
         }
@@ -477,14 +477,18 @@ class MenuHandler {
 
     private void displayTopSelection(CalendarSlotsHandler calendarSlotsHandler){
          TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
+         TextView topSelectionTitleInfo = groupDetailsDialog.findViewById(R.id.topSelectionsTitle);
          String topSelectionText = "";
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
          if (!currentGroup.getIsScheduled()) {
+             topSelectionTitleInfo.setText("Suggestions:");
              topSelectionText = displaySuggestions(topSelections);
          }else {
-             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText,
+             topSelectionTitleInfo.setText("Next MeetUp:");
+             topSelectionTitleInfo.setTextSize(30);
+             topSelectionText = String.format("%s%s", topSelectionText,
                      fullDayDisplay(currentGroup.getChosenDate()));
-             topSelectionInfo.setTextSize(30);
+             topSelectionInfo.setTextSize(28);
          }
         topSelectionInfo.setText(topSelectionText);
     }
@@ -516,14 +520,20 @@ class MenuHandler {
                 fullDay = "Saturday";
                 break;
         }
-        dateChosenByAdmin = String.format("%s %s", fullDay, dayAndTime[1]);
+        if (currentGroup.getIsScheduled()){
+            dateChosenByAdmin = String.format("%s\n%s", fullDay, dayAndTime[1]);
+        }else {
+            dateChosenByAdmin = String.format("%s %s", fullDay, dayAndTime[1]);
+        }
         return dateChosenByAdmin;
     }
 
     private String displaySuggestions(ArrayList<String> topSelections){
-        String topSelectionText = activity.getString(R.string.Suggestions);
+        String topSelectionText = topSelections.get(0);
         for (String suggestion : topSelections) {
-            topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
+            if (!suggestion.equals(topSelectionText)) {
+                topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
+            }
         }
         return topSelectionText;
     }
