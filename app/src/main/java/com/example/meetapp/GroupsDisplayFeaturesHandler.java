@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -23,7 +22,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +43,7 @@ class GroupsDisplayFeaturesHandler {
     private DocumentReference calendarRef;
     private CollectionReference allUsersRef;
     private CollectionReference usersRef;
-    public static int TIME_SLOTS_AMOUNT = 21;
+    static int TIME_SLOTS_AMOUNT = 21;
     private Map<String, Integer> initialMap;
     private Map<String, Object> initialCalendar;
     private Query allUsers;
@@ -112,8 +110,6 @@ class GroupsDisplayFeaturesHandler {
     {
         EditText userInput = newGroupDialog.findViewById(R.id.newGroupNameInput);
         final String newGroupName = userInput.getText().toString();
-        //TODO decide if check for double names is required, the DB supports two groups with the same name
-        // makeToastToCenterOfScreen(activity.getString(R.string.groupNameExists));
         addNewGroupToDB(adminID, newGroupName, members);
         makeToastToCenterOfScreen(activity.getString(R.string.newGroupCreated));
         newGroupDialog.dismiss();
@@ -144,7 +140,7 @@ class GroupsDisplayFeaturesHandler {
         for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
             initialMap.put(Integer.toString(i), 0);
         }
-        initialCalendar = new HashMap<String, Object>();
+        initialCalendar = new HashMap<>();
         initialCalendar.put("all", initialMap);
         calendarRef = db.collection("calendars").document(groupId);
         for (String member: groupMembers) {
@@ -190,7 +186,8 @@ class GroupsDisplayFeaturesHandler {
         admin = usersRef.whereEqualTo("userId", adminID);
         Task firstTask = allUsers.get();
         Task secondTask = admin.get();
-        Task combinedTask = Tasks.whenAllSuccess(firstTask, secondTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+        Task combinedTask = Tasks.whenAllSuccess(firstTask, secondTask).
+                addOnSuccessListener(new OnSuccessListener<List<Object>>() {
             @Override
             public void onSuccess(List<Object> list) {
                 queriesList = (List<QuerySnapshot>)(Object)list;
@@ -218,7 +215,7 @@ class GroupsDisplayFeaturesHandler {
         membersIdsList.clear();
         membersIdsList.add(adminID);
         membersIdsList.addAll(AddMembersHandler.getMembersIdsToAdd());
-        groupMembers = membersNamesList.toString().substring(1, membersNamesList.toString().length()-1);
+        groupMembers = membersNamesList.toString().substring(1, membersNamesList.toString().length() - 1);
         membersNames = String.format("Group Members: %s", groupMembers);
         showNewGroupPopup(adminID, membersNames, membersIdsList);
     }
