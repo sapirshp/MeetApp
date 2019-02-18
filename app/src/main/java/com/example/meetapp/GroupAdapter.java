@@ -93,6 +93,8 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
         if(group.getIsScheduled())
         {
             showScheduledTimeSymbols(groupHolder, group.getChosenDate());
+        } else {
+            resetTimeSymbols(groupHolder);
         }
         groupHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +110,12 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
         goToGroupScreen.putExtra("userId", userId);
         activity.startActivityForResult(goToGroupScreen, 1);
         activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private void resetTimeSymbols(@NonNull GroupHolder groupHolder)
+    {
+        groupHolder.dayScheduled.setImageDrawable(null);
+        groupHolder.timeInDay.setImageResource(0);
     }
 
     private void showScheduledTimeSymbols(@NonNull GroupHolder groupHolder, String chosenDate)
