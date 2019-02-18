@@ -26,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     private CharSequence userEmail = "";
     private CharSequence userPassword1 = "";
     private CharSequence userPassword2 = "";
+    private String emailAlreadyExistsError = "The email address is already in use by another account.";
     private TextView feedbackToUser;
     private Button registerBtn;
     private String EMPTY = "";
@@ -106,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void handleUserPassword1() {
-        EditText password1EditText = findViewById(R.id.RegisterPassword1Input);
+        final EditText password1EditText = findViewById(R.id.RegisterPassword1Input);
         password1EditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -122,10 +123,18 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        password1EditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && userPassword1.toString().length() < 6){
+                    password1EditText.setError("The Password must be at least 6 characters long");
+                }
+            }
+        });
     }
 
     private void handleUserPassword2() {
-        EditText password2EditText = findViewById(R.id.RegisterPassword2Input);
+        final EditText password2EditText = findViewById(R.id.RegisterPassword2Input);
         password2EditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -140,6 +149,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+        password2EditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && userPassword1.toString().length() < 6){
+                    password2EditText.setError("The Password must be at least 6 characters long");
+                }
+            }
         });
     }
 
@@ -167,14 +184,14 @@ public class RegisterActivity extends AppCompatActivity {
                     password2EditText.setText("");
                     userPassword2 = "";
                     feedbackToUser.setText(v.getContext().getString(R.string.PasswordsDoNotMatch));
-                }else {
-                    writeToDB();
+                } else {
+                    writeToDB(v);
                 }
             }
         });
     }
 
-    private void writeToDB(){
+    private void writeToDB(final View v){
         final String name = userName.toString();
         final String email = userEmail.toString();
         final String password = userPassword1.toString();
@@ -188,6 +205,9 @@ public class RegisterActivity extends AppCompatActivity {
                             addUserToDB(userId, name);
                             goToGroupDisplayScreen(userId);
                         } else {
+                            if (task.getException().getMessage().equals(emailAlreadyExistsError)) {
+                                feedbackToUser.setText(v.getContext().getString(R.string.EmailAlreadyExists));
+                            }
                             Toast.makeText(RegisterActivity.this, task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
