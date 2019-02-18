@@ -1,10 +1,11 @@
 package com.example.meetapp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-
+// According to Firebase documentation, Each custom class must have a public constructor that takes
+// no arguments. In addition, the class must include a public getter for each property, in order to
+// use the toObject method, that turn the data back into object instance.
 public class Group {
     private String name;
     private String admin;
@@ -12,7 +13,6 @@ public class Group {
     private List<String> members;
     public List<String> namesList;
     private boolean isScheduled;
-    private HashMap<TimeSlot, Integer> groupSlotSelections;
     private String chosenDate;
 
     public Group(String name, String groupId, String admin, List<String> members, boolean isScheduled) {
@@ -21,13 +21,11 @@ public class Group {
         this.admin = admin;
         this.members = members;
         this.isScheduled = isScheduled;
-        this.groupSlotSelections = new HashMap<>();
         this.chosenDate = "";
         this.namesList = new ArrayList<>();
     }
 
     public Group() {
-        this.groupSlotSelections = new HashMap<>();
         this.namesList = new ArrayList<>();
     }
 
@@ -71,14 +69,6 @@ public class Group {
         this.members = members;
     }
 
-    public HashMap<TimeSlot, Integer> getGroupSlotSelections() {
-        return groupSlotSelections;
-    }
-
-    public void setGroupSlotSelections(HashMap<TimeSlot, Integer> groupSlotSelections) {
-        this.groupSlotSelections = groupSlotSelections;
-    }
-
     public String getChosenDate() {
         return chosenDate;
     }
@@ -108,16 +98,5 @@ public class Group {
 
     public int getMembersAmount() {
         return members.size();
-    }
-
-    public TimeSlot getTimeSlot(TimeSlot slotToGet){
-        TimeSlot slotToReturn = slotToGet;
-        for (TimeSlot groupTimeSlot : groupSlotSelections.keySet()){
-            if (groupTimeSlot.getSlotIndex() == slotToGet.getSlotIndex()){
-                slotToReturn = groupTimeSlot;
-                break;
-            }
-        }
-        return slotToReturn;
     }
 }
