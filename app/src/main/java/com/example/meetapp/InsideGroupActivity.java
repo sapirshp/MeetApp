@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -19,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -115,18 +113,22 @@ public class InsideGroupActivity extends AppCompatActivity {
     }
 
     public void setDialogsMap(){
-        groupActionsDialog = new Dialog(this);
-        addMemberDialog = new Dialog(this);
-        topSuggestionsDialog = new Dialog(this);
-        groupDetailsDialog = new Dialog(this);
-        editGroupNameDialog = new Dialog(this);
-        meetingChosenDialog = new Dialog(this);
+        createDialogs();
         AddMembersHandler.setDialog(addMemberDialog);
         dialogs.put("addMemberDialog", addMemberDialog);
         dialogs.put("groupDetailsDialog", groupDetailsDialog);
         dialogs.put("editGroupNameDialog", editGroupNameDialog);
         dialogs.put("topSuggestionsDialog", topSuggestionsDialog);
         dialogs.put("meetingChosenDialog", meetingChosenDialog);
+    }
+
+    private void createDialogs() {
+        groupActionsDialog = new Dialog(this);
+        addMemberDialog = new Dialog(this);
+        topSuggestionsDialog = new Dialog(this);
+        groupDetailsDialog = new Dialog(this);
+        editGroupNameDialog = new Dialog(this);
+        meetingChosenDialog = new Dialog(this);
     }
 
     @Override
@@ -140,7 +142,8 @@ public class InsideGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
-        groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll(",\\s",",").split(",")));
+        groupMembersList = new LinkedList<>(Arrays.asList(groupMembers.replaceAll
+                (",\\s",",").split(",")));
         menuHandler = new MenuHandler(dialogs, groupMembersList, this, thisGroup);
         if (thisGroup.getIsScheduled()){
             nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, groupName, toolbar);
@@ -167,7 +170,8 @@ public class InsideGroupActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler,
+                        toolbar.getTitle().toString(), toolbar);
             }
         });
     }
@@ -179,7 +183,8 @@ public class InsideGroupActivity extends AppCompatActivity {
                 menuHandler.handleAddParticipant(groupId);
                 break;
             case R.id.groupDetailsBtn:
-                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler, toolbar.getTitle().toString(), toolbar);
+                nameChanged = menuHandler.handleGroupDetails(calendarSlotsHandler,
+                        toolbar.getTitle().toString(), toolbar);
                 break;
             case R.id.resetTimeChoiceBtn:
                     menuHandler.handleResetTimeChoice(calendarSlotsHandler, groupId, userId);
