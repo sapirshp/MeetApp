@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,7 +30,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
 import java.util.HashMap;
 
 public class GroupsDisplayActivity extends AppCompatActivity {
@@ -293,7 +291,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("MeetApp");
+            getSupportActionBar().setTitle(getString(R.string.app_name));
             getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
