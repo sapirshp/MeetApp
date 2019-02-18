@@ -208,7 +208,8 @@ public class GroupsDisplayActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         FirebaseAuth.getInstance().signOut();
                         dialog.dismiss();
-                        finish();
+                        final Intent goToLoginScreen = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivityForResult(goToLoginScreen, 1);
                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                     }
                 });
