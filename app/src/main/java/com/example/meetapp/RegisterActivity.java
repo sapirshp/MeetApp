@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -19,7 +18,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,14 +54,10 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // NOTE:
-    // It may seem that there is code duplication in the next 4 functions.
-    // These functions use the global variables userName, userEmail, userPassword1 and userPassword2.
-    // These variables are accessed from within an inner scope - for the the "onTextChanged"
-    // function - and therefore must need to be final if declared locally.
-    // We cannot make these variables final, because they hold the current input of
-    // the user (which is not final...).
-    // Therefore we had to re-write this short code segment 4 times, for each field separately. In
-    // each function we addressed a different global variable.
+    // It may seem that there is code duplication in the next 4 functions. These functions use the global variables
+    // userName, userEmail, userPassword1 and userPassword2. However, the use of nested function demands either global
+    // or final variables. These are not final variables, as they hold current user's input, and therefore were written one by one.
+
 
     private void handleUserNameInput() {
         EditText userNameInput = findViewById(R.id.RegisterNameInput);
