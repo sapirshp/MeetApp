@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -38,12 +37,12 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
     public class GroupHolder extends RecyclerView.ViewHolder
     {
         public TextView textViewGroupName;
-        public TextView textViewParticipants;
+        TextView textViewParticipants;
         public LinearLayout linearLayout;
-        public ImageView dayScheduled;
+        ImageView dayScheduled;
         public ImageView timeInDay;
 
-        public GroupHolder(@NonNull View itemView) {
+        GroupHolder(@NonNull View itemView) {
             super(itemView);
             textViewGroupName = itemView.findViewById(R.id.textViewGroupName);
             textViewParticipants = itemView.findViewById(R.id.textViewParticipantsName);
@@ -98,25 +97,29 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
         groupHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToGroupScreen = new Intent(activity, InsideGroupActivity.class);
-                goToGroupScreen.putExtra("groupId", group.getGroupId());
-                goToGroupScreen.putExtra("userId", userId);
-                activity.startActivityForResult(goToGroupScreen, 1);
-                activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                goToClickedGroup(group);
             }
         });
+    }
+
+    private void goToClickedGroup(@NonNull Group group) {
+        Intent goToGroupScreen = new Intent(activity, InsideGroupActivity.class);
+        goToGroupScreen.putExtra("groupId", group.getGroupId());
+        goToGroupScreen.putExtra("userId", userId);
+        activity.startActivityForResult(goToGroupScreen, 1);
+        activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void showScheduledTimeSymbols(@NonNull GroupHolder groupHolder, String chosenDate)
     {
         String[] chosenDayAndTime = chosenDate.split(" ");
-        TextDrawable dayLetterRepr = daySymbolFactory(chosenDayAndTime[0]);    // OREN - CHANGE HERE
+        TextDrawable dayLetterRepr = daySymbolFactory(chosenDayAndTime[0]);
         groupHolder.dayScheduled.setImageDrawable(dayLetterRepr);
-        int timeInDaySymbol = timeInDayFactory(chosenDayAndTime[1]);           // OREN - CHANGE HERE
+        int timeInDaySymbol = timeInDayFactory(chosenDayAndTime[1]);
         groupHolder.timeInDay.setImageResource(timeInDaySymbol);
     }
 
-    public TextDrawable daySymbolFactory(String dayRepr)
+    TextDrawable daySymbolFactory(String dayRepr)
     {
         switch (dayRepr){
             case "Sun":
@@ -136,7 +139,7 @@ public class GroupAdapter extends FirestoreRecyclerAdapter<Group, GroupAdapter.G
         }
     }
 
-    public int timeInDayFactory(String timeRepr) {
+    int timeInDayFactory(String timeRepr) {
         switch (timeRepr) {
             case "Morning":
                 return R.drawable.morning_icon;
