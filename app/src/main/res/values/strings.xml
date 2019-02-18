@@ -50,4 +50,5 @@
     <string name="logoutQuestion">Are you sure you want to logout?</string>
     <string name="logoutDialogTitle">Logout?</string>
     <string name="logoutAnswer">Logout</string>
+    <string name="Suggestions">Suggestions:</string>
 </resources>
