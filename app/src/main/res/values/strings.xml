@@ -55,4 +55,5 @@
     <string name="InvalidEmailAddress">Invalid email address</string>
     <string name="Suggestions">Suggestions:</string>
     <string name="pressAgainToExitMsg">Press once again to exit!</string>
+    <string name="timeSlotStringFormat">%s%s %s - %d/%d</string>
 </resources>
