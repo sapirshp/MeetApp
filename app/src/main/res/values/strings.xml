@@ -42,6 +42,7 @@
     <string name="SignUp">Sign Up</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="PasswordsDoNotMatch">Passwords do not match</string>
+    <string name="EmailAlreadyExists">This email address is already in use by another account, Use another email</string>
     <string name="Register">Register</string>
     <string name="EnterYourName">Enter your name</string>
     <string name="ReEnterYourPassword">Re-enter your password</string>
