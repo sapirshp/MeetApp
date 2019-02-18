@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.List;
 
 class UsersGetter {
