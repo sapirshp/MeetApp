@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,67 +35,70 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static com.example.meetapp.GroupsDisplayFeaturesHandler.TIME_SLOTS_AMOUNT;
 
 class MenuHandler {
     private final int LEAVE_GROUP_RESULT_CODE = 1;
     private final int NO_OPTION_CHOSEN = -1;
+    private final int NO_SLOTS_CHOSEN = 0;
+    private static int dialogCount = 0;
     private int currentMeetingChoice = NO_OPTION_CHOSEN;
     private Dialog topSuggestionsDialog;
     private Dialog addMemberDialog;
     private Dialog groupDetailsDialog;
     private Dialog editGroupNameDialog;
     private Dialog meetingChosenDialog;
+    private DocumentReference groupRef;
+    private DocumentReference userRef;
+    private DocumentReference calendarRef;
+    private DocumentReference calendarRefForUpdate;
     private List<String> groupMembers;
     private List<String> membersIdsToAdd;
+    private HashMap<String, Long> userCalendar;
+    private HashMap<String, Long> allUsersCalendar;
     private ArrayList<TimeSlot> slotsToReset = new ArrayList<>();
-    private final int NO_SLOTS_CHOSEN = 0;
     private Activity activity;
     private boolean isDateChosen;
     private String dateChosenByAdmin;
     private Group currentGroup;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private DocumentReference groupRef;
-    private DocumentReference userRef;
-    private DocumentReference calendarRef;
     private CollectionReference usersRef;
-    private HashMap<String,Long> userCalendar;
-    private HashMap<String,Long> allUsersCalendar;
-    private DocumentReference calendarRefForUpdate;
-    private static int dialogCount = 0;
     private static Toast noTimeSlotsSelectedToast = null;
 
-    MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity, Group currentGroup){
-        this.addMemberDialog = dialogs.get("addMemberDialog");
-        this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
+    MenuHandler(HashMap<String, Dialog> dialogs, List<String> membersNames, Activity activity,
+                Group currentGroup){
+        unpackDialogs(dialogs);
         this.groupMembers = membersNames;
-        this.topSuggestionsDialog = dialogs.get("topSuggestionsDialog");
-        this.editGroupNameDialog = dialogs.get("editGroupNameDialog");
-        this.meetingChosenDialog = dialogs.get("meetingChosenDialog");
         this.activity = activity;
         this.isDateChosen = false;
         this.dateChosenByAdmin = "";
         this.currentGroup = currentGroup;
     }
 
-    void handleAddParticipant(final String groupId)
-    {
+    private void unpackDialogs(HashMap<String, Dialog> dialogs) {
+        this.addMemberDialog = dialogs.get("addMemberDialog");
+        this.groupDetailsDialog = dialogs.get("groupDetailsDialog");
+        this.topSuggestionsDialog = dialogs.get("topSuggestionsDialog");
+        this.editGroupNameDialog = dialogs.get("editGroupNameDialog");
+        this.meetingChosenDialog = dialogs.get("meetingChosenDialog");
+    }
+
+    void handleAddParticipant(final String groupId){
         addMemberDialog.setContentView(R.layout.add_member_popup);
         TextView exitPopupBtn = addMemberDialog.findViewById(R.id.addMemberExitBtn);
         handleExitPopup(addMemberDialog, exitPopupBtn);
         usersRef = db.collection("users");
         Query allUsers = usersRef.orderBy("name");
         Query groupUsers = usersRef.whereArrayContains("memberOf", groupId).orderBy("name");
-        Task firstTask = allUsers.get();
-        Task secondTask = groupUsers.get();
-        Task combinedTask = Tasks.whenAllSuccess(firstTask, secondTask).addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+        Task getAllUsersTask = allUsers.get();
+        Task getGroupUsersTask = groupUsers.get();
+        Task combinedTask = Tasks.whenAllSuccess(getAllUsersTask, getGroupUsersTask)
+                .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
             @Override
             public void onSuccess(List<Object> list) {
                 List<QuerySnapshot> queriesList = (List<QuerySnapshot>)(Object)list;
@@ -119,12 +121,7 @@ class MenuHandler {
     boolean handleGroupDetails(CalendarSlotsHandler calendarSlotsHandler, String groupName, Toolbar toolbar)
     {
         groupDetailsDialog.setContentView(R.layout.group_details_popap);
-        TextView exitPopupBtn = groupDetailsDialog.findViewById(R.id.groupDetailsExitBtn);
-        handleExitPopup(groupDetailsDialog, exitPopupBtn);
-        displayGroupName(groupName);
-        displayMembersInfo(calendarSlotsHandler.getContext());
-        displayTopSelection(calendarSlotsHandler);
-        handleEditGroupName(currentGroup.getGroupId());
+        buildGroupDetailsAppearance(calendarSlotsHandler, groupName);
         String newName = toolbar.getTitle().toString();
         groupDetailsDialog.setCanceledOnTouchOutside(false);
         if (dialogCount == 0) {
@@ -133,6 +130,15 @@ class MenuHandler {
         }
         setGroupDetailsBehavior();
         return (newName.equals(groupName));
+    }
+
+    private void buildGroupDetailsAppearance(CalendarSlotsHandler calendarSlotsHandler, String groupName) {
+        TextView exitPopupBtn = groupDetailsDialog.findViewById(R.id.groupDetailsExitBtn);
+        handleExitPopup(groupDetailsDialog, exitPopupBtn);
+        displayGroupName(groupName);
+        displayMembersInfo(calendarSlotsHandler.getContext());
+        displayTopSelection(calendarSlotsHandler);
+        handleEditGroupName(currentGroup.getGroupId());
     }
 
     private void setGroupDetailsBehavior(){
@@ -178,7 +184,8 @@ class MenuHandler {
         });
     }
 
-    void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler, final String groupId, final String userId) {
+    void handleResetTimeChoice(final CalendarSlotsHandler calendarSlotsHandler, final String groupId,
+                               final String userId) {
         calendarRef = db.collection("calendars").document(groupId);
         calendarRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -203,21 +210,26 @@ class MenuHandler {
         for (int i = 0; i < TIME_SLOTS_AMOUNT; i++) {
             initialMap.put(Integer.toString(i), 0);
         }
-        Map<String, Object> initialCalendar = new HashMap<String, Object>();
+        Map<String, Object> initialCalendar = new HashMap<>();
         initialCalendar.put(userId, initialMap);
         calendarRef = db.collection("calendars").document(groupId);
         calendarRef.set(initialCalendar, SetOptions.merge());
+        resetAllSlots(calendarSlotsHandler, userCalendar);
+        setUndoBar(calendarSlotsHandler, userCalendar);
+    }
+
+    private void resetAllSlots(CalendarSlotsHandler calendarSlotsHandler, HashMap<String, Long> userCalendar) {
         for (String slotIndex : userCalendar.keySet()) {
             if (userCalendar.get(slotIndex) == 1) {
                 int slotConvertedIndex = calendarSlotsHandler.convertToSlotsIndex(Integer.valueOf(slotIndex));
                 calendarSlotsHandler.clickedOff(calendarSlotsHandler.getSlotById(slotConvertedIndex));
             }
         }
-        setUndoBar(calendarSlotsHandler, userCalendar);
     }
 
     private void setUndoBar(final CalendarSlotsHandler calendarSlotsHandler, HashMap<String,Long> userCalendar) {
-        SuperActivityToast.OnButtonClickListener onButtonClickListener = undoOnClickListener(calendarSlotsHandler, userCalendar);
+        SuperActivityToast.OnButtonClickListener onButtonClickListener = undoOnClickListener(calendarSlotsHandler,
+                userCalendar);
         SuperActivityToast.create(activity, new Style(), Style.TYPE_BUTTON)
                 .setButtonText("UNDO")
                 .setOnButtonClickListener("undo_bar", null, onButtonClickListener)
@@ -227,15 +239,17 @@ class MenuHandler {
                 .setAnimations(Style.ANIMATIONS_POP).show();
     }
 
-    private SuperActivityToast.OnButtonClickListener undoOnClickListener(final CalendarSlotsHandler calendarSlotsHandler,
-                                                                         final HashMap<String,Long> userCalendar){
+    private SuperActivityToast.OnButtonClickListener undoOnClickListener(final CalendarSlotsHandler
+                                 calendarSlotsHandler, final HashMap<String,Long> userCalendar){
          return new SuperActivityToast.OnButtonClickListener() {
              @Override
              public void onClick(View view, Parcelable token) {
                  for (String slotIndex : userCalendar.keySet()) {
                      if (userCalendar.get(slotIndex) == 1) {
-                         int slotConvertedIndex = calendarSlotsHandler.convertToSlotsIndex(Integer.valueOf(slotIndex));
-                         calendarSlotsHandler.clickedOn(calendarSlotsHandler.getSlotById(slotConvertedIndex));
+                         int slotConvertedIndex = calendarSlotsHandler.convertToSlotsIndex
+                                 (Integer.valueOf(slotIndex));
+                         calendarSlotsHandler.clickedOn(calendarSlotsHandler.
+                                 getSlotById(slotConvertedIndex));
                      }
                  }
              }
@@ -262,20 +276,13 @@ class MenuHandler {
          layoutParams.weight = 10;
          btnPositive.setLayoutParams(layoutParams);
          btnNegative.setLayoutParams(layoutParams);
-
      }
 
      private void activeGroupUpdate(final String groupId, final String userId, final String adminId,
                                     final ArrayList<String> membersList) {
          groupRef = db.collection("groups").document(groupId);
          groupRef.update("members", FieldValue.arrayRemove(userId));
-         if (userId.equals(adminId)) {
-             if (membersList.get(0).equals(adminId)) {
-                 groupRef.update("admin", membersList.get(1));
-             } else {
-                 groupRef.update("admin", membersList.get(0));
-             }
-         }
+         updateAdminCase(userId, adminId, membersList);
          findAndRemoveArrivals(groupId, userId);
          Map<String,Object> userToRemove = new HashMap<>();
          userToRemove.put(userId, FieldValue.delete());
@@ -283,7 +290,17 @@ class MenuHandler {
          calendarRef.update(userToRemove);
      }
 
-     private void checkGroupActivityAndUpdate(final String groupId, final String userId,
+    private void updateAdminCase(String userId, String adminId, ArrayList<String> membersList) {
+        if (userId.equals(adminId)) {
+            if (membersList.get(0).equals(adminId)) {
+                groupRef.update("admin", membersList.get(1));
+            } else {
+                groupRef.update("admin", membersList.get(0));
+            }
+        }
+    }
+
+    private void checkGroupActivityAndUpdate(final String groupId, final String userId,
                                               DocumentSnapshot document) {
          ArrayList<String> membersList = (ArrayList<String>) document.get("members");
          if (membersList.size() == 1) {
@@ -362,13 +379,13 @@ class MenuHandler {
                  editGroupNameDialog.setContentView(R.layout.edit_group_name_popup);
                  TextView exitBtn = editGroupNameDialog.findViewById(R.id.exitEditNameBtn);
                  handleExitPopup(editGroupNameDialog, exitBtn);
-                 handleEditInput(groupId);
+                 handleEditGroupNameInput(groupId);
                  editGroupNameDialog.show();
              }
         });
     }
 
-    private void handleEditInput(final String groupId){
+    private void handleEditGroupNameInput(final String groupId){
         final Button changeNameBtn = editGroupNameDialog.findViewById(R.id.changeNameBtn);
         EditText userInput = editGroupNameDialog.findViewById(R.id.editGroupNameInput);
         setTxtInChangeGroupPopup(userInput);
@@ -377,21 +394,25 @@ class MenuHandler {
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 0){
-                    changeNameBtn.setBackgroundResource(R.drawable.disabled_button_background);
-                }else {
-                    changeNameBtn.setBackgroundResource(R.drawable.green_round_background);
-                    changeNameBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handleChangeNameRequest(groupId);
-                        }
-                    });
-                }
+                handleGroupNameInputChanges(s, changeNameBtn, groupId);
             }
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void handleGroupNameInputChanges(CharSequence s, Button changeNameBtn, final String groupId) {
+        if (s.length() == 0){
+            changeNameBtn.setBackgroundResource(R.drawable.disabled_button_background);
+        } else {
+            changeNameBtn.setBackgroundResource(R.drawable.green_round_background);
+            changeNameBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleChangeNameRequest(groupId);
+                }
+            });
+        }
     }
 
     private void setTxtInChangeGroupPopup(EditText userInput) {
@@ -454,14 +475,15 @@ class MenuHandler {
         membersInfo.addView(newTextView);
     }
 
-    private void displayTopSelection (CalendarSlotsHandler calendarSlotsHandler){
+    private void displayTopSelection(CalendarSlotsHandler calendarSlotsHandler){
          TextView topSelectionInfo = groupDetailsDialog.findViewById(R.id.topSelections);
          String topSelectionText = "";
          ArrayList<String> topSelections = calendarSlotsHandler.displayTopSelections();
          if (!currentGroup.getIsScheduled()) {
              topSelectionText = displaySuggestions(topSelections);
          }else {
-             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText, fullDayDisplay(currentGroup.getChosenDate()));
+             topSelectionText = String.format("Next MeetUp:\n%s%s", topSelectionText,
+                     fullDayDisplay(currentGroup.getChosenDate()));
              topSelectionInfo.setTextSize(30);
          }
         topSelectionInfo.setText(topSelectionText);
@@ -499,7 +521,7 @@ class MenuHandler {
     }
 
     private String displaySuggestions(ArrayList<String> topSelections){
-        String topSelectionText = "Suggestions:";
+        String topSelectionText = activity.getString(R.string.Suggestions);
         for (String suggestion : topSelections) {
             topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
         }
@@ -528,7 +550,8 @@ class MenuHandler {
         TextView exitBtn = topSuggestionsDialog.findViewById(R.id.exitPopupBtn);
         handleExitPopup(topSuggestionsDialog, exitBtn);
         Button[] allOptionsLst = createAllOptionsLst();
-        final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst, numOfOptionsToDisplay);
+        final ArrayList<Button> currentOptionLst = activateOnlyRelevantButtons(allOptionsLst,
+                numOfOptionsToDisplay);
         setTextForOptions(currentOptionLst, calendarSlotsHandler);
         handleAllOptionPresses(currentOptionLst, allOptionsLst);
         handleCreateMeetingBtnPress(currentOptionLst);
@@ -553,7 +576,8 @@ class MenuHandler {
         return currentOptionLst;
     }
 
-    private void buildSuggestionsButtonsList(int numOfOptionsToDisplay, ArrayList<Button> currentOptionLst, Button[] allOptionsLst){
+    private void buildSuggestionsButtonsList(int numOfOptionsToDisplay, ArrayList<Button> currentOptionLst,
+                                             Button[] allOptionsLst){
         Button createMeeting = allOptionsLst[3];
         switch (numOfOptionsToDisplay){
             case 3:
@@ -586,7 +610,8 @@ class MenuHandler {
 
     private void handleAllOptionPresses(final ArrayList<Button> currentOptionLst, Button[] allOptionsLst)
     {
-        for(int i = 0; i < 3; i++)
+        final int numOfOptions = 3;
+        for(int i = 0; i < numOfOptions; i++)
         {
             final int curOptionNum = i;
             allOptionsLst[i].setOnClickListener(new View.OnClickListener() {
