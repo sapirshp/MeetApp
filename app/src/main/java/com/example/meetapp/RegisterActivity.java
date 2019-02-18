@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
         password2EditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && userPassword1.toString().length() < 6){
+                if (!hasFocus && userPassword2.toString().length() < 6){
                     password2EditText.setError("The Password must be at least 6 characters long");
                 }
             }
@@ -207,6 +207,8 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             if (task.getException().getMessage().equals(emailAlreadyExistsError)) {
                                 feedbackToUser.setText(v.getContext().getString(R.string.EmailAlreadyExists));
+                            } else {
+                                feedbackToUser.setText(v.getContext().getString(R.string.GeneralRegistrationError));
                             }
                             Toast.makeText(RegisterActivity.this, task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
