@@ -157,7 +157,7 @@ public class InsideGroupActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             groupName = thisGroup.getName();
             getSupportActionBar().setTitle(groupName);
-            getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
+            getSupportActionBar().setLogo(R.drawable.new_logo);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
         groupMembers = thisGroup.getMembersString();

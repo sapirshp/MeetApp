@@ -292,7 +292,7 @@ public class GroupsDisplayActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(getString(R.string.app_name));
-            getSupportActionBar().setLogo(R.drawable.meetapp_logo_toolbar);
+            getSupportActionBar().setLogo(R.drawable.new_logo);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
     }
