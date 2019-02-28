@@ -529,10 +529,13 @@ class MenuHandler {
     }
 
     private String displaySuggestions(ArrayList<String> topSelections){
-        String topSelectionText = topSelections.get(0);
-        for (String suggestion : topSelections) {
-            if (!suggestion.equals(topSelectionText)) {
-                topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
+        String topSelectionText = "";
+        if (topSelections.size() > 0) {
+            topSelectionText = topSelections.get(0);
+            for (String suggestion : topSelections) {
+                if (!suggestion.equals(topSelectionText)) {
+                    topSelectionText = String.format("%s\n%s", topSelectionText, suggestion);
+                }
             }
         }
         return topSelectionText;
